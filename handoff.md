@@ -90,3 +90,42 @@
   - Phase 2-2: Full command hierarchy (たたかう/じゅもん/どうぐ/にげる)
   - Phase 2-3: Proper damage formula (FC DQ2 spec)
   - Phase 2-4: Level up system with growth curves
+
+## 2026-02-10 Full Implementation + Fukkatsu no Jumon
+- Added:
+  - Full game rewrite with minified codebase (external commit)
+  - 64x64 procedural world map with zone system (4 zones)
+  - 15 monster types including bosses (ハーゴン, シドー, はぐれメタル)
+  - Complete battle system: 4 commands, spells, items, agility-based turn order
+  - 12 spells (ホイミ, ベホイミ, ギラ, ベギラマ, ラリホー, マヌーサ, ルーラ, リレミト, ザオリク, イオナズン, スクルト, バイキルト)
+  - Equipment system: weapons, armor, shields, helmets
+  - Town/castle/cave/tower indoor maps with NPCs
+  - Shop system (items, weapons, armor)
+  - Story events: 仲間加入 (サマルトリア, ムーンブルク), 船入手, ボス戦
+  - Save/Load via localStorage
+  - Game over and ending screens
+  - **復活の呪文 (Revival Password) system**:
+    - Encode game state to ひらがな string
+    - Decode ひらがな string back to game state
+    - Encodes: 3 chars' levels/exp, gold, flags, equipment, items
+    - Checksum for validation
+    - Show password in menu (さくせん → ふっかつのじゅもん)
+    - Input password from title screen or menu
+    - Kana grid input UI with cursor
+
+- Verification:
+  - [x] Title screen shows 3 options (はじめる/ぼうけんのしょ/ふっかつのじゅもん)
+  - [ ] 復活の呪文 encode/decode round-trip works correctly
+  - [ ] Invalid password shows error message
+  - [ ] Touch controls for mobile play
+
+- Known issues:
+  - Code is heavily minified/compressed (single-line functions)
+  - No touch/mobile controls yet
+  - No宿屋 (inn) system yet
+  - Equip menu doesn't allow changing equipment
+
+- Next:
+  - Mobile touch controls (virtual D-pad + A/B buttons)
+  - Inn system for HP/MP recovery
+  - Code readability improvements

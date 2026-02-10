@@ -79,8 +79,70 @@ function startBattle(bossName){const zone=bossName?3:(G.mapId==='world'?getZone(
 function updateBattle(){const bs=G.bs;if(!bs)return;if(bs.phase==='msg'){bs.msgTimer--;if(bs.msgTimer<=0||kp('KeyZ')||kp('Enter')){if(bs.nextPhase){bs.phase=bs.nextPhase;bs.nextPhase=null}else bs.phase='select';bs.msg=''}return}if(bs.phase==='start'){bs.phase='select';bs.cursor=0;bs.partyActs=[];bs.curActor=0}if(bs.phase==='select'){const a=G.party[bs.curActor];if(!a||!a.alive){bs.curActor++;if(bs.curActor>=G.party.length){bs.phase='exec';bs.curActor=0}return}if(kp('ArrowUp'))bs.cursor=(bs.cursor-1+4)%4;if(kp('ArrowDown'))bs.cursor=(bs.cursor+1)%4;if(kp('KeyZ')||kp('Enter')){if(bs.cursor===0){bs.partyActs.push({ai:bs.curActor,type:'atk',tgt:0});bs.curActor++;bs.cursor=0}else if(bs.cursor===1){if(a.spells.length>0){bs.phase='spell';bs.cursor=0}else{bs.msg='じゅもんを おぼえていない！';bs.msgTimer=40;bs.phase='msg';bs.nextPhase='select'}}else if(bs.cursor===2){if(G.items.length>0){bs.phase='item';bs.cursor=0}else{bs.msg='どうぐがない！';bs.msgTimer=40;bs.phase='msg';bs.nextPhase='select'}}else if(bs.cursor===3){if(bs.enemies.some(e=>e.boss)){bs.msg='ボスからは にげられない！';bs.msgTimer=40;bs.phase='msg';bs.nextPhase='select'}else if(Math.random()>0.5){bs.msg='うまく にげきれた！';bs.msgTimer=40;bs.phase='msg';bs.nextPhase='end'}else{bs.msg='にげられない！';bs.msgTimer=40;bs.phase='msg';bs.partyActs.push({ai:bs.curActor,type:'def'});bs.curActor++;bs.nextPhase='select'}}}if(bs.curActor>=G.party.length&&bs.phase==='select'){bs.phase='exec';bs.curActor=0}}if(bs.phase==='spell'){const a=G.party[bs.curActor];if(!a){bs.phase='select';return}if(kp('ArrowUp'))bs.cursor=Math.max(0,bs.cursor-1);if(kp('ArrowDown'))bs.cursor=Math.min(a.spells.length-1,bs.cursor);if(kp('KeyZ')||kp('Enter')){const sp=SPELLS[a.spells[bs.cursor]];if(a.mp<sp.mp){bs.msg='MPが たりない！';bs.msgTimer=40;bs.phase='msg';bs.nextPhase='spell'}else{bs.partyActs.push({ai:bs.curActor,type:'spell',spell:a.spells[bs.cursor],tgt:0});bs.curActor++;bs.cursor=0;bs.phase='select'}}if(kp('KeyX')||kp('Escape')){bs.phase='select';bs.cursor=1}}if(bs.phase==='item'){if(kp('ArrowUp'))bs.cursor=Math.max(0,bs.cursor-1);if(kp('ArrowDown'))bs.cursor=Math.min(G.items.length-1,bs.cursor);if(kp('KeyZ')||kp('Enter')){bs.partyActs.push({ai:bs.curActor,type:'item',idx:bs.cursor});bs.curActor++;bs.cursor=0;bs.phase='select'}if(kp('KeyX')||kp('Escape')){bs.phase='select';bs.cursor=2}}if(bs.phase==='exec')execBattle();if(bs.phase==='result'){bs.msgTimer--;if(bs.msgTimer<=0){if(bs.resultIdx<bs.resultMsgs.length){bs.msg=bs.resultMsgs[bs.resultIdx];bs.resultIdx++;bs.msgTimer=50}else if(kp('KeyZ')||kp('Enter')||bs.msgTimer<-30){if(G.party.every(c=>!c.alive))G.state=GS.GAMEOVER;else if(G.flags.sidoDown)G.state=GS.ENDING;else bs.phase='end'}}}if(bs.phase==='end'){G.state=GS.EXPLORE;G.bs=null;G.party.forEach(c=>{c.atkBuf=0;c.defBuf=0})}}
 function execBattle(){const bs=G.bs,acts=[];bs.partyActs.forEach(a=>{const ac=G.party[a.ai];if(ac&&ac.alive)acts.push({...a,agi:ac.agi,isP:true,obj:ac})});bs.enemies.forEach((e,i)=>{if(!e.alive)return;let t='atk';if(e.spells.length>0&&e.mp>0&&Math.random()>0.5)t='spell';acts.push({type:t,ai:i,isP:false,obj:e,agi:e.agi,spell:t==='spell'?e.spells[Math.floor(Math.random()*e.spells.length)]:null,tgt:Math.floor(Math.random()*G.party.length)})});acts.sort((a,b)=>b.agi-a.agi);const ms=[];for(const act of acts){if(act.isP){const a=act.obj;if(!a.alive)continue;if(a.status.includes('sleep')){if(Math.random()>0.5)a.status=a.status.filter(s=>s!=='sleep');ms.push(a.name+'は ねている。');continue}if(act.type==='atk'){const al=bs.enemies.filter(e=>e.alive);if(al.length===0)continue;const t=al[Math.floor(Math.random()*al.length)];const w=a.weapon!=null?WEAPONS[a.weapon]:null;const hits=w&&w.hits?w.hits:1;let td=0;for(let h=0;h<hits;h++){const d=Math.max(1,Math.floor(a.atk-t.def/2+Math.random()*4-2));t.hp-=d;td+=d}ms.push(a.name+'のこうげき！ '+t.name+'に '+td+'ダメージ！');if(t.hp<=0){t.alive=false;ms.push(t.name+'を たおした！')}}else if(act.type==='spell'){const sp=SPELLS[act.spell];a.mp-=sp.mp;if(sp.type==='damage'){const al=bs.enemies.filter(e=>e.alive);al.forEach(e=>{const d=Math.max(1,Math.floor(sp.power+Math.random()*10-e.def/4));e.hp-=d;if(e.hp<=0){e.alive=false;ms.push(e.name+'を たおした！')}});ms.push(a.name+'は '+sp.name+'！')}else if(sp.type==='heal'){const t=G.party.find(c=>c.alive&&c.hp<c.maxHp)||a;t.hp=Math.min(t.maxHp,t.hp+sp.power);ms.push(a.name+'は '+sp.name+'！ '+t.name+'のHPかいふく！')}else if(sp.type==='buff'){if(sp.effect==='def_up'){G.party.forEach(c=>{if(c.alive)c.defBuf+=10});ms.push(a.name+'は '+sp.name+'！ しゅびりょくUP！')}else if(sp.effect==='atk_up'){a.atkBuf+=15;ms.push(a.name+'は '+sp.name+'！ こうげきりょくUP！')}}else if(sp.type==='status'){const al=bs.enemies.filter(e=>e.alive);if(al.length>0){const t=al[Math.floor(Math.random()*al.length)];if(Math.random()>0.3){t.status.push('sleep');ms.push(a.name+'は '+sp.name+'！ '+t.name+'は ねむった！')}else ms.push(a.name+'は '+sp.name+'！ しかし きかなかった！')}}else if(sp.type==='revive'){const t=G.party.find(c=>!c.alive);if(t){t.alive=true;t.hp=t.maxHp;ms.push(a.name+'は '+sp.name+'！ '+t.name+'は いきかえった！')}else ms.push(a.name+'は '+sp.name+'！ しかし だれも たおれていない。')}}else if(act.type==='item'){const it=G.items[act.idx];if(it){const item=ITEMS[it.id];if(item.type==='heal'){a.hp=Math.min(a.maxHp,a.hp+item.power);it.count--;if(it.count<=0)G.items.splice(act.idx,1);ms.push(a.name+'は '+item.name+'を つかった！')}}}}else{const e=act.obj;if(!e.alive)continue;if(e.flee&&Math.random()<e.flee){e.alive=false;ms.push(e.name+'は にげだした！');continue}if(e.status.includes('sleep')){if(Math.random()>0.5)e.status=e.status.filter(s=>s!=='sleep');ms.push(e.name+'は ねている。');continue}const ap=G.party.filter(c=>c.alive);if(ap.length===0)continue;const t=ap[Math.floor(Math.random()*ap.length)];if(act.type==='atk'){const d=Math.max(1,Math.floor(e.atk-t.def/2+Math.random()*4-2));t.hp-=d;ms.push(e.name+'のこうげき！ '+t.name+'に '+d+'ダメージ！');if(t.hp<=0){t.hp=0;t.alive=false;ms.push(t.name+'は ちからつきた…')}}else if(act.type==='spell'){const sp=SPELLS[act.spell];if(e.mp<sp.mp){const d=Math.max(1,Math.floor(e.atk-t.def/2+Math.random()*4-2));t.hp-=d;ms.push(e.name+'のこうげき！ '+t.name+'に '+d+'ダメージ！');if(t.hp<=0){t.hp=0;t.alive=false;ms.push(t.name+'は ちからつきた…')}}else{e.mp-=sp.mp;if(sp.type==='damage'){ap.forEach(c=>{const d=Math.max(1,Math.floor(sp.power+Math.random()*8-c.def/4));c.hp-=d;if(c.hp<=0){c.hp=0;c.alive=false;ms.push(c.name+'は ちからつきた…')}});ms.push(e.name+'は '+sp.name+'！')}else if(sp.type==='heal'){e.hp=Math.min(e.maxHp,e.hp+sp.power);ms.push(e.name+'は '+sp.name+'！ HPかいふく！')}}}}}const allED=bs.enemies.every(e=>!e.alive),allPD=G.party.every(c=>!c.alive);if(allED){let te=0,tg=0;bs.enemies.forEach(e=>{te+=e.exp;tg+=e.gold});G.gold+=tg;ms.push('かった！ '+te+'EXP '+tg+'G かくとく！');G.party.forEach(c=>{if(!c.alive)return;c.exp+=te;if(c.lvUp())ms.push(c.name+' Lv'+c.level+'に UP！')});bs.enemies.forEach(e=>{if(e.name==='ハーゴン')G.flags.hargonDown=true;if(e.name==='シドー'){G.flags.sidoDown=true;ms.push('へいわが おとずれた…！')}})}if(allPD)ms.push('ぜんめつ…');bs.phase='result';bs.resultMsgs=ms;bs.resultIdx=0;bs.msgTimer=0}
 function drawBattle(){const bs=G.bs;if(!bs)return;ctx.fillStyle='#111';ctx.fillRect(0,0,SW,SH);const al=bs.enemies.filter(e=>e.alive);al.forEach((e,i)=>{const ex=SW/(al.length+1)*(i+1),ey=60;ctx.fillStyle=e.boss?'#a00':'#c80';ctx.fillRect(ex-12,ey-12,24,24);ctx.fillStyle='#fff';ctx.fillRect(ex-6,ey-6,4,4);ctx.fillRect(ex+2,ey-6,4,4);ctx.fillStyle='#000';ctx.fillRect(ex-4,ey+2,8,2);dtc(e.name,ex,ey+22,6);dtc('HP'+e.hp,ex,ey+30,5,'#0f0')});dw(SW-120,SH-100,112,92);G.party.forEach((c,i)=>{const y=SH-92+i*28;dt(c.name.slice(0,4),SW-112,y,6,c.alive?'#fff':'#888');dt('HP'+c.hp+'/'+c.maxHp,SW-112,y+10,6,c.hp<c.maxHp/4?'#f00':'#0f0');dt('MP'+c.mp+'/'+c.maxMp,SW-112,y+18,6,'#0af')});if(bs.phase==='select'){const a=G.party[bs.curActor];if(a){dw(8,SH-80,80,72);dt(a.name.slice(0,5),16,SH-70,6,'#ffd700');['たたかう','じゅもん','どうぐ','にげる'].forEach((c,i)=>dt(c,24,SH-56+i*14,7));dc(14,SH-63+bs.cursor*14)}}if(bs.phase==='spell'){const a=G.party[bs.curActor];if(a){dw(8,8,120,a.spells.length*14+20);dt('じゅもん',16,24,7,'#ffd700');a.spells.forEach((sp,i)=>{const s=SPELLS[sp];dt((i===bs.cursor?'▶':' ')+s.name+' '+s.mp,16,38+i*14,7)})}}if(bs.phase==='item'){dw(8,8,140,G.items.length*14+20);dt('どうぐ',16,24,7,'#ffd700');G.items.forEach((it,i)=>{dt((i===bs.cursor?'▶':' ')+ITEMS[it.id].name,16,38+i*14,7)})}if(bs.msg){dw(8,SH-40,SW-16,32);dt(bs.msg,16,SH-22,7)}}
-function updateMenu(){const ms=G.ms;if(!ms)return;if(ms.pg==='main'){const it=['はなす','じゅもん','どうぐ','つよさ','そうび','さくせん','とじる'];if(kp('ArrowUp'))ms.cursor=(ms.cursor-1+it.length)%it.length;if(kp('ArrowDown'))ms.cursor=(ms.cursor+1)%it.length;if(kp('KeyZ')||kp('Enter')){switch(ms.cursor){case 0:G.state=GS.EXPLORE;checkInteraction();break;case 1:ms.pg='spell';ms.cursor=0;ms.ci=0;break;case 2:ms.pg='item';ms.cursor=0;break;case 3:ms.pg='status';ms.ci=0;break;case 4:ms.pg='equip';ms.cursor=0;ms.ci=0;break;case 5:saveGame();G.state=GS.EXPLORE;break;case 6:G.state=GS.EXPLORE;break}}if(kp('KeyX')||kp('Escape'))G.state=GS.EXPLORE}else if(ms.pg==='status'){if(kp('KeyX')||kp('Escape')||kp('KeyZ'))ms.pg='main';if(kp('ArrowLeft'))ms.ci=(ms.ci-1+G.party.length)%G.party.length;if(kp('ArrowRight'))ms.ci=(ms.ci+1)%G.party.length}else if(ms.pg==='item'){if(kp('ArrowUp'))ms.cursor=Math.max(0,ms.cursor-1);if(kp('ArrowDown'))ms.cursor=Math.min(G.items.length-1,ms.cursor);if(kp('KeyZ')||kp('Enter')){if(G.items.length>0)useItem(ms.cursor)}if(kp('KeyX')||kp('Escape'))ms.pg='main'}else if(ms.pg==='spell'){const c=G.party[ms.ci];if(kp('ArrowUp'))ms.cursor=Math.max(0,ms.cursor-1);if(kp('ArrowDown'))ms.cursor=Math.min(c.spells.length-1,ms.cursor);if(kp('ArrowLeft')){ms.ci=(ms.ci-1+G.party.length)%G.party.length;ms.cursor=0}if(kp('ArrowRight')){ms.ci=(ms.ci+1)%G.party.length;ms.cursor=0}if(kp('KeyZ')||kp('Enter')){if(c.spells.length>0)useFieldSpell(c,c.spells[ms.cursor])}if(kp('KeyX')||kp('Escape'))ms.pg='main'}else if(ms.pg==='equip'){const c=G.party[ms.ci];if(kp('ArrowLeft')){ms.ci=(ms.ci-1+G.party.length)%G.party.length;ms.cursor=0}if(kp('ArrowRight')){ms.ci=(ms.ci+1)%G.party.length;ms.cursor=0}if(kp('KeyX')||kp('Escape'))ms.pg='main'}}
-function drawMenu(){const ms=G.ms;if(!ms)return;if(ms.pg==='main'){dw(8,8,80,120);['はなす','じゅもん','どうぐ','つよさ','そうび','さくせん','とじる'].forEach((t,i)=>dt(t,24,24+i*14));dc(14,17+ms.cursor*14);dw(96,8,152,40*G.party.length);G.party.forEach((c,i)=>{const y=20+i*36;dt(c.name.slice(0,6),104,y,7);dt('HP'+c.hp+'/'+c.maxHp,104,y+12,7);dt('MP'+c.mp+'/'+c.maxMp,104,y+22,7);dt('Lv'+c.level,180,y,7)})}else if(ms.pg==='status'){const c=G.party[ms.ci];dw(8,8,240,200);dt('< '+c.name+' >',16,26,8,'#ffd700');dt('レベル: '+c.level,16,44);dt('HP: '+c.hp+'/'+c.maxHp,16,58);dt('MP: '+c.mp+'/'+c.maxMp,16,72);dt('ちから: '+c.str,16,86);dt('すばやさ: '+c.agi,16,100);dt('こうげき力: '+c.atk,16,114);dt('しゅび力: '+c.def,16,128);dt('EXP: '+c.exp,16,142);const nx=c.level<c.lt.length?c.lt[c.level][0]-c.exp:'---';dt('つぎのLvまで: '+nx,16,156);dt('←→ キャラ切替 Z/Escで戻る',16,190,6,'#888')}else if(ms.pg==='item'){dw(8,8,200,180);dt('どうぐ',16,26,8,'#ffd700');if(G.items.length===0)dt('なにも もっていない',16,44);G.items.forEach((it,i)=>{dt((i===ms.cursor?'▶':'  ')+ITEMS[it.id].name+(it.count>1?' x'+it.count:''),16,44+i*14,7)});dt('G: '+G.gold,16,170,7,'#ffd700')}else if(ms.pg==='spell'){const c=G.party[ms.ci];dw(8,8,200,180);dt(c.name+'のじゅもん',16,26,8,'#ffd700');if(c.spells.length===0)dt('おぼえていない',16,44);c.spells.forEach((sp,i)=>{const s=SPELLS[sp];dt((i===ms.cursor?'▶':'  ')+s.name+' MP'+s.mp,16,44+i*14,7)});dt('←→ キャラ切替',16,170,6,'#888')}else if(ms.pg==='equip'){const c=G.party[ms.ci];dw(8,8,240,140);dt(c.name+'のそうび',16,26,8,'#ffd700');dt('ぶき: '+(c.weapon!=null?WEAPONS[c.weapon].name:'なし'),16,44);dt('よろい: '+(c.armor!=null?ARMORS[c.armor].name:'なし'),16,58);dt('たて: '+(c.shield!=null?SHIELDS[c.shield].name:'なし'),16,72);dt('かぶと: '+(c.helmet!=null?HELMETS[c.helmet].name:'なし'),16,86);dt('←→ キャラ切替',16,120,6,'#888')}}
+function updateMenu(){const ms=G.ms;if(!ms)return;if(ms.pg==='main'){const it=['はなす','じゅもん','どうぐ','つよさ','そうび','さくせん','とじる'];if(kp('ArrowUp'))ms.cursor=(ms.cursor-1+it.length)%it.length;if(kp('ArrowDown'))ms.cursor=(ms.cursor+1)%it.length;if(kp('KeyZ')||kp('Enter')){switch(ms.cursor){case 0:G.state=GS.EXPLORE;checkInteraction();break;case 1:ms.pg='spell';ms.cursor=0;ms.ci=0;break;case 2:ms.pg='item';ms.cursor=0;break;case 3:ms.pg='status';ms.ci=0;break;case 4:ms.pg='equip';ms.cursor=0;ms.ci=0;break;case 5:ms.pg='sakusen';ms.cursor=0;break;case 6:G.state=GS.EXPLORE;break}}if(kp('KeyX')||kp('Escape'))G.state=GS.EXPLORE}else if(ms.pg==='status'){if(kp('KeyX')||kp('Escape')||kp('KeyZ'))ms.pg='main';if(kp('ArrowLeft'))ms.ci=(ms.ci-1+G.party.length)%G.party.length;if(kp('ArrowRight'))ms.ci=(ms.ci+1)%G.party.length}else if(ms.pg==='item'){if(kp('ArrowUp'))ms.cursor=Math.max(0,ms.cursor-1);if(kp('ArrowDown'))ms.cursor=Math.min(G.items.length-1,ms.cursor);if(kp('KeyZ')||kp('Enter')){if(G.items.length>0)useItem(ms.cursor)}if(kp('KeyX')||kp('Escape'))ms.pg='main'}else if(ms.pg==='spell'){const c=G.party[ms.ci];if(kp('ArrowUp'))ms.cursor=Math.max(0,ms.cursor-1);if(kp('ArrowDown'))ms.cursor=Math.min(c.spells.length-1,ms.cursor);if(kp('ArrowLeft')){ms.ci=(ms.ci-1+G.party.length)%G.party.length;ms.cursor=0}if(kp('ArrowRight')){ms.ci=(ms.ci+1)%G.party.length;ms.cursor=0}if(kp('KeyZ')||kp('Enter')){if(c.spells.length>0)useFieldSpell(c,c.spells[ms.cursor])}if(kp('KeyX')||kp('Escape'))ms.pg='main'}else if(ms.pg==='equip'){const c=G.party[ms.ci];if(kp('ArrowLeft')){ms.ci=(ms.ci-1+G.party.length)%G.party.length;ms.cursor=0}if(kp('ArrowRight')){ms.ci=(ms.ci+1)%G.party.length;ms.cursor=0}if(kp('KeyX')||kp('Escape'))ms.pg='main'}
+else if(ms.pg==='sakusen'){
+if(kp('ArrowUp'))ms.cursor=(ms.cursor-1+3)%3;
+if(kp('ArrowDown'))ms.cursor=(ms.cursor+1)%3;
+if(kp('KeyZ')||kp('Enter')){
+if(ms.cursor===0){saveGame();G.state=GS.EXPLORE}
+else if(ms.cursor===1){ms.pg='jumon_show';ms.jumon=encodeJumon()}
+else{ms.pg='main';ms.cursor=5}
+}if(kp('KeyX')||kp('Escape')){ms.pg='main';ms.cursor=5}
+}else if(ms.pg==='jumon_show'){
+if(kp('KeyZ')||kp('Enter')||kp('KeyX')||kp('Escape')){ms.pg='sakusen';ms.cursor=1}
+}else if(ms.pg==='jumon_input'){
+if(!ms.inputBuf)ms.inputBuf='';
+if(!ms.jcursor)ms.jcursor={x:0,y:0};
+const jc=JUMON_CHARS;const cols=10;const rows=Math.ceil(jc.length/cols);
+if(kp('ArrowRight'))ms.jcursor.x=Math.min(cols-1,ms.jcursor.x+1);
+if(kp('ArrowLeft'))ms.jcursor.x=Math.max(0,ms.jcursor.x-1);
+if(kp('ArrowDown'))ms.jcursor.y=Math.min(rows,ms.jcursor.y+1);
+if(kp('ArrowUp'))ms.jcursor.y=Math.max(0,ms.jcursor.y-1);
+if(kp('KeyZ')||kp('Enter')){
+if(ms.jcursor.y===rows){
+// けってい row
+const data=decodeJumon(ms.inputBuf);
+if(data){applyJumon(data);showMsg('ふっかつのじゅもんを うけつけた！')}
+else showMsg('じゅもんが ちがいます。');
+ms.pg='main';ms.cursor=0;
+}else{
+const idx=ms.jcursor.y*cols+ms.jcursor.x;
+if(idx<jc.length)ms.inputBuf+=jc[idx];
+}}
+if(kp('KeyX')||kp('Escape')){
+if(ms.inputBuf.length>0)ms.inputBuf=ms.inputBuf.slice(0,-1);
+else{ms.pg='sakusen';ms.cursor=1}
+}}
+}
+function drawMenu(){const ms=G.ms;if(!ms)return;if(ms.pg==='main'){dw(8,8,80,120);['はなす','じゅもん','どうぐ','つよさ','そうび','さくせん','とじる'].forEach((t,i)=>dt(t,24,24+i*14));dc(14,17+ms.cursor*14);dw(96,8,152,40*G.party.length);G.party.forEach((c,i)=>{const y=20+i*36;dt(c.name.slice(0,6),104,y,7);dt('HP'+c.hp+'/'+c.maxHp,104,y+12,7);dt('MP'+c.mp+'/'+c.maxMp,104,y+22,7);dt('Lv'+c.level,180,y,7)})}else if(ms.pg==='status'){const c=G.party[ms.ci];dw(8,8,240,200);dt('< '+c.name+' >',16,26,8,'#ffd700');dt('レベル: '+c.level,16,44);dt('HP: '+c.hp+'/'+c.maxHp,16,58);dt('MP: '+c.mp+'/'+c.maxMp,16,72);dt('ちから: '+c.str,16,86);dt('すばやさ: '+c.agi,16,100);dt('こうげき力: '+c.atk,16,114);dt('しゅび力: '+c.def,16,128);dt('EXP: '+c.exp,16,142);const nx=c.level<c.lt.length?c.lt[c.level][0]-c.exp:'---';dt('つぎのLvまで: '+nx,16,156);dt('←→ キャラ切替 Z/Escで戻る',16,190,6,'#888')}else if(ms.pg==='item'){dw(8,8,200,180);dt('どうぐ',16,26,8,'#ffd700');if(G.items.length===0)dt('なにも もっていない',16,44);G.items.forEach((it,i)=>{dt((i===ms.cursor?'▶':'  ')+ITEMS[it.id].name+(it.count>1?' x'+it.count:''),16,44+i*14,7)});dt('G: '+G.gold,16,170,7,'#ffd700')}else if(ms.pg==='spell'){const c=G.party[ms.ci];dw(8,8,200,180);dt(c.name+'のじゅもん',16,26,8,'#ffd700');if(c.spells.length===0)dt('おぼえていない',16,44);c.spells.forEach((sp,i)=>{const s=SPELLS[sp];dt((i===ms.cursor?'▶':'  ')+s.name+' MP'+s.mp,16,44+i*14,7)});dt('←→ キャラ切替',16,170,6,'#888')}else if(ms.pg==='equip'){const c=G.party[ms.ci];dw(8,8,240,140);dt(c.name+'のそうび',16,26,8,'#ffd700');dt('ぶき: '+(c.weapon!=null?WEAPONS[c.weapon].name:'なし'),16,44);dt('よろい: '+(c.armor!=null?ARMORS[c.armor].name:'なし'),16,58);dt('たて: '+(c.shield!=null?SHIELDS[c.shield].name:'なし'),16,72);dt('かぶと: '+(c.helmet!=null?HELMETS[c.helmet].name:'なし'),16,86);dt('←→ キャラ切替',16,120,6,'#888')}
+else if(ms.pg==='sakusen'){
+dw(8,8,140,66);dt('さくせん',16,26,8,'#ffd700');
+['きろくする','ふっかつのじゅもん','もどる'].forEach((t,i)=>dt((i===ms.cursor?'▶':' ')+t,16,42+i*14,7));
+}else if(ms.pg==='jumon_show'){
+dw(4,4,248,232);dt('ふっかつのじゅもん',16,24,8,'#ffd700');
+dt('この じゅもんを ひかえよ！',16,42,7);
+const j=ms.jumon||'';
+for(let i=0;i<j.length;i++){
+const row=Math.floor(i/14),col=i%14;
+dt(j[i],16+col*16,66+row*18,8,'#0f0');
+}dt('Z/Escで もどる',16,218,6,'#888');
+}else if(ms.pg==='jumon_input'){
+dw(4,4,248,232);dt('ふっかつのじゅもんを いれよ',16,22,7,'#ffd700');
+// Show input buffer
+dw(8,32,240,24);dt(ms.inputBuf||'',14,48,8,'#0f0');
+// Kana grid
+const jc=JUMON_CHARS,cols=10;
+for(let i=0;i<jc.length;i++){
+const r=Math.floor(i/cols),c=i%cols;
+const sel=ms.jcursor&&ms.jcursor.y===r&&ms.jcursor.x===c;
+dt(jc[i],14+c*22,76+r*16,8,sel?'#ff0':'#fff');
+}
+// けってい button
+const rows=Math.ceil(jc.length/cols);
+const selK=ms.jcursor&&ms.jcursor.y===rows;
+dt('けってい',14,76+rows*16,8,selK?'#ff0':'#fff');
+dt('X:1文字けす Esc:もどる',14,218,5,'#888');
+}}
 function useItem(idx){if(idx>=G.items.length)return;const it=G.items[idx],item=ITEMS[it.id];if(item.type==='heal'){const c=G.party.find(c=>c.alive&&c.hp<c.maxHp);if(c){c.hp=Math.min(c.maxHp,c.hp+item.power);it.count--;if(it.count<=0)G.items.splice(idx,1);G.state=GS.EXPLORE;showMsg(c.name+'のHP '+item.power+' かいふく！')}else showMsg('つかう ひつようが ない。')}else if(item.type==='cure'){const c=G.party.find(c=>c.alive&&c.status.includes(item.cure));if(c){c.status=c.status.filter(s=>s!==item.cure);it.count--;if(it.count<=0)G.items.splice(idx,1);G.state=GS.EXPLORE;showMsg(item.cure+'が なおった！')}else showMsg('つかう ひつようが ない。')}else showMsg('ここでは つかえない。')}
 function useFieldSpell(caster,sid){const s=SPELLS[sid];if(caster.mp<s.mp){showMsg('MPが たりない！');return}if(s.type==='heal'){const t=G.party.find(c=>c.alive&&c.hp<c.maxHp);if(!t){showMsg('つかう ひつようがない。');return}caster.mp-=s.mp;t.hp=Math.min(t.maxHp,t.hp+s.power);G.state=GS.EXPLORE;showMsg(caster.name+'は '+s.name+'！\n'+t.name+'のHP '+s.power+' かいふく！')}else if(s.type==='revive'){const t=G.party.find(c=>!c.alive);if(!t){showMsg('つかう ひつようがない。');return}caster.mp-=s.mp;t.alive=true;t.hp=t.maxHp;G.state=GS.EXPLORE;showMsg(caster.name+'は '+s.name+'！\n'+t.name+'は いきかえった！')}else if(sid==='ruura'){if(G.visited.length===0){showMsg('まだ町を訪れていない。');return}caster.mp-=s.mp;G.mapId='world';G.px=10;G.py=11;G.state=GS.EXPLORE;showMsg(caster.name+'は ルーラ！')}else if(sid==='riremito'){if(G.mapId==='world'){showMsg('ここでは つかえない。');return}caster.mp-=s.mp;G.mapId='world';G.state=GS.EXPLORE;showMsg(caster.name+'は リレミト！')}else showMsg('ここでは つかえない。')}
 function initNPCs(){G.npcs={loracia:[{x:5,y:3,name:'ローレシア王',msg:'ローレシア王「サマルトリアの王子を\n仲間にするのじゃ！\n北東の城を訪ねよ。」'},{x:10,y:8,name:'兵士',msg:'兵士「東にリリザの町があります。」'}],liriza:[{x:4,y:5,name:'商人',msg:'商人「ここはリリザだよ。」',shop:true},{x:8,y:3,name:'女性',msg:'女性「サマルトリアの王子は\n旅に出たらしいわよ。」'}],samaltria:[{x:7,y:3,name:'サマルトリア王',msg:'サマルトリア王「うちの王子が\nお前を探していたぞ。\nリリザの宿屋にいるはずじゃ。」'},{x:5,y:8,name:'サマルトリアのおうじ',recruit:'prince',msg:'サマルトリアのおうじ「おお！\nぼくも つれていってください！」'}],moonpeta:[{x:5,y:5,name:'老人',msg:'老人「ムーンブルク城は南西じゃ。\nしかし魔物に占領されておる…」'},{x:9,y:7,name:'犬',recruit:'princess',msg:'犬「ワン！ワン！」\nラーのかがみを使いますか？'},{x:3,y:9,name:'道具屋',msg:'道具屋「いらっしゃい！」',shop:true}],beranule:[{x:4,y:5,name:'船乗り',msg:'船乗り「船が欲しいのか？\nふねのきっぷを持ってきな！」',giveShip:true},{x:8,y:3,name:'道具屋',msg:'道具屋「いらっしゃい！」',shop:true}],perpoi:[{x:4,y:5,name:'学者',msg:'学者「ロンダルキアへの洞窟は\n北西にある。\n強い装備が必要じゃ。」'},{x:8,y:3,name:'道具屋',msg:'道具屋「いらっしゃい！」',shop:true}]};G.shops={liriza:{items:[{id:0,p:8},{id:1,p:10},{id:2,p:25}],weapons:[{id:0,p:10},{id:1,p:100}],armors:[{id:0,p:30},{id:1,p:80}]},moonpeta:{items:[{id:0,p:8},{id:1,p:10},{id:2,p:25}],weapons:[{id:2,p:500},{id:7,p:200}],armors:[{id:2,p:300}]},beranule:{items:[{id:0,p:8},{id:1,p:10},{id:2,p:25}],weapons:[{id:2,p:500},{id:6,p:300}],armors:[{id:3,p:700}]},perpoi:{items:[{id:0,p:8},{id:1,p:10},{id:2,p:25}],weapons:[{id:4,p:3500}],armors:[{id:4,p:3000}]}}}
@@ -89,8 +151,125 @@ function enterShop(){const s=G.shops[G.mapId];if(!s)return;G.state=GS.SHOP;G.ss=
 function updateShop(){const ss=G.ss;if(!ss)return;if(ss.pg==='main'){if(kp('ArrowUp'))ss.cursor=(ss.cursor-1+4)%4;if(kp('ArrowDown'))ss.cursor=(ss.cursor+1)%4;if(kp('KeyZ')||kp('Enter')){if(ss.cursor===0){ss.pg='buy_item';ss.cursor=0}else if(ss.cursor===1){ss.pg='buy_weapon';ss.cursor=0}else if(ss.cursor===2){ss.pg='buy_armor';ss.cursor=0}else{G.state=GS.EXPLORE;G.ss=null}}if(kp('KeyX')||kp('Escape')){G.state=GS.EXPLORE;G.ss=null}}else{let list;if(ss.pg==='buy_item')list=ss.items;else if(ss.pg==='buy_weapon')list=ss.weapons;else list=ss.armors;if(kp('ArrowUp'))ss.cursor=Math.max(0,ss.cursor-1);if(kp('ArrowDown'))ss.cursor=Math.min(list.length-1,ss.cursor);if(kp('KeyZ')||kp('Enter')){if(list.length>0){const it=list[ss.cursor];if(G.gold>=it.p){G.gold-=it.p;if(ss.pg==='buy_item'){const ex=G.items.find(i=>i.id===it.id);if(ex)ex.count++;else G.items.push({id:it.id,count:1});showMsg(ITEMS[it.id].name+'を かった！')}else if(ss.pg==='buy_weapon'){showMsg(WEAPONS[it.id].name+'を かった！');G.party[0].weapon=it.id}else{showMsg(ARMORS[it.id].name+'を かった！');G.party[0].armor=it.id}}else showMsg('ゴールドが たりない！')}}if(kp('KeyX')||kp('Escape')){ss.pg='main';ss.cursor=0}}}
 function drawShop(){const ss=G.ss;if(!ss)return;if(ss.pg==='main'){dw(8,8,120,80);dt('おみせ  G:'+G.gold,16,26,7,'#ffd700');['どうぐ','ぶき','よろい','やめる'].forEach((t,i)=>dt((i===ss.cursor?'▶':' ')+t,16,42+i*14,7))}else{let list,names;if(ss.pg==='buy_item'){list=ss.items;names=list.map(i=>ITEMS[i.id].name)}else if(ss.pg==='buy_weapon'){list=ss.weapons;names=list.map(i=>WEAPONS[i.id].name)}else{list=ss.armors;names=list.map(i=>ARMORS[i.id].name)}dw(8,8,200,list.length*14+40);dt('G: '+G.gold,16,26,7,'#ffd700');list.forEach((it,i)=>dt((i===ss.cursor?'▶':' ')+names[i]+' '+it.p+'G',16,42+i*14,7));dt('Xで もどる',16,list.length*14+42,6,'#888')}}
 function drawNPCs(){if(G.mapId==='world')return;const npcs=G.npcs[G.mapId];if(!npcs)return;npcs.forEach(npc=>{const sx=(npc.x-G.cam.x)*T,sy=(npc.y-G.cam.y)*T;if(sx<-T||sx>SW||sy<-T||sy>SH)return;ctx.fillStyle='#fa0';ctx.fillRect(sx+4,sy+4,8,10);ctx.fillStyle='#fdb';ctx.fillRect(sx+5,sy+1,6,5)})}
-function drawTitle(){ctx.fillStyle='#000';ctx.fillRect(0,0,SW,SH);dtc('ドラゴンクエストII',SW/2,60,12,'#ffd700');dtc('～悪霊の神々～',SW/2,78,8,'#ffd700');ctx.strokeStyle='#ffd700';ctx.lineWidth=1;ctx.beginPath();ctx.arc(SW/2,120,30,0,Math.PI*2);ctx.stroke();ctx.beginPath();ctx.moveTo(SW/2,90);ctx.lineTo(SW/2+26,135);ctx.lineTo(SW/2-26,135);ctx.closePath();ctx.stroke();dtc('ぼうけんをはじめる',SW/2,170,8);dtc('ぼうけんのしょ',SW/2,186,8);if(G.frame%40<20)dc(SW/2-60,G.ms&&G.ms.cursor===1?179:163);if(kp('Enter')||kp('Space')||kp('KeyZ')){if(!G.ms||G.ms.cursor===0)newGame();else loadGame()}if(kp('ArrowDown'))G.ms={cursor:1};if(kp('ArrowUp'))G.ms={cursor:0};dtc('Z/Enter: けってい  矢印: いどう',SW/2,220,6,'#888')}
+function drawTitle(){ctx.fillStyle='#000';ctx.fillRect(0,0,SW,SH);dtc('ドラゴンクエストII',SW/2,60,12,'#ffd700');dtc('～悪霊の神々～',SW/2,78,8,'#ffd700');ctx.strokeStyle='#ffd700';ctx.lineWidth=1;ctx.beginPath();ctx.arc(SW/2,120,30,0,Math.PI*2);ctx.stroke();ctx.beginPath();ctx.moveTo(SW/2,90);ctx.lineTo(SW/2+26,135);ctx.lineTo(SW/2-26,135);ctx.closePath();ctx.stroke();dtc('ぼうけんをはじめる',SW/2,166,8);dtc('ぼうけんのしょ',SW/2,182,8);dtc('ふっかつのじゅもん',SW/2,198,8);
+const tc=G.ms?G.ms.cursor||0:0;
+if(G.frame%40<20)dc(SW/2-66,159+tc*16);
+if(kp('Enter')||kp('Space')||kp('KeyZ')){
+if(tc===0)newGame();
+else if(tc===1)loadGame();
+else{G.state=GS.MENU;G.ms={pg:'jumon_input',cursor:0,ci:0,inputBuf:'',jcursor:{x:0,y:0}}}
+}
+if(kp('ArrowDown')){if(!G.ms)G.ms={cursor:0};G.ms.cursor=Math.min(2,(G.ms.cursor||0)+1)}
+if(kp('ArrowUp')){if(!G.ms)G.ms={cursor:0};G.ms.cursor=Math.max(0,(G.ms.cursor||0)-1)};dtc('Z/Enter: けってい  矢印: いどう',SW/2,220,6,'#888')}
 function newGame(){G.hero=new Chara(0,'ローレシアのおうじ',HERO_LV);G.hero.weapon=1;G.hero.armor=1;G.party=[G.hero];G.gold=50;G.items=[{id:0,count:3}];G.mapId='world';G.px=10;G.py=11;G.pdir=0;G.flags={};G.visited=['loracia'];G.prince=null;G.princess=null;G.state=GS.DIALOG;showMsg('ローレシア王「おお ローレシアのおうじよ！\n魔王ハーゴンを倒す旅に出るのじゃ！」',()=>{showMsg('ローレシア王「サマルトリアの王子を\n仲間にするのじゃ！\n東の城を訪ねよ。」',()=>{G.state=GS.EXPLORE})})}
+// ===== FUKKATSU NO JUMON (Revival Password) =====
+const JUMON_CHARS='あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよらりるれろわをん';
+function encodeJumon(){
+const d=[];
+// Hero level (4bit), prince level (4bit), princess level (4bit)
+d.push(G.hero?G.hero.level:0);
+d.push(G.prince?G.prince.level:0);
+d.push(G.princess?G.princess.level:0);
+// Gold (16bit, max 65535)
+const g=Math.min(G.gold,65535);
+d.push(g>>8);d.push(g&0xFF);
+// Hero exp (16bit)
+const he=G.hero?Math.min(G.hero.exp,65535):0;
+d.push(he>>8);d.push(he&0xFF);
+// Prince exp (16bit)
+const pe=G.prince?Math.min(G.prince.exp,65535):0;
+d.push(pe>>8);d.push(pe&0xFF);
+// Princess exp (16bit)
+const pre=G.princess?Math.min(G.princess.exp,65535):0;
+d.push(pre>>8);d.push(pre&0xFF);
+// Flags (8bit): princeJoined, princessJoined, hasShip, hargonDown, key items...
+let flags=0;
+if(G.flags.princeJoined)flags|=1;
+if(G.flags.princessJoined)flags|=2;
+if(G.hasShip)flags|=4;
+if(G.flags.hargonDown)flags|=8;
+if(G.items.some(it=>it.id===4))flags|=16; // ぎんのカギ
+if(G.items.some(it=>it.id===5))flags|=32; // きんのカギ
+if(G.items.some(it=>it.id===8))flags|=64; // ラーのかがみ
+d.push(flags);
+// Equipment: hero weapon(4bit)+armor(4bit)
+const hw=G.hero&&G.hero.weapon!=null?G.hero.weapon+1:0;
+const ha=G.hero&&G.hero.armor!=null?G.hero.armor+1:0;
+d.push((hw<<4)|ha);
+// Items count: yakusou (4bit)
+const yc=G.items.find(it=>it.id===0);
+d.push(yc?Math.min(yc.count,15):0);
+// Checksum
+let cs=0;for(const v of d)cs=(cs+v)&0xFF;
+d.push(cs);
+// Encode to kana: each byte -> 2 chars (high nibble + low nibble) using base-46
+const jc=JUMON_CHARS;
+let s='';
+for(const v of d){s+=jc[Math.floor(v/46)%46];s+=jc[v%46]}
+return s;
+}
+function decodeJumon(s){
+const jc=JUMON_CHARS;
+const clean=s.replace(/[\s　]/g,'');
+if(clean.length<28)return null;
+const d=[];
+for(let i=0;i<clean.length;i+=2){
+const hi=jc.indexOf(clean[i]),lo=jc.indexOf(clean[i+1]);
+if(hi<0||lo<0)return null;
+d.push(hi*46+lo);
+}
+// Verify checksum
+const cs=d.pop();
+let ck=0;for(const v of d)ck=(ck+v)&0xFF;
+if(ck!==cs)return null;
+// Decode
+const heroLv=d[0],princeLv=d[1],princessLv=d[2];
+const gold=(d[3]<<8)|d[4];
+const heroExp=(d[5]<<8)|d[6];
+const princeExp=(d[7]<<8)|d[8];
+const princessExp=(d[9]<<8)|d[10];
+const flags=d[11];
+const hw=d[12]>>4,ha=d[12]&0xF;
+const yakusou=d[13];
+return{heroLv,princeLv,princessLv,gold,heroExp,princeExp,princessExp,flags,hw,ha,yakusou};
+}
+function applyJumon(data){
+G.hero=new Chara(0,'ローレシアのおうじ',HERO_LV);
+G.hero.level=1;G.hero.exp=0;
+while(G.hero.level<data.heroLv&&G.hero.level<HERO_LV.length)
+{G.hero.level++;const s=HERO_LV[G.hero.level-1];G.hero.maxHp=s[1];G.hero.maxMp=s[2];G.hero.str=s[3];G.hero.agi=s[4];for(const sp of s[5])if(!G.hero.spells.includes(sp))G.hero.spells.push(sp)}
+G.hero.hp=G.hero.maxHp;G.hero.mp=G.hero.maxMp;G.hero.exp=data.heroExp;
+if(data.hw>0)G.hero.weapon=data.hw-1;
+if(data.ha>0)G.hero.armor=data.ha-1;
+G.party=[G.hero];G.prince=null;G.princess=null;
+if(data.flags&1){
+G.prince=new Chara(1,'サマルトリアのおうじ',PRINCE_LV);
+G.prince.level=1;
+while(G.prince.level<data.princeLv&&G.prince.level<PRINCE_LV.length)
+{G.prince.level++;const s=PRINCE_LV[G.prince.level-1];G.prince.maxHp=s[1];G.prince.maxMp=s[2];G.prince.str=s[3];G.prince.agi=s[4];for(const sp of s[5])if(!G.prince.spells.includes(sp))G.prince.spells.push(sp)}
+G.prince.hp=G.prince.maxHp;G.prince.mp=G.prince.maxMp;G.prince.exp=data.princeExp;
+G.party.push(G.prince);G.flags.princeJoined=true;
+}
+if(data.flags&2){
+G.princess=new Chara(2,'ムーンブルクのおうじょ',PRINCESS_LV);
+G.princess.level=1;
+while(G.princess.level<data.princessLv&&G.princess.level<PRINCESS_LV.length)
+{G.princess.level++;const s=PRINCESS_LV[G.princess.level-1];G.princess.maxHp=s[1];G.princess.maxMp=s[2];G.princess.str=s[3];G.princess.agi=s[4];for(const sp of s[5])if(!G.princess.spells.includes(sp))G.princess.spells.push(sp)}
+G.princess.hp=G.princess.maxHp;G.princess.mp=G.princess.maxMp;G.princess.exp=data.princessExp;
+G.party.push(G.princess);G.flags.princessJoined=true;
+}
+G.gold=data.gold;
+G.items=[];
+if(data.yakusou>0)G.items.push({id:0,count:data.yakusou});
+if(data.flags&16)G.items.push({id:4,count:1});
+if(data.flags&32)G.items.push({id:5,count:1});
+if(data.flags&64)G.items.push({id:8,count:1});
+G.hasShip=!!(data.flags&4);
+if(data.flags&8)G.flags.hargonDown=true;
+G.mapId='world';G.px=10;G.py=11;G.pdir=0;
+G.visited=['loracia'];
+G.state=GS.EXPLORE;
+}
 function saveGame(){const d={party:G.party.map(c=>({id:c.id,name:c.name,level:c.level,exp:c.exp,hp:c.hp,maxHp:c.maxHp,mp:c.mp,maxMp:c.maxMp,str:c.str,agi:c.agi,spells:c.spells,weapon:c.weapon,armor:c.armor,shield:c.shield,helmet:c.helmet,alive:c.alive})),gold:G.gold,items:G.items,flags:G.flags,mapId:G.mapId,px:G.px,py:G.py,pdir:G.pdir,visited:G.visited,hasShip:G.hasShip,shipX:G.shipX,shipY:G.shipY};localStorage.setItem('dq2save',JSON.stringify(d));showMsg('ぼうけんのしょに きろくしました。')}
 function loadGame(){const r=localStorage.getItem('dq2save');if(!r){showMsg('ぼうけんのしょが ありません。');return}try{const d=JSON.parse(r);const ts=[HERO_LV,PRINCE_LV,PRINCESS_LV];G.party=d.party.map(p=>{const c=new Chara(p.id,p.name,ts[p.id]);Object.assign(c,p);c.lt=ts[p.id];return c});G.hero=G.party[0];G.prince=G.party.find(c=>c.id===1)||null;G.princess=G.party.find(c=>c.id===2)||null;G.gold=d.gold;G.items=d.items;G.flags=d.flags;G.mapId=d.mapId;G.px=d.px;G.py=d.py;G.pdir=d.pdir;G.visited=d.visited||[];G.hasShip=d.hasShip||false;G.shipX=d.shipX||0;G.shipY=d.shipY||0;G.state=GS.EXPLORE}catch(e){showMsg('ぼうけんのしょが こわれています。')}}
 function updateExplore(){G.moveTimer--;if(G.moveTimer>0)return;let dx=0,dy=0;if(kh('ArrowUp')){dy=-1;G.pdir=1}else if(kh('ArrowDown')){dy=1;G.pdir=0}else if(kh('ArrowLeft')){dx=-1;G.pdir=2}else if(kh('ArrowRight')){dx=1;G.pdir=3}if(dx||dy){tryMove(dx,dy);G.moveTimer=8}if(kp('KeyX')||kp('Escape')){G.state=GS.MENU;G.ms={pg:'main',cursor:0,ci:0}}if(kp('KeyZ')||kp('Enter'))checkInteraction()}
