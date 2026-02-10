@@ -162,24 +162,41 @@
             MOUNTAIN: 'mountain'
         };
 
-        const WORLD_MAP = [
-            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-            [1, 0, 4, 4, 0, 0, 0, 0, 0, 0, 0, 5, 0, 0, 0, 1],
-            [1, 0, 4, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-            [1, 0, 0, 0, 0, 0, 2, 2, 2, 0, 0, 0, 0, 0, 0, 1],
-            [1, 0, 0, 0, 0, 0, 2, 3, 2, 0, 0, 0, 0, 0, 0, 1],
-            [1, 0, 0, 0, 0, 0, 2, 0, 2, 0, 0, 0, 0, 0, 0, 1],
-            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 4, 0, 0, 0, 1],
-            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 1],
-            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-        ];
+        // Generate a 32x32 world map procedurally
+        function generateWorldMap() {
+            const W = 32, H = 32;
+            const map = [];
+            for (let y = 0; y < H; y++) {
+                const row = [];
+                for (let x = 0; x < W; x++) {
+                    // Border = sea
+                    if (x === 0 || y === 0 || x === W-1 || y === H-1) { row.push(1); continue; }
+                    // Second border ring = sea (island feel)
+                    if (x === 1 || y === 1 || x === W-2 || y === H-2) { row.push(1); continue; }
+                    row.push(0); // grass by default
+                }
+                map.push(row);
+            }
+            // Mountains
+            [[4,4],[4,5],[5,4],[5,5],[14,3],[15,3],[14,4],[20,20],[21,20],[20,21]].forEach(([x,y]) => map[y][x] = 4);
+            // Castle (ローレシア城 placeholder) - walls + floor
+            for (let y = 8; y <= 12; y++) for (let x = 8; x <= 12; x++) {
+                if (y === 8 || y === 12 || x === 8 || x === 12) map[y][x] = 2; // wall
+                else map[y][x] = 3; // floor
+            }
+            map[12][10] = 0; // castle entrance
+            // Town
+            map[6][20] = 5;
+            // Another town
+            map[22][8] = 5;
+            // Lakes
+            [[18,10],[19,10],[18,11],[19,11],[25,15],[26,15],[25,16]].forEach(([x,y]) => map[y][x] = 1);
+            // Forest patches (use grass with slight variation - still grass tile for now)
+            // More mountains for variety
+            [[24,5],[25,5],[24,6],[10,22],[11,22],[10,23],[28,25],[29,25],[28,26]].forEach(([x,y]) => map[y][x] = 4);
+            return map;
+        }
+        const WORLD_MAP = generateWorldMap();
 
         const TILE_MAP = [MapType.GRASS, MapType.SEA, MapType.WALL, MapType.FLOOR, MapType.MOUNTAIN, 'town'];
 
@@ -201,11 +218,13 @@
                 this.lastTime = 0;
                 this.keys = {};
                 this.keyPressed = {}; // single-press detection
-                this.player = { x: 5, y: 5, dir: Direction.DOWN };
+                this.player = { x: 10, y: 14, dir: Direction.DOWN }; // start near castle entrance
+                this.camera = { x: 0, y: 0 }; // top-left tile of viewport
                 this.moveTimer = 0;
                 this.MOVE_DELAY = 150; // ms between steps (FC DQ2 feel)
                 this.titleBlink = 0;
                 this.message = null; // { text, callback }
+                this.updateCamera();
                 this.initInputs();
             }
 
@@ -290,6 +309,18 @@
                 this.player.x = nx;
                 this.player.y = ny;
                 this.moveTimer = this.MOVE_DELAY;
+                this.updateCamera();
+            }
+
+            updateCamera() {
+                const mapW = WORLD_MAP[0].length;
+                const mapH = WORLD_MAP.length;
+                // Center camera on player
+                this.camera.x = this.player.x - Math.floor(COLS / 2);
+                this.camera.y = this.player.y - Math.floor(ROWS / 2);
+                // Clamp to map bounds
+                this.camera.x = Math.max(0, Math.min(this.camera.x, mapW - COLS));
+                this.camera.y = Math.max(0, Math.min(this.camera.y, mapH - ROWS));
             }
 
             showMessage(text, callback) {
@@ -339,12 +370,15 @@
             }
 
             drawMap() {
-                for (let y = 0; y < WORLD_MAP.length; y++) {
-                    for (let x = 0; x < WORLD_MAP[0].length; x++) {
-                        const tileId = WORLD_MAP[y][x];
+                const cx = this.camera.x, cy = this.camera.y;
+                for (let sy = 0; sy < ROWS; sy++) {
+                    for (let sx = 0; sx < COLS; sx++) {
+                        const mx = cx + sx, my = cy + sy;
+                        if (my < 0 || my >= WORLD_MAP.length || mx < 0 || mx >= WORLD_MAP[0].length) continue;
+                        const tileId = WORLD_MAP[my][mx];
                         const tileName = TILE_MAP[tileId];
                         if (assets.tiles[tileName]) {
-                            ctx.drawImage(assets.tiles[tileName], x * TILE_SIZE, y * TILE_SIZE);
+                            ctx.drawImage(assets.tiles[tileName], sx * TILE_SIZE, sy * TILE_SIZE);
                         }
                     }
                 }
@@ -352,7 +386,9 @@
 
             drawPlayer() {
                 const sprite = DIR_SPRITES[this.player.dir];
-                ctx.drawImage(assets.tiles[sprite], this.player.x * TILE_SIZE, this.player.y * TILE_SIZE);
+                const sx = (this.player.x - this.camera.x) * TILE_SIZE;
+                const sy = (this.player.y - this.camera.y) * TILE_SIZE;
+                ctx.drawImage(assets.tiles[sprite], sx, sy);
             }
 
             // FC-style bordered window drawn on Canvas
