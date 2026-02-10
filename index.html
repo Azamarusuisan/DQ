@@ -6,36 +6,57 @@
 <title>ドラゴンクエストII - HTML版</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-user-select:none;user-select:none}
-body{background:#000;display:flex;flex-direction:column;justify-content:center;align-items:center;height:100vh;height:100dvh;overflow:hidden;font-family:monospace;touch-action:none}
-#gc{position:relative;width:512px;height:480px;image-rendering:pixelated;max-width:100vw;max-height:60vh}
-canvas{width:100%;height:100%;display:block}
-#pad{display:none;width:100%;max-width:512px;padding:10px 16px;justify-content:space-between;align-items:center}
-.dpad{position:relative;width:120px;height:120px}
-.dpad button{position:absolute;width:40px;height:40px;background:rgba(255,255,255,0.2);border:2px solid rgba(255,255,255,0.4);border-radius:8px;color:#fff;font-size:18px;display:flex;align-items:center;justify-content:center;-webkit-tap-highlight-color:transparent}
-.dpad button:active{background:rgba(255,255,255,0.5)}
-.dpad .up{top:0;left:40px}.dpad .down{bottom:0;left:40px}.dpad .left{top:40px;left:0}.dpad .right{top:40px;right:0}
-.btns{display:flex;gap:12px;align-items:center}
-.btns button{width:52px;height:52px;border-radius:50%;border:2px solid rgba(255,255,255,0.4);background:rgba(255,255,255,0.15);color:#fff;font-size:14px;font-weight:bold;-webkit-tap-highlight-color:transparent}
-.btns button:active{background:rgba(255,255,255,0.5)}
-.btn-b{background:rgba(255,80,80,0.2)!important;border-color:rgba(255,80,80,0.5)!important}
-@media(pointer:coarse),(max-width:600px){
-#gc{max-height:55vh}
+body{background:#111;display:flex;flex-direction:column;justify-content:center;align-items:center;height:100vh;height:100dvh;overflow:hidden;font-family:monospace;touch-action:none}
+#gc{position:relative;width:768px;height:720px;image-rendering:pixelated;image-rendering:crisp-edges;-ms-interpolation-mode:nearest-neighbor;max-width:100vw}
+canvas{width:100%;height:100%;display:block;image-rendering:pixelated;image-rendering:crisp-edges}
+#pad{display:none;width:100%;max-width:520px;padding:8px 12px 16px;justify-content:space-between;align-items:center;flex-shrink:0}
+.dpad{position:relative;width:140px;height:140px}
+.dpad button{position:absolute;width:48px;height:48px;background:rgba(255,255,255,0.18);border:2px solid rgba(255,255,255,0.35);border-radius:12px;color:#fff;font-size:22px;display:flex;align-items:center;justify-content:center;-webkit-tap-highlight-color:transparent;outline:none}
+.dpad button:active,.dpad button.held{background:rgba(255,255,255,0.5)}
+.dpad .up{top:0;left:46px}.dpad .down{bottom:0;left:46px}.dpad .left{top:46px;left:0}.dpad .right{top:46px;right:0}
+.dpad .center{top:46px;left:46px;width:48px;height:48px;background:rgba(255,255,255,0.08);border:none;border-radius:4px;pointer-events:none;font-size:10px;color:rgba(255,255,255,0.2)}
+.ab-area{display:flex;flex-direction:column;align-items:center;gap:8px}
+.ab-row{display:flex;gap:16px;align-items:center}
+.ab-row button{width:56px;height:56px;border-radius:50%;border:2px solid rgba(255,255,255,0.4);background:rgba(60,60,255,0.25);color:#fff;font-size:16px;font-weight:bold;-webkit-tap-highlight-color:transparent;outline:none}
+.ab-row button:active,.ab-row button.held{background:rgba(100,100,255,0.6)}
+.btn-b{background:rgba(255,80,80,0.25)!important;border-color:rgba(255,80,80,0.5)!important}
+.btn-b:active,.btn-b.held{background:rgba(255,80,80,0.6)!important}
+.meta-row{display:flex;gap:12px;margin-top:4px}
+.meta-row button{width:60px;height:28px;border-radius:14px;border:1px solid rgba(255,255,255,0.3);background:rgba(255,255,255,0.1);color:#aaa;font-size:10px;-webkit-tap-highlight-color:transparent;outline:none}
+.meta-row button:active{background:rgba(255,255,255,0.3)}
+@media(pointer:coarse),(max-width:700px){
+#gc{max-height:52vh;max-height:52dvh}
 #pad{display:flex}
+}
+@media(max-height:500px){
+#gc{max-height:45vh;max-height:45dvh}
+.dpad{width:110px;height:110px}
+.dpad button{width:38px;height:38px;font-size:16px}
+.dpad .up{left:36px}.dpad .down{left:36px}.dpad .left{top:36px}.dpad .right{top:36px}
+.dpad .center{top:36px;left:36px;width:38px;height:38px}
+.ab-row button{width:46px;height:46px;font-size:14px}
 }
 </style>
 </head>
 <body>
-<div id="gc"><canvas id="cv" width="256" height="240"></canvas></div>
+<div id="gc"><canvas id="cv" width="768" height="720"></canvas></div>
 <div id="pad">
 <div class="dpad">
 <button class="up" data-key="ArrowUp">▲</button>
 <button class="down" data-key="ArrowDown">▼</button>
 <button class="left" data-key="ArrowLeft">◀</button>
 <button class="right" data-key="ArrowRight">▶</button>
+<div class="center">+</div>
 </div>
-<div class="btns">
+<div class="ab-area">
+<div class="ab-row">
 <button class="btn-b" data-key="KeyX">B</button>
 <button data-key="KeyZ">A</button>
+</div>
+<div class="meta-row">
+<button data-key="Escape">MENU</button>
+<button data-key="Enter">START</button>
+</div>
 </div>
 </div>
 <script>
@@ -85,7 +106,7 @@ window.addEventListener('keydown',e=>{G.keys[e.code]=true;G.kp[e.code]=true;e.pr
 window.addEventListener('keyup',e=>{G.keys[e.code]=false});
 function kp(c){const r=G.kp[c];G.kp[c]=false;return r}
 function kh(c){return G.keys[c]}
-const cv=document.getElementById('cv'),ctx=cv.getContext('2d');ctx.imageSmoothingEnabled=false;
+const cv=document.getElementById('cv'),ctx=cv.getContext('2d');ctx.imageSmoothingEnabled=false;ctx.scale(3,3);
 function dt(t,x,y,s=8,c='#fff'){ctx.fillStyle=c;ctx.font=s+'px monospace';ctx.textAlign='left';ctx.fillText(t,x,y)}
 function dtc(t,x,y,s=8,c='#fff'){ctx.fillStyle=c;ctx.font=s+'px monospace';ctx.textAlign='center';ctx.fillText(t,x,y)}
 function dw(x,y,w,h){ctx.fillStyle='#000';ctx.fillRect(x,y,w,h);ctx.strokeStyle='#fff';ctx.lineWidth=2;ctx.strokeRect(x+1,y+1,w-2,h-2)}
@@ -303,10 +324,10 @@ function drawEnding(){ctx.fillStyle='#000';ctx.fillRect(0,0,SW,SH);dtc('邪神�
 function checkBossEvents(){if(G.mapId==='hargon'&&G.px===8&&G.py===8&&!G.flags.hargonDown){showMsg('ハーゴン「おろかもの！\nわがやみのちからを みるがよい！」',()=>startBattle('ハーゴン'))}if(G.mapId==='hargon'&&G.px===8&&G.py===4&&G.flags.hargonDown&&!G.flags.sidoDown){showMsg('大地がゆれる…\n邪神シドーが あらわれた！',()=>startBattle('シドー'))}}
 function mainLoop(){G.frame++;switch(G.state){case GS.TITLE:drawTitle();break;case GS.EXPLORE:updateExplore();checkBossEvents();drawMap();drawPlayer();drawNPCs();if(G.party.length>0){dw(0,0,SW,14);G.party.forEach((c,i)=>{const col=c.alive?(c.hp<c.maxHp/4?'#f00':'#fff'):'#555';dt(c.name.slice(0,2)+' H'+c.hp+' M'+c.mp,i*85+4,10,6,col)})}break;case GS.BATTLE:updateBattle();drawBattle();break;case GS.MENU:updateMenu();drawMap();drawPlayer();drawNPCs();drawMenu();break;case GS.DIALOG:drawMap();drawPlayer();drawNPCs();break;case GS.SHOP:updateShop();drawMap();drawPlayer();drawNPCs();drawShop();break;case GS.GAMEOVER:drawGameOver();break;case GS.ENDING:drawEnding();break}if(G.msgT){drawMsg();if(kp('KeyZ')||kp('Enter')){if(G.msgCb){const cb=G.msgCb;G.msgCb=null;cb()}else nxtMsg()}}requestAnimationFrame(mainLoop)}
 // ===== TOUCH CONTROLS =====
-document.querySelectorAll('#pad button').forEach(btn=>{
+document.querySelectorAll('#pad button[data-key]').forEach(btn=>{
 const key=btn.dataset.key;
-function tstart(e){e.preventDefault();G.keys[key]=true;G.kp[key]=true}
-function tend(e){e.preventDefault();G.keys[key]=false}
+function tstart(e){e.preventDefault();G.keys[key]=true;G.kp[key]=true;btn.classList.add('held')}
+function tend(e){e.preventDefault();G.keys[key]=false;btn.classList.remove('held')}
 btn.addEventListener('touchstart',tstart,{passive:false});
 btn.addEventListener('touchend',tend,{passive:false});
 btn.addEventListener('touchcancel',tend,{passive:false});
@@ -314,6 +335,8 @@ btn.addEventListener('mousedown',tstart);
 btn.addEventListener('mouseup',tend);
 btn.addEventListener('mouseleave',tend);
 });
+// Prevent zoom/scroll on mobile
+document.addEventListener('touchmove',e=>e.preventDefault(),{passive:false});
 initMaps();initNPCs();G.state=GS.TITLE;G.ms={cursor:0};mainLoop();
 </script>
 </body>
