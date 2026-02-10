@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DRAGON QUEST II - HTML EDITION</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: #000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+            font-family: 'Courier New', Courier, monospace;
+        }
+        #game-container {
+            position: relative;
+            width: 512px;
+            height: 480px;
+            image-rendering: pixelated;
+        }
+        canvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+        #ui-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            color: #fff;
+            text-shadow: 2px 2px #000;
+        }
+        .window {
+            position: absolute;
+            border: 4px solid #fff;
+            background: #000;
+            padding: 10px;
+            box-sizing: border-box;
+            border-radius: 4px;
+        }
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+    <div id="game-container">
+        <canvas id="gameCanvas" width="256" height="240"></canvas>
+        <div id="ui-layer">
+            <div id="message-window" class="window hidden" style="bottom: 20px; left: 50%; transform: translateX(-50%); width: 90%; height: 100px;">
+                <div id="message-text"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- CONSTANTS & CONFIG ---
+        const TILE_SIZE = 16;
+        const SCREEN_WIDTH = 256;
+        const SCREEN_HEIGHT = 240;
+        const COLS = SCREEN_WIDTH / TILE_SIZE;
+        const ROWS = SCREEN_HEIGHT / TILE_SIZE;
+
+        // --- ENUMS & TYPES ---
+        const GameState = {
+            TITLE: 'title',
+            EXPLORE: 'explore',
+            BATTLE: 'battle',
+            MENU: 'menu',
+            DIALOG: 'dialog'
+        };
+
+        const Direction = {
+            UP: 0, DOWN: 1, LEFT: 2, RIGHT: 3
+        };
+
+        // --- CORE ENGINE ---
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        ctx.imageSmoothingEnabled = false;
+
+        class GameEngine {
+            constructor() {
+                this.state = GameState.TITLE;
+                this.lastTime = 0;
+                this.keys = {};
+                this.initInputs();
+            }
+
+            initInputs() {
+                window.addEventListener('keydown', (e) => this.keys[e.code] = true);
+                window.addEventListener('keyup', (e) => this.keys[e.code] = false);
+            }
+
+            start() {
+                requestAnimationFrame((t) => this.loop(t));
+            }
+
+            loop(timestamp) {
+                const dt = timestamp - this.lastTime;
+                this.lastTime = timestamp;
+
+                this.update(dt);
+                this.draw();
+
+                requestAnimationFrame((t) => this.loop(t));
+            }
+
+            update(dt) {
+                // To be implemented in Part 2
+            }
+
+            draw() {
+                ctx.fillStyle = '#000';
+                ctx.fillRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+
+                if (this.state === GameState.TITLE) {
+                    ctx.fillStyle = '#fff';
+                    ctx.textAlign = 'center';
+                    ctx.font = '16px monospace';
+                    ctx.fillText('DRAGON QUEST II', SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
+                    ctx.font = '8px monospace';
+                    ctx.fillText('PRESS START (ENTER)', SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 + 40);
+                    
+                    if (this.keys['Enter']) {
+                        this.state = GameState.EXPLORE;
+                    }
+                }
+            }
+        }
+
+        const engine = new GameEngine();
+        engine.start();
+
+        // --- EXPORT FOR APPEND ---
+        // Placeholder for future logic
+    </script>
+</body>
+</html>
