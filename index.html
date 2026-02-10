@@ -159,10 +159,26 @@ G.warps={
 'world_55_50':{map:'hargon',x:8,y:14},'hargon_8_15':{map:'world',x:55,y:51},
 'world_38_10':{map:'rhone',x:7,y:12},'rhone_7_13':{map:'world',x:38,y:11}}}
 function mkTown(w,h,type){const m=[];for(let y=0;y<h;y++){m[y]=[];for(let x=0;x<w;x++){if(x===0||x===w-1||y===0||y===h-1)m[y][x]=5;else m[y][x]=6}}if(type==='castle'){for(let y=2;y<6;y++)for(let x=3;x<7;x++)m[y][x]=5;m[5][5]=6;m[3][5]=6}m[h-1][Math.floor(w/2)]=6;return m}
-function mkDungeon(w,h){const m=[];for(let y=0;y<h;y++){m[y]=[];for(let x=0;x<w;x++)m[y][x]=5}const rs=[];for(let i=0;i<5;i++){const rw=3+Math.floor(Math.random()*3),rh=3+Math.floor(Math.random()*3),rx=1+Math.floor(Math.random()*(w-rw-2)),ry=1+Math.floor(Math.random()*(h-rh-2));rs.push({x:rx,y:ry,w:rw,h:rh});for(let y=ry;y<ry+rh;y++)for(let x=rx;x<rx+rw;x++)m[y][x]=6}for(let i=0;i<rs.length-1;i++){let cx=rs[i].x+Math.floor(rs[i].w/2),cy=rs[i].y+Math.floor(rs[i].h/2);const tx=rs[i+1].x+Math.floor(rs[i+1].w/2),ty=rs[i+1].y+Math.floor(rs[i+1].h/2);while(cx!==tx){m[cy][cx]=6;cx+=cx<tx?1:-1}while(cy!==ty){m[cy][cx]=6;cy+=cy<ty?1:-1}}m[1][Math.floor(w/2)]=6;m[0][Math.floor(w/2)]=6;m[h-2][Math.floor(w/2)]=6;return m}
-function placeChest(mapId,x,y,reward){const m=G.maps[mapId];if(!m)return;const d=m.data;if(!d[y])return;d[y][x]=9;
-// Ensure chest is reachable by carving a path to nearest floor
-for(let dy=-1;dy<=1;dy++)for(let dx=-1;dx<=1;dx++){if(d[y+dy]&&d[y+dy][x+dx]===5)d[y+dy][x+dx]=6}
+function mkDungeon(w,h){const m=[];for(let y=0;y<h;y++){m[y]=[];for(let x=0;x<w;x++)m[y][x]=5}const rs=[];for(let i=0;i<6;i++){const rw=3+Math.floor(Math.random()*3),rh=3+Math.floor(Math.random()*3),rx=1+Math.floor(Math.random()*(w-rw-2)),ry=1+Math.floor(Math.random()*(h-rh-2));rs.push({x:rx,y:ry,w:rw,h:rh});for(let y=ry;y<ry+rh;y++)for(let x=rx;x<rx+rw;x++)m[y][x]=6}
+// Connect rooms with corridors
+for(let i=0;i<rs.length-1;i++){let cx=rs[i].x+Math.floor(rs[i].w/2),cy=rs[i].y+Math.floor(rs[i].h/2);const tx=rs[i+1].x+Math.floor(rs[i+1].w/2),ty=rs[i+1].y+Math.floor(rs[i+1].h/2);while(cx!==tx){m[cy][cx]=6;cx+=cx<tx?1:-1}while(cy!==ty){m[cy][cx]=6;cy+=cy<ty?1:-1}}
+// Entrance at top center
+const ex=Math.floor(w/2);m[0][ex]=6;m[1][ex]=6;
+// Connect entrance to nearest room
+let cx=ex,cy=1;const nr=rs[0];const tx=nr.x+Math.floor(nr.w/2),ty=nr.y+Math.floor(nr.h/2);
+while(cx!==tx){m[cy][cx]=6;cx+=cx<tx?1:-1}while(cy!==ty){m[cy][cx]=6;cy+=cy<ty?1:-1}
+// Exit at bottom center
+m[h-2][ex]=6;m[h-1][ex]=6;
+return m}
+function placeChest(mapId,x,y,reward){const m=G.maps[mapId];if(!m||!m.data[y])return;m.data[y][x]=9;
+// BFS: carve shortest path from chest to nearest existing floor tile
+const dirs=[[0,-1],[0,1],[-1,0],[1,0]];let ok=false;
+for(const[dx,dy]of dirs){const nx=x+dx,ny=y+dy;if(ny>=0&&ny<m.h&&nx>=0&&nx<m.w&&m.data[ny][nx]===6){ok=true;break}}
+if(!ok){const vis=new Set();const q=[[x,y,[]]];vis.add(y*m.w+x);let path=null;
+while(q.length>0){const[cx,cy,p]=q.shift();for(const[dx,dy]of dirs){const nx=cx+dx,ny=cy+dy;
+if(nx<1||nx>=m.w-1||ny<1||ny>=m.h-1)continue;const k=ny*m.w+nx;if(vis.has(k))continue;vis.add(k);
+const np=[...p,[nx,ny]];if(m.data[ny][nx]===6){path=np;break}q.push([nx,ny,np])}if(path)break}
+if(path)for(const[px,py]of path)if(m.data[py][px]===5)m.data[py][px]=6}
 const key=mapId+'_'+x+'_'+y;G.chests[key]=reward}
 function openChest(mapId,x,y){const key=mapId+'_'+x+'_'+y;if(G.flags['chest_'+key])return;const r=G.chests[key];if(!r)return;G.flags['chest_'+key]=true;const m=G.maps[mapId];if(m&&m.data[y])m.data[y][x]=10;if(r.id!=null){const ex=G.items.find(it=>it.id===r.id);const cnt=r.count||1;if(ex)ex.count+=cnt;else G.items.push({id:r.id,count:cnt});showMsg('たからばこから\n'+r.name+'を みつけた！')}else if(r.weapon!=null){G.party[0].weapon=r.weapon;showMsg('たからばこから\n'+r.name+'を みつけた！\nそうびした！')}else if(r.armor!=null){G.party[0].armor=r.armor;showMsg('たからばこから\n'+r.name+'を みつけた！\nそうびした！')}}
 function useInn(){const cost=G.innPrice*G.party.length;if(G.gold<cost){showMsg('ゴールドが たりない！\n('+cost+'G ひつよう)');return}G.gold-=cost;G.party.forEach(c=>{if(c.alive){c.hp=c.maxHp;c.mp=c.maxMp;c.status=[]}});showMsg('ゆっくり やすんだ。\nHPとMPが かいふくした！\n('+cost+'G)')}
