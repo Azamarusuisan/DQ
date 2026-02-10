@@ -214,6 +214,64 @@
             { id: 2, name: 'ドラキー', hp: 6, mp: 0, atk: 8, def: 4, agi: 6, exp: 2, gold: 2 },
         ];
 
+        // ===== DATA: PARTY GROWTH TABLES (FC DQ2 approximate) =====
+        // [lv] = { hp, mp, str, agi, exp_to_next }
+        const GROWTH = {
+            lorasia: [
+                null, // lv0 unused
+                { hp:15, mp:0,  str:8,  agi:4,  def:4,  exp:0 },
+                { hp:22, mp:0,  str:12, agi:5,  def:6,  exp:7 },
+                { hp:28, mp:0,  str:16, agi:7,  def:8,  exp:23 },
+                { hp:36, mp:0,  str:22, agi:8,  def:11, exp:47 },
+                { hp:42, mp:0,  str:28, agi:10, def:14, exp:110 },
+                { hp:52, mp:0,  str:34, agi:12, def:17, exp:220 },
+                { hp:60, mp:0,  str:40, agi:14, def:20, exp:450 },
+                { hp:70, mp:0,  str:48, agi:16, def:24, exp:800 },
+                { hp:82, mp:0,  str:56, agi:18, def:28, exp:1300 },
+                { hp:95, mp:0,  str:64, agi:20, def:32, exp:2000 },
+            ],
+            samaltria: [
+                null,
+                { hp:10, mp:5,  str:4,  agi:3,  def:3,  exp:0 },
+                { hp:16, mp:8,  str:7,  agi:5,  def:5,  exp:12 },
+                { hp:22, mp:12, str:10, agi:7,  def:7,  exp:35 },
+                { hp:28, mp:18, str:14, agi:9,  def:9,  exp:65 },
+                { hp:34, mp:24, str:18, agi:12, def:12, exp:140 },
+                { hp:42, mp:32, str:22, agi:14, def:14, exp:280 },
+                { hp:50, mp:40, str:26, agi:17, def:17, exp:560 },
+                { hp:58, mp:50, str:30, agi:20, def:20, exp:1000 },
+                { hp:66, mp:60, str:36, agi:23, def:23, exp:1600 },
+                { hp:76, mp:72, str:42, agi:26, def:26, exp:2500 },
+            ],
+            moonbrook: [
+                null,
+                { hp:8,  mp:8,  str:3,  agi:6,  def:2,  exp:0 },
+                { hp:12, mp:14, str:5,  agi:8,  def:4,  exp:10 },
+                { hp:16, mp:22, str:7,  agi:11, def:5,  exp:30 },
+                { hp:20, mp:30, str:9,  agi:14, def:7,  exp:55 },
+                { hp:26, mp:40, str:11, agi:18, def:9,  exp:120 },
+                { hp:32, mp:52, str:14, agi:22, def:11, exp:250 },
+                { hp:38, mp:64, str:16, agi:26, def:14, exp:500 },
+                { hp:44, mp:78, str:19, agi:30, def:16, exp:900 },
+                { hp:52, mp:92, str:22, agi:34, def:19, exp:1500 },
+                { hp:60, mp:108,str:26, agi:38, def:22, exp:2300 },
+            ],
+        };
+
+        // Create a party member from growth table at a given level
+        function createPartyMember(name, classKey, level) {
+            const g = GROWTH[classKey][level];
+            return {
+                name, classKey, level,
+                maxHp: g.hp, hp: g.hp,
+                maxMp: g.mp, mp: g.mp,
+                str: g.str, agi: g.agi, def: g.def,
+                exp: 0, gold: 0,
+                equipment: { weapon: null, armor: null, shield: null, helmet: null },
+                alive: true,
+            };
+        }
+
         // Direction sprite names
         const DIR_SPRITES = ['player_up', 'player_down', 'player_left', 'player_right'];
 
@@ -236,6 +294,11 @@
                 this.titleBlink = 0;
                 this.message = null; // { text, callback }
                 this.battle = null; // battle state object
+                // Party initialization (start with hero only, others join later)
+                this.party = [
+                    createPartyMember('ローレシア', 'lorasia', 1),
+                ];
+                this.gold = 0;
                 this.updateCamera();
                 this.initInputs();
             }
@@ -409,21 +472,45 @@
                     if (b.resultTimer > 1200 || this.consumeKey('Enter') || this.consumeKey('KeyZ')) {
                         b.resultTimer = 0;
                         if (b.phase === 'player_result') {
-                            // Check if all enemies dead
                             if (b.enemies.every(e => e.currentHp <= 0)) {
                                 const totalExp = b.enemies.reduce((s, e) => s + e.exp, 0);
                                 const totalGold = b.enemies.reduce((s, e) => s + e.gold, 0);
+                                this.gold += totalGold;
                                 b.turnLog = [`まものを たおした！`, `${totalExp}の けいけんちを かくとく！`, `${totalGold}ゴールド てにいれた！`];
+                                // Award EXP and check level up
+                                this.party.filter(p => p.alive).forEach(p => {
+                                    p.exp += totalExp;
+                                    const lvUp = this.checkLevelUp(p);
+                                    if (lvUp) b.turnLog.push(`${p.name}は レベル${p.level}に あがった！`);
+                                });
                                 b.phase = 'end';
                             } else {
                                 b.phase = 'enemy_turn';
                                 this.executeEnemyTurn();
                             }
                         } else {
-                            // After enemy turn, back to command
-                            b.phase = 'command';
-                            b.cursor = 0;
+                            // After enemy turn, check party wipe
+                            if (this.party.every(p => !p.alive)) {
+                                b.turnLog = ['ぜんめつしてしまった…'];
+                                b.phase = 'gameover';
+                            } else {
+                                b.phase = 'command';
+                                b.cursor = 0;
+                            }
                         }
+                    }
+                } else if (b.phase === 'gameover') {
+                    b.resultTimer += dt;
+                    if (b.resultTimer > 2000 || this.consumeKey('Enter') || this.consumeKey('KeyZ')) {
+                        // Revive at start, lose half gold (FC DQ2 style)
+                        this.gold = Math.floor(this.gold / 2);
+                        this.party.forEach(p => {
+                            p.hp = p.maxHp; p.mp = p.maxMp; p.alive = true;
+                        });
+                        this.player.x = 10; this.player.y = 14; // Castle position
+                        this.updateCamera();
+                        this.state = GameState.EXPLORE;
+                        this.battle = null;
                     }
                 } else if (b.phase === 'end') {
                     b.resultTimer += dt;
@@ -434,15 +521,43 @@
                 }
             }
 
+            checkLevelUp(member) {
+                const growth = GROWTH[member.classKey];
+                const nextLv = member.level + 1;
+                if (nextLv >= growth.length) return false;
+                const needed = growth[nextLv].exp;
+                if (member.exp >= needed) {
+                    member.level = nextLv;
+                    const g = growth[nextLv];
+                    member.maxHp = g.hp; member.hp = g.hp; // Full heal on level up (FC DQ2)
+                    member.maxMp = g.mp; member.mp = g.mp;
+                    member.str = g.str; member.agi = g.agi; member.def = g.def;
+                    member.exp = 0; // Reset exp (simplified; FC uses cumulative)
+                    return true;
+                }
+                return false;
+            }
+
+            // FC DQ2 damage formula: dmg = atk/2 - def/4 + rand(-1..+2)
+            calcDamage(atk, def) {
+                const base = Math.floor(atk / 2) - Math.floor(def / 4);
+                const dmg = base + Math.floor(Math.random() * 4) - 1;
+                return Math.max(0, dmg);
+            }
+
             executeBattleTurn() {
                 const b = this.battle;
-                // Attack first alive enemy
+                const hero = this.party[0];
                 const target = b.enemies.find(e => e.currentHp > 0);
-                if (!target) return;
-                // Simple damage: 5~10 for now (placeholder)
-                const dmg = 3 + Math.floor(Math.random() * 5);
+                if (!target || !hero.alive) return;
+                const dmg = this.calcDamage(hero.str, target.def);
                 target.currentHp = Math.max(0, target.currentHp - dmg);
-                b.turnLog = [`ローレシアのおうじ の こうげき！`, `${target.name}に ${dmg}の ダメージ！`];
+                b.turnLog = [`${hero.name}の こうげき！`];
+                if (dmg > 0) {
+                    b.turnLog.push(`${target.name}に ${dmg}の ダメージ！`);
+                } else {
+                    b.turnLog.push(`ミス！ ダメージを あたえられない！`);
+                }
                 if (target.currentHp <= 0) {
                     b.turnLog.push(`${target.name}を たおした！`);
                 }
@@ -455,8 +570,22 @@
                 const alive = b.enemies.filter(e => e.currentHp > 0);
                 if (alive.length === 0) return;
                 const attacker = alive[Math.floor(Math.random() * alive.length)];
-                const dmg = Math.max(1, attacker.atk - 3 + Math.floor(Math.random() * 3));
-                b.turnLog = [`${attacker.name}の こうげき！`, `ローレシアのおうじは ${dmg}の ダメージをうけた！`];
+                // Target random alive party member
+                const targets = this.party.filter(p => p.alive);
+                if (targets.length === 0) return;
+                const target = targets[Math.floor(Math.random() * targets.length)];
+                const dmg = this.calcDamage(attacker.atk, target.def);
+                target.hp = Math.max(0, target.hp - dmg);
+                b.turnLog = [`${attacker.name}の こうげき！`];
+                if (dmg > 0) {
+                    b.turnLog.push(`${target.name}は ${dmg}の ダメージをうけた！`);
+                } else {
+                    b.turnLog.push(`${target.name}は ダメージをうけなかった！`);
+                }
+                if (target.hp <= 0) {
+                    target.alive = false;
+                    b.turnLog.push(`${target.name}は ちからつきた！`);
+                }
             }
 
             // --- DRAW ---
@@ -469,6 +598,7 @@
                 } else if (this.state === GameState.EXPLORE || this.state === GameState.DIALOG || this.state === GameState.MENU) {
                     this.drawMap();
                     this.drawPlayer();
+                    this.drawFieldStatus();
                     if (this.state === GameState.DIALOG && this.message) {
                         this.drawMessageWindow(this.message.text);
                     }
@@ -518,6 +648,19 @@
                     });
                 }
 
+                // Party status window (right side, FC DQ2 style)
+                const stX = 140, stY = 148, stW = 110, stH = 12 + this.party.length * 14;
+                this.drawWindow(stX, stY, stW, stH);
+                ctx.fillStyle = '#fff';
+                ctx.font = '7px monospace';
+                this.party.forEach((p, i) => {
+                    const shortName = p.name.substring(0, 4);
+                    const hpStr = `${String(p.hp).padStart(3)}/${String(p.maxHp).padStart(3)}`;
+                    const mpStr = p.maxMp > 0 ? ` M${String(p.mp).padStart(2)}` : '';
+                    const status = p.alive ? '' : ' しに';
+                    ctx.fillText(`${shortName} H${hpStr}${mpStr}${status}`, stX + 6, stY + 8 + i * 14);
+                });
+
                 // Command window (only during command phase)
                 if (b.phase === 'command') {
                     const cmdX = 8, cmdY = 150, cmdW = 100, cmdH = 40;
@@ -529,6 +672,15 @@
                         const prefix = b.cursor === i ? '▶' : '　';
                         ctx.fillText(`${prefix}${cmd}`, cmdX + 8, cmdY + 8 + i * 14);
                     });
+                }
+
+                // Gameover overlay
+                if (b.phase === 'gameover') {
+                    ctx.fillStyle = '#fff';
+                    ctx.font = '10px monospace';
+                    ctx.textAlign = 'center';
+                    ctx.fillText('おうは しんでしまった！', SCREEN_WIDTH / 2, 220);
+                    ctx.textAlign = 'left';
                 }
             }
 
@@ -577,6 +729,19 @@
                 const sx = (this.player.x - this.camera.x) * TILE_SIZE;
                 const sy = (this.player.y - this.camera.y) * TILE_SIZE;
                 ctx.drawImage(assets.tiles[sprite], sx, sy);
+            }
+
+            drawFieldStatus() {
+                // Small status bar at top-right (FC DQ2 style)
+                const sw = 90, sh = 12 + this.party.length * 12;
+                const sx = SCREEN_WIDTH - sw - 4, sy = 4;
+                this.drawWindow(sx, sy, sw, sh);
+                ctx.fillStyle = '#fff';
+                ctx.font = '7px monospace';
+                this.party.forEach((p, i) => {
+                    const name = p.name.substring(0, 3);
+                    ctx.fillText(`${name} L${p.level} H${p.hp}/${p.maxHp}`, sx + 5, sy + 7 + i * 12);
+                });
             }
 
             // FC-style bordered window drawn on Canvas
