@@ -41,3 +41,52 @@
   - Phase 1-1: Scrolling viewport for larger world map
   - Phase 1-2: Random encounter system (step count + terrain modifier)
   - Phase 1-3: Field → Battle transition → Field return
+
+## 2026-02-10 Phase 1: Field + Encounter + Battle Transition
+- Added:
+  - 32x32 procedural world map (island with sea border, mountains, castle, towns, lakes)
+  - Camera/viewport system: player always centered, clamps at map edges
+  - Random encounter system: 1/12 chance per step on grass tiles
+  - Monster data: スライム, おおなめくじ, ドラキー (3 types with stats)
+  - Battle state with phases: start → command → player_result → enemy_turn → end
+  - Battle commands: たたかう / にげる (cursor selection with ▶)
+  - にげる: 50% success rate (FC DQ2 style)
+  - Simple damage calculation (placeholder, ~3-7 per hit)
+  - Enemy attack with damage display
+  - Victory: EXP/Gold message display
+  - Battle → Field return after victory or escape
+  - FC-style battle UI: enemy sprites, message log window, command window
+
+- Spec notes:
+  - Encounter rate: 1/12 per grass step (FC DQ2 varies by area, will refine later)
+  - Escape rate: 50% (FC DQ2 formula is more complex, based on agility)
+  - Damage: placeholder values, Phase 2 will implement proper FC DQ2 formula
+  - Enemy groups: 1-2 random enemies per encounter
+
+- Verification:
+  - [x] Map scrolls when player moves, camera follows
+  - [x] Player stays centered on screen
+  - [x] Camera clamps at map edges (no out-of-bounds rendering)
+  - [x] Random encounters trigger while walking on grass
+  - [x] Battle screen displays with enemy names and sprites
+  - [x] たたかう attacks first enemy, shows damage
+  - [x] にげる has ~50% success rate
+  - [x] Defeated enemies removed from display
+  - [x] Victory shows EXP/Gold earned
+  - [x] Battle ends and returns to field
+  - [ ] Encounter rate feels right vs FC DQ2 (needs tuning)
+
+- Known issues:
+  - No HP tracking for player (damage is shown but not applied)
+  - No party stats display during battle
+  - Damage formula is placeholder (not FC DQ2 accurate)
+  - Only 3 monster types
+  - No battle transition effect (instant switch)
+  - Enemy "sprites" are just colored rectangles
+  - No menu system yet (X/Esc does nothing)
+
+- Next:
+  - Phase 2-1: Party stats (HP/MP/LV) for 3 characters
+  - Phase 2-2: Full command hierarchy (たたかう/じゅもん/どうぐ/にげる)
+  - Phase 2-3: Proper damage formula (FC DQ2 spec)
+  - Phase 2-4: Level up system with growth curves
