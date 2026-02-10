@@ -130,3 +130,60 @@
   - Equipment change UI in menu
   - More monster variety per zone
   - Dungeon treasure chests
+
+## 2026-02-10 Story Progression Fix - Completable Game
+- Added:
+  - **Treasure chest system**: chest/chest_open tiles, placeChest(), openChest()
+    - Walk onto chest to open, items added to inventory
+    - Opened chests remembered in G.flags
+    - Chests carve surrounding walls for accessibility
+  - **Key item placement**:
+    - ラーのかがみ: 湖の洞窟 (lake_cave)
+    - ぎんのカギ: 湖の洞窟 (lake_cave)
+    - ふねのきっぷ: ロンの洞窟 (ron_cave)
+    - はやぶさのけん: ロンの洞窟 (ron_cave)
+    - ロトのつるぎ: ドラゴンの角 (dragon_horn)
+    - みずのはごろも: ドラゴンの角 (dragon_horn)
+    - ロトのよろい: ハーゴン神殿 (hargon)
+    - せかいじゅのは: ハーゴン神殿 (hargon)
+  - **Inn system**: useInn() function, 宿屋 NPCs in all towns/castles
+    - Costs 6G per party member, full HP/MP recovery
+  - **Ship system**: board/disembark mechanics
+    - Ship spawns at nearest sea tile to ベラヌール on getting ふねのきっぷ
+    - Player drawn with ship sprite while sailing
+    - Ship parks where player disembarks
+  - **ハーゴン神殿 fixed layout**: mkHargon() creates designed dungeon
+    - Entrance corridor → main hall → side rooms → boss corridor → boss room
+    - ハーゴン at (8,3), シドー at (8,2)
+  - **World map redesign**: all locations within reachable radius
+    - ローレシア城(12,14) → サマルトリア城(16,40) → リリザ(22,28)
+    - ムーンペタ(28,42) → ベラヌール(42,18) → ペルポイ(48,35)
+    - ロンダルキアのほこら(38,10)
+    - ハーゴン island (55,50) - only reachable by ship
+  - **New dungeon**: ドラゴンの角 (dragon_horn, tower at 40,40)
+  - **NPC dialog improvements**: hints for next destination
+  - **Princess recruitment fixed**: ラーのかがみ consumed on use
+  - **Prince/Princess start with equipment**
+
+- Story Flow (completable path):
+  1. ローレシア城 → 南のサマルトリア城 (recruit prince)
+  2. 湖の洞窟 (20,22) → get ラーのかがみ & ぎんのカギ
+  3. ムーンペタ (28,42) → use ラーのかがみ on dog → recruit princess
+  4. ロンの洞窟 (45,28) → get ふねのきっぷ
+  5. ベラヌール (42,18) → give ticket to sailor → get ship
+  6. ドラゴンの角 (40,40) → ロトのつるぎ & みずのはごろも
+  7. Sail to ハーゴン island (55,50)
+  8. ハーゴン神殿 → fight ハーゴン → fight シドー → ENDING
+
+- Verification:
+  - [x] Treasure chests can be opened
+  - [x] ラーのかがみ obtainable from lake_cave
+  - [x] Princess recruitable with ラーのかがみ
+  - [x] ふねのきっぷ obtainable from ron_cave
+  - [x] Ship obtainable from ベラヌール
+  - [x] Ship sailing works (board/disembark)
+  - [x] ハーゴン boss fight triggers
+  - [x] シドー boss fight triggers after ハーゴン
+  - [x] Ending screen displays after シドー defeat
+  - [x] Inn restores HP/MP
+  - [x] All locations reachable on world map
