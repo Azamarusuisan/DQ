@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -16,46 +17,28 @@
             overflow: hidden;
             font-family: 'Courier New', Courier, monospace;
         }
+
         #game-container {
             position: relative;
             width: 512px;
             height: 480px;
             image-rendering: pixelated;
         }
+
         canvas {
             width: 100%;
             height: 100%;
             display: block;
         }
-        #ui-layer {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            color: #fff;
-            text-shadow: 2px 2px #000;
-        }
-        .window {
-            position: absolute;
-            border: 4px solid #fff;
-            background: #000;
-            padding: 10px;
-            box-sizing: border-box;
-            border-radius: 4px;
-        }
-        .hidden { display: none; }
+
+        /* UI is rendered on Canvas */
     </style>
 </head>
+
 <body>
     <div id="game-container">
         <canvas id="gameCanvas" width="256" height="240"></canvas>
-        <div id="ui-layer">
-            <div id="message-window" class="window hidden" style="bottom: 20px; left: 50%; transform: translateX(-50%); width: 90%; height: 100px;">
-                <div id="message-text"></div>
-            </div>
-        </div>
+        <!-- UI is drawn on Canvas directly -->
     </div>
 
     <script>
@@ -79,58 +62,334 @@
             UP: 0, DOWN: 1, LEFT: 2, RIGHT: 3
         };
 
+        // --- ASSET MANAGER (Programmatic Drawing) ---
+        class AssetManager {
+            constructor() {
+                this.tiles = {}; // Map of name to canvas
+                this.generateTiles();
+            }
+
+            createTile(name, drawFn) {
+                const offscreen = document.createElement('canvas');
+                offscreen.width = TILE_SIZE;
+                offscreen.height = TILE_SIZE;
+                const oCtx = offscreen.getContext('2d');
+                drawFn(oCtx);
+                this.tiles[name] = offscreen;
+            }
+
+            generateTiles() {
+                // Grass
+                this.createTile('grass', (c) => {
+                    c.fillStyle = '#0a0';
+                    c.fillRect(0, 0, 16, 16);
+                    c.fillStyle = '#1b1';
+                    c.fillRect(2, 2, 2, 2);
+                    c.fillRect(10, 8, 2, 2);
+                });
+                // Sea
+                this.createTile('sea', (c) => {
+                    c.fillStyle = '#00f';
+                    c.fillRect(0, 0, 16, 16);
+                    c.strokeStyle = '#fff';
+                    c.beginPath(); c.moveTo(2, 4); c.lineTo(6, 4); c.stroke();
+                    c.beginPath(); c.moveTo(10, 12); c.lineTo(14, 12); c.stroke();
+                });
+                // Wall
+                this.createTile('wall', (c) => {
+                    c.fillStyle = '#888';
+                    c.fillRect(0, 0, 16, 16);
+                    c.strokeStyle = '#fff';
+                    c.strokeRect(1, 1, 14, 14);
+                });
+                // Floor
+                this.createTile('floor', (c) => {
+                    c.fillStyle = '#ccc';
+                    c.fillRect(0, 0, 16, 16);
+                    c.strokeStyle = '#999';
+                    c.strokeRect(0, 0, 16, 16);
+                });
+                // Mountain
+                this.createTile('mountain', (c) => {
+                    c.fillStyle = '#863';
+                    c.fillRect(0, 0, 16, 16);
+                    c.fillStyle = '#fff';
+                    c.beginPath(); c.moveTo(8, 2); c.lineTo(14, 14); c.lineTo(2, 14); c.close(); c.fill();
+                });
+                // Town/Castle entrance
+                this.createTile('town', (c) => {
+                    c.fillStyle = '#0a0'; c.fillRect(0, 0, 16, 16);
+                    c.fillStyle = '#c60'; c.fillRect(3, 3, 10, 10);
+                    c.fillStyle = '#fc0'; c.fillRect(5, 5, 6, 6);
+                    c.fillStyle = '#c60'; c.fillRect(7, 2, 2, 3);
+                });
+                // Player sprites (4 directions) - DQ2 hero style
+                this.createTile('player_down', (c) => {
+                    c.fillStyle = '#6060ff'; c.fillRect(4, 0, 8, 4); // helmet
+                    c.fillStyle = '#fcc'; c.fillRect(4, 4, 8, 4); // face
+                    c.fillStyle = '#00c'; c.fillRect(3, 8, 10, 5); // body
+                    c.fillStyle = '#c60'; c.fillRect(4, 13, 3, 3); c.fillRect(9, 13, 3, 3); // boots
+                });
+                this.createTile('player_up', (c) => {
+                    c.fillStyle = '#6060ff'; c.fillRect(4, 0, 8, 4);
+                    c.fillStyle = '#60f'; c.fillRect(4, 4, 8, 4);
+                    c.fillStyle = '#00c'; c.fillRect(3, 8, 10, 5);
+                    c.fillStyle = '#c60'; c.fillRect(4, 13, 3, 3); c.fillRect(9, 13, 3, 3);
+                });
+                this.createTile('player_left', (c) => {
+                    c.fillStyle = '#6060ff'; c.fillRect(3, 0, 8, 4);
+                    c.fillStyle = '#fcc'; c.fillRect(3, 4, 6, 4);
+                    c.fillStyle = '#00c'; c.fillRect(3, 8, 9, 5);
+                    c.fillStyle = '#c60'; c.fillRect(3, 13, 3, 3); c.fillRect(8, 13, 3, 3);
+                });
+                this.createTile('player_right', (c) => {
+                    c.fillStyle = '#6060ff'; c.fillRect(5, 0, 8, 4);
+                    c.fillStyle = '#fcc'; c.fillRect(7, 4, 6, 4);
+                    c.fillStyle = '#00c'; c.fillRect(4, 8, 9, 5);
+                    c.fillStyle = '#c60'; c.fillRect(5, 13, 3, 3); c.fillRect(10, 13, 3, 3);
+                });
+            }
+        }
+
+        const assets = new AssetManager();
+
+        // --- MAP SYSTEM ---
+        const MapType = {
+            GRASS: 'grass',
+            SEA: 'sea',
+            WALL: 'wall',
+            FLOOR: 'floor',
+            MOUNTAIN: 'mountain'
+        };
+
+        const WORLD_MAP = [
+            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+            [1, 0, 4, 4, 0, 0, 0, 0, 0, 0, 0, 5, 0, 0, 0, 1],
+            [1, 0, 4, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+            [1, 0, 0, 0, 0, 0, 2, 2, 2, 0, 0, 0, 0, 0, 0, 1],
+            [1, 0, 0, 0, 0, 0, 2, 3, 2, 0, 0, 0, 0, 0, 0, 1],
+            [1, 0, 0, 0, 0, 0, 2, 0, 2, 0, 0, 0, 0, 0, 0, 1],
+            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 4, 0, 0, 0, 1],
+            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 1],
+            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+        ];
+
+        const TILE_MAP = [MapType.GRASS, MapType.SEA, MapType.WALL, MapType.FLOOR, MapType.MOUNTAIN, 'town'];
+
+        // Passability: true = can walk on
+        const TILE_PASSABLE = { grass: true, sea: false, wall: false, floor: true, mountain: false, town: true };
+
+        // Direction sprite names
+        const DIR_SPRITES = ['player_up', 'player_down', 'player_left', 'player_right'];
+
         // --- CORE ENGINE ---
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
         ctx.imageSmoothingEnabled = false;
 
+        // ===== ENGINE: STATE/LOOP/INPUT =====
         class GameEngine {
             constructor() {
                 this.state = GameState.TITLE;
                 this.lastTime = 0;
                 this.keys = {};
+                this.keyPressed = {}; // single-press detection
+                this.player = { x: 5, y: 5, dir: Direction.DOWN };
+                this.moveTimer = 0;
+                this.MOVE_DELAY = 150; // ms between steps (FC DQ2 feel)
+                this.titleBlink = 0;
+                this.message = null; // { text, callback }
                 this.initInputs();
             }
 
             initInputs() {
-                window.addEventListener('keydown', (e) => this.keys[e.code] = true);
-                window.addEventListener('keyup', (e) => this.keys[e.code] = false);
+                window.addEventListener('keydown', (e) => {
+                    e.preventDefault();
+                    if (!this.keys[e.code]) this.keyPressed[e.code] = true;
+                    this.keys[e.code] = true;
+                });
+                window.addEventListener('keyup', (e) => {
+                    this.keys[e.code] = false;
+                    this.keyPressed[e.code] = false;
+                });
+            }
+
+            consumeKey(code) {
+                if (this.keyPressed[code]) { this.keyPressed[code] = false; return true; }
+                return false;
             }
 
             start() {
+                this.lastTime = performance.now();
                 requestAnimationFrame((t) => this.loop(t));
             }
 
             loop(timestamp) {
                 const dt = timestamp - this.lastTime;
                 this.lastTime = timestamp;
-
                 this.update(dt);
                 this.draw();
-
                 requestAnimationFrame((t) => this.loop(t));
             }
 
+            // --- UPDATE ---
             update(dt) {
-                // To be implemented in Part 2
+                if (this.state === GameState.TITLE) {
+                    this.titleBlink += dt;
+                    if (this.consumeKey('Enter') || this.consumeKey('KeyZ')) {
+                        this.state = GameState.EXPLORE;
+                    }
+                } else if (this.state === GameState.EXPLORE) {
+                    this.updateMovement(dt);
+                } else if (this.state === GameState.DIALOG) {
+                    if (this.consumeKey('Enter') || this.consumeKey('KeyZ')) {
+                        if (this.message && this.message.callback) this.message.callback();
+                        this.message = null;
+                        this.state = GameState.EXPLORE;
+                    }
+                }
             }
 
+            updateMovement(dt) {
+                this.moveTimer -= dt;
+                if (this.moveTimer > 0) return;
+
+                let dx = 0, dy = 0, newDir = this.player.dir;
+                if (this.keys['ArrowUp'])    { dy = -1; newDir = Direction.UP; }
+                else if (this.keys['ArrowDown'])  { dy = 1;  newDir = Direction.DOWN; }
+                else if (this.keys['ArrowLeft'])  { dx = -1; newDir = Direction.LEFT; }
+                else if (this.keys['ArrowRight']) { dx = 1;  newDir = Direction.RIGHT; }
+
+                if (dx === 0 && dy === 0) return;
+
+                this.player.dir = newDir;
+                const nx = this.player.x + dx;
+                const ny = this.player.y + dy;
+
+                // Bounds check
+                if (ny < 0 || ny >= WORLD_MAP.length || nx < 0 || nx >= WORLD_MAP[0].length) {
+                    this.moveTimer = this.MOVE_DELAY;
+                    return;
+                }
+
+                // Collision check
+                const tileId = WORLD_MAP[ny][nx];
+                const tileName = TILE_MAP[tileId];
+                if (!TILE_PASSABLE[tileName]) {
+                    this.moveTimer = this.MOVE_DELAY;
+                    return;
+                }
+
+                this.player.x = nx;
+                this.player.y = ny;
+                this.moveTimer = this.MOVE_DELAY;
+            }
+
+            showMessage(text, callback) {
+                this.message = { text, callback: callback || null };
+                this.state = GameState.DIALOG;
+            }
+
+            // --- DRAW ---
             draw() {
                 ctx.fillStyle = '#000';
                 ctx.fillRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 
                 if (this.state === GameState.TITLE) {
-                    ctx.fillStyle = '#fff';
-                    ctx.textAlign = 'center';
-                    ctx.font = '16px monospace';
-                    ctx.fillText('DRAGON QUEST II', SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
-                    ctx.font = '8px monospace';
-                    ctx.fillText('PRESS START (ENTER)', SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 + 40);
-                    
-                    if (this.keys['Enter']) {
-                        this.state = GameState.EXPLORE;
+                    this.drawTitle();
+                } else if (this.state === GameState.EXPLORE || this.state === GameState.DIALOG || this.state === GameState.MENU) {
+                    this.drawMap();
+                    this.drawPlayer();
+                    if (this.state === GameState.DIALOG && this.message) {
+                        this.drawMessageWindow(this.message.text);
                     }
                 }
+            }
+
+            drawTitle() {
+                // FC DQ2 style: black bg, centered text
+                ctx.fillStyle = '#000';
+                ctx.fillRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+
+                // Title
+                ctx.fillStyle = '#fff';
+                ctx.font = 'bold 14px monospace';
+                ctx.fillText('ドラゴンクエストII', SCREEN_WIDTH / 2, 80);
+                ctx.font = '10px monospace';
+                ctx.fillText('悪霊の神々', SCREEN_WIDTH / 2, 100);
+
+                // Blinking "press start"
+                if (Math.floor(this.titleBlink / 500) % 2 === 0) {
+                    ctx.fillStyle = '#fff';
+                    ctx.font = '8px monospace';
+                    ctx.fillText('ぼうけんをはじめる（Enter）', SCREEN_WIDTH / 2, 170);
+                }
+
+                ctx.textAlign = 'left';
+                ctx.textBaseline = 'alphabetic';
+            }
+
+            drawMap() {
+                for (let y = 0; y < WORLD_MAP.length; y++) {
+                    for (let x = 0; x < WORLD_MAP[0].length; x++) {
+                        const tileId = WORLD_MAP[y][x];
+                        const tileName = TILE_MAP[tileId];
+                        if (assets.tiles[tileName]) {
+                            ctx.drawImage(assets.tiles[tileName], x * TILE_SIZE, y * TILE_SIZE);
+                        }
+                    }
+                }
+            }
+
+            drawPlayer() {
+                const sprite = DIR_SPRITES[this.player.dir];
+                ctx.drawImage(assets.tiles[sprite], this.player.x * TILE_SIZE, this.player.y * TILE_SIZE);
+            }
+
+            // FC-style bordered window drawn on Canvas
+            drawWindow(x, y, w, h) {
+                // Outer border (white)
+                ctx.fillStyle = '#fff';
+                ctx.fillRect(x, y, w, h);
+                // Inner fill (black)
+                ctx.fillStyle = '#000';
+                ctx.fillRect(x + 2, y + 2, w - 4, h - 4);
+                // Inner border highlight
+                ctx.fillStyle = '#fff';
+                ctx.fillRect(x + 1, y + 1, w - 2, 1);
+                ctx.fillRect(x + 1, y + 1, 1, h - 2);
+                ctx.fillRect(x + 1, y + h - 2, w - 2, 1);
+                ctx.fillRect(x + w - 2, y + 1, 1, h - 2);
+                // Black interior
+                ctx.fillStyle = '#000';
+                ctx.fillRect(x + 3, y + 3, w - 6, h - 6);
+            }
+
+            drawMessageWindow(text) {
+                const wx = 8, wy = SCREEN_HEIGHT - 56, ww = SCREEN_WIDTH - 16, wh = 48;
+                this.drawWindow(wx, wy, ww, wh);
+                ctx.fillStyle = '#fff';
+                ctx.font = '8px monospace';
+                ctx.textAlign = 'left';
+                ctx.textBaseline = 'top';
+                // Word wrap simple
+                const maxChars = 28;
+                const lines = [];
+                for (let i = 0; i < text.length; i += maxChars) {
+                    lines.push(text.substring(i, i + maxChars));
+                }
+                lines.forEach((line, idx) => {
+                    ctx.fillText(line, wx + 8, wy + 8 + idx * 12);
+                });
             }
         }
 
@@ -141,4 +400,5 @@
         // Placeholder for future logic
     </script>
 </body>
+
 </html>
