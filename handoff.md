@@ -117,15 +117,16 @@
   - [x] Title screen shows 3 options (はじめる/ぼうけんのしょ/ふっかつのじゅもん)
   - [ ] 復活の呪文 encode/decode round-trip works correctly
   - [ ] Invalid password shows error message
-  - [ ] Touch controls for mobile play
+  - [x] Touch controls for mobile play
 
 - Known issues:
   - Code is heavily minified/compressed (single-line functions)
-  - No touch/mobile controls yet
   - No宿屋 (inn) system yet
   - Equip menu doesn't allow changing equipment
+  - Shop only equips to hero (party[0])
 
 - Next:
-  - Mobile touch controls (virtual D-pad + A/B buttons)
   - Inn system for HP/MP recovery
-  - Code readability improvements
+  - Equipment change UI in menu
+  - More monster variety per zone
+  - Dungeon treasure chests
