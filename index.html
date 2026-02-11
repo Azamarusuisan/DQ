@@ -161,7 +161,31 @@ const ITEMS=[{id:0,name:'やくそう',type:'heal',power:30,price:8},{id:1,name:
 const HERO_LV=[[0,20,0,8,4,[]],[10,28,0,12,6,[]],[30,36,5,16,9,[]],[80,44,8,22,12,[]],[150,55,12,28,16,['gira']],[250,65,16,35,20,[]],[400,78,20,42,25,['begirama']],[600,90,25,50,30,[]],[900,105,30,58,36,['ionazun']],[1300,120,35,68,42,[]],[1800,138,42,78,48,[]],[2500,155,48,88,55,['baikiruto']],[3500,170,55,98,62,[]],[5000,190,62,110,70,[]],[7000,210,70,120,80,[]]];
 const PRINCE_LV=[[0,18,10,6,5,['hoimi']],[12,24,16,10,8,[]],[40,30,22,14,11,['gira']],[100,38,28,18,15,[]],[200,48,36,24,20,['behoimi','sukuruto']],[350,56,42,30,24,[]],[550,66,50,36,29,['begirama']],[800,78,58,44,34,['zaoriku']],[1200,88,66,52,40,[]],[1700,100,75,60,46,[]],[2400,112,84,68,52,[]],[3300,126,94,78,60,[]],[4500,140,104,88,68,[]],[6200,156,116,98,76,[]],[8500,172,128,108,85,[]]];
 const PRINCESS_LV=[[0,14,18,4,6,['hoimi','rariho']],[15,18,26,6,10,[]],[50,22,34,8,14,['manusa']],[120,28,42,11,18,['ruura']],[230,34,52,14,23,['behoimi']],[400,40,60,17,28,['riremito']],[650,48,70,21,34,[]],[1000,56,80,26,40,['ionazun']],[1500,64,92,31,46,[]],[2200,74,104,36,52,['zaoriku']],[3100,84,116,42,58,[]],[4200,94,128,48,64,[]],[5800,106,142,55,72,[]],[7800,118,156,62,80,[]],[10000,132,172,70,88,[]]];
-const MONSTERS=[{name:'スライム',hp:8,mp:0,atk:6,def:3,agi:3,exp:2,gold:2,spells:[],zone:[0]},{name:'おおなめくじ',hp:14,mp:0,atk:10,def:4,agi:2,exp:4,gold:4,spells:[],zone:[0]},{name:'ドラキー',hp:12,mp:0,atk:9,def:5,agi:6,exp:3,gold:3,spells:[],zone:[0,1]},{name:'ゴースト',hp:20,mp:5,atk:14,def:8,agi:5,exp:6,gold:8,spells:['gira'],zone:[1]},{name:'リカント',hp:28,mp:0,atk:20,def:12,agi:8,exp:10,gold:12,spells:[],zone:[1]},{name:'マンドリル',hp:35,mp:0,atk:28,def:15,agi:10,exp:14,gold:18,spells:[],zone:[1,2]},{name:'メイジドラキー',hp:22,mp:10,atk:12,def:10,agi:12,exp:8,gold:10,spells:['gira'],zone:[1]},{name:'キラービー',hp:18,mp:0,atk:24,def:18,agi:15,exp:12,gold:14,spells:[],zone:[2]},{name:'バピラス',hp:40,mp:8,atk:32,def:20,agi:14,exp:18,gold:22,spells:['rariho'],zone:[2]},{name:'デスフラッター',hp:30,mp:6,atk:26,def:16,agi:18,exp:16,gold:20,spells:['manusa'],zone:[2]},{name:'ようがんまじん',hp:60,mp:0,atk:50,def:40,agi:8,exp:35,gold:45,spells:[],zone:[3]},{name:'アークデーモン',hp:80,mp:20,atk:55,def:35,agi:20,exp:50,gold:60,spells:['begirama'],zone:[3]},{name:'はぐれメタル',hp:5,mp:99,atk:10,def:250,agi:200,exp:1050,gold:10,spells:[],zone:[2,3],flee:0.5},{name:'ハーゴン',hp:200,mp:50,atk:80,def:60,agi:40,exp:0,gold:0,spells:['begirama','behoimi'],zone:[],boss:true},{name:'シドー',hp:300,mp:99,atk:120,def:80,agi:50,exp:0,gold:0,spells:['ionazun','behoimi'],zone:[],boss:true}];
+const MONSTERS=[
+// Zone 0: ローレシア周辺
+{name:'スライム',hp:8,mp:0,atk:6,def:3,agi:3,exp:2,gold:2,spells:[],zone:[0]},
+{name:'おおなめくじ',hp:14,mp:0,atk:10,def:4,agi:2,exp:4,gold:4,spells:[],zone:[0]},
+{name:'アイアンアント',hp:16,mp:0,atk:12,def:6,agi:4,exp:5,gold:5,spells:[],zone:[0]},
+// Zone 1: サマルトリア～ムーンペタ
+{name:'ドラキー',hp:12,mp:0,atk:9,def:5,agi:6,exp:3,gold:3,spells:[],zone:[0,1]},
+{name:'バブルスライム',hp:18,mp:0,atk:14,def:6,agi:4,exp:6,gold:6,spells:[],zone:[1]},
+{name:'マンドリル',hp:35,mp:0,atk:28,def:15,agi:10,exp:14,gold:18,spells:[],zone:[1,2]},
+{name:'リビングデッド',hp:30,mp:0,atk:22,def:12,agi:6,exp:10,gold:14,spells:[],zone:[1]},
+{name:'まじゅつし',hp:25,mp:10,atk:16,def:10,agi:14,exp:12,gold:16,spells:['gira'],zone:[1]},
+// Zone 2: ロンダルキアへの洞窟
+{name:'バピラス',hp:40,mp:8,atk:32,def:20,agi:14,exp:18,gold:22,spells:['rariho'],zone:[2]},
+{name:'ドラゴン',hp:70,mp:0,atk:45,def:35,agi:16,exp:30,gold:40,spells:['gira'],zone:[2]},
+{name:'キラーマシン',hp:120,mp:0,atk:55,def:80,agi:25,exp:65,gold:50,spells:[],zone:[2,3]},
+{name:'フレイム',hp:50,mp:8,atk:38,def:25,agi:20,exp:25,gold:30,spells:['gira'],zone:[2]},
+{name:'はぐれメタル',hp:5,mp:99,atk:10,def:250,agi:200,exp:1050,gold:10,spells:[],zone:[2,3],flee:0.5},
+// Zone 3: ハーゴン神殿
+{name:'ギガンテス',hp:100,mp:0,atk:65,def:45,agi:12,exp:55,gold:60,spells:[],zone:[3]},
+{name:'アークデーモン',hp:80,mp:20,atk:55,def:35,agi:20,exp:50,gold:60,spells:['begirama'],zone:[3]},
+{name:'ブリザード',hp:60,mp:20,atk:40,def:30,agi:35,exp:45,gold:50,spells:['ionazun'],zone:[3]},
+{name:'あくましんかん',hp:90,mp:30,atk:45,def:40,agi:22,exp:55,gold:55,spells:['behoimi'],zone:[3]},
+// ボス
+{name:'ハーゴン',hp:200,mp:50,atk:80,def:60,agi:40,exp:0,gold:0,spells:['begirama','behoimi'],zone:[],boss:true},
+{name:'シドー',hp:300,mp:99,atk:120,def:80,agi:50,exp:0,gold:0,spells:['ionazun','behoimi'],zone:[],boss:true}];
 const TILE_NAMES=['grass','sea','forest','mountain','desert','swamp','town','castle','cave','tower','bridge'];
 const WALKABLE=[true,false,true,false,true,true,true,true,true,true,true];
 function genWorld(){const W=64,H=64,m=[];for(let y=0;y<H;y++){m[y]=[];for(let x=0;x<W;x++){if(x<2||x>W-3||y<2||y>H-3){m[y][x]=1;continue}const cx=W/2,cy=H/2,d=Math.sqrt((x-cx)**2+(y-cy)**2);if(d>28){m[y][x]=1;continue}if(d>18&&d<22&&y>cy-3&&y<cy+3&&x>cx+5){m[y][x]=1;continue}m[y][x]=0;const n=Math.sin(x*0.8)*Math.cos(y*0.6)*0.5+Math.sin(x*0.3+y*0.4)*0.5;if(n>0.6)m[y][x]=2;if(y>18&&y<26&&x>12&&x<22)m[y][x]=3;if(y>36&&y<42&&x>36&&x<46)m[y][x]=3;if(x>40&&x<52&&y>12&&y<22&&d<28)m[y][x]=4;if(x>26&&x<33&&y>38&&y<44)m[y][x]=5}}
