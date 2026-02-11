@@ -78,90 +78,215 @@ function seItem(){playSE(440,0.05);setTimeout(()=>playSE(880,0.1),60)}
 const TL={};
 function mkTile(n,fn){const c=document.createElement('canvas');c.width=c.height=T;fn(c.getContext('2d'));TL[n]=c}
 function initTiles(){
-mkTile('grass',c=>{c.fillStyle='#3a9a3a';c.fillRect(0,0,T,T);c.fillStyle='#4ab04a';c.fillRect(1,1,6,6);c.fillRect(9,9,6,6);c.fillStyle='#2d8a2d';c.fillRect(3,10,2,1);c.fillRect(11,4,2,1);c.fillRect(7,7,1,1)});
-mkTile('sea',c=>{c.fillStyle='#1858cc';c.fillRect(0,0,T,T);c.fillStyle='#2068dd';c.fillRect(0,3,T,3);c.fillRect(0,10,T,3);c.fillStyle='#3080ee';c.fillRect(2,4,4,1);c.fillRect(10,11,4,1);c.fillStyle='#1050aa';c.fillRect(0,7,T,1)});
-mkTile('desert',c=>{c.fillStyle='#e8b840';c.fillRect(0,0,T,T);c.fillStyle='#d0a030';c.fillRect(0,0,8,8);c.fillRect(8,8,8,8);c.fillStyle='#f0c850';c.fillRect(3,3,2,2);c.fillRect(11,11,2,2);c.fillStyle='#c89418';c.fillRect(6,12,3,1);c.fillRect(12,5,2,1)});
-mkTile('mountain',c=>{c.fillStyle='#3a9a3a';c.fillRect(0,0,T,T);c.fillStyle='#8B5a23';c.beginPath();c.moveTo(8,1);c.lineTo(15,14);c.lineTo(1,14);c.fill();c.fillStyle='#a07040';c.fillRect(6,4,4,3);c.fillStyle='#fff';c.beginPath();c.moveTo(8,1);c.lineTo(10,4);c.lineTo(6,4);c.fill();c.fillStyle='#704020';c.fillRect(1,14,14,2)});
-mkTile('forest',c=>{c.fillStyle='#3a9a3a';c.fillRect(0,0,T,T);c.fillStyle='#1a6a1a';c.beginPath();c.arc(8,5,5,0,Math.PI*2);c.fill();c.fillStyle='#228a22';c.beginPath();c.arc(6,4,3,0,Math.PI*2);c.fill();c.beginPath();c.arc(10,4,3,0,Math.PI*2);c.fill();c.fillStyle='#0a4a0a';c.beginPath();c.arc(8,6,2,0,Math.PI*2);c.fill();c.fillStyle='#8B4513';c.fillRect(7,10,2,6)});
-mkTile('wall',c=>{c.fillStyle='#7a7a8a';c.fillRect(0,0,T,T);c.fillStyle='#9a9aaa';c.fillRect(0,0,7,7);c.fillRect(8,8,8,7);c.fillStyle='#5a5a6a';c.fillRect(7,0,1,T);c.fillRect(0,7,T,1);c.fillStyle='#aaaabc';c.fillRect(1,1,2,1);c.fillRect(10,10,2,1)});
-mkTile('floor',c=>{c.fillStyle='#d4b892';c.fillRect(0,0,T,T);c.fillStyle='#c4a882';c.fillRect(0,0,8,8);c.fillRect(8,8,8,8);c.strokeStyle='#b09870';c.lineWidth=0.5;c.strokeRect(0.5,0.5,T-1,T-1);c.strokeRect(0.5,8,T-1,0)});
-mkTile('town',c=>{c.fillStyle='#3a9a3a';c.fillRect(0,0,T,T);c.fillStyle='#cc3333';c.fillRect(3,5,10,9);c.fillStyle='#dd4444';c.fillRect(4,6,8,7);c.fillStyle='#aa2222';c.beginPath();c.moveTo(8,1);c.lineTo(14,5);c.lineTo(2,5);c.fill();c.fillStyle='#ffd700';c.fillRect(7,8,2,6);c.fillStyle='#4af';c.fillRect(4,7,2,2);c.fillRect(10,7,2,2)});
-mkTile('cave',c=>{c.fillStyle='#3a9a3a';c.fillRect(0,0,T,T);c.fillStyle='#555';c.beginPath();c.arc(8,10,6,Math.PI,0);c.fill();c.fillRect(2,10,12,6);c.fillStyle='#222';c.beginPath();c.arc(8,10,4,Math.PI,0);c.fill();c.fillRect(4,10,8,6);c.fillStyle='#888';c.fillRect(2,9,1,1);c.fillRect(13,9,1,1)});
-mkTile('castle',c=>{c.fillStyle='#3a9a3a';c.fillRect(0,0,T,T);c.fillStyle='#eee';c.fillRect(2,5,12,11);c.fillStyle='#ddd';c.fillRect(3,6,10,9);c.fillStyle='#ccc';c.fillRect(2,2,3,5);c.fillRect(11,2,3,5);c.fillStyle='#eee';c.fillRect(3,1,1,2);c.fillRect(12,1,1,2);c.fillStyle='#8B4513';c.fillRect(6,9,4,7);c.fillStyle='#448';c.fillRect(4,6,2,2);c.fillRect(10,6,2,2);c.fillStyle='#ffd700';c.fillRect(7,5,2,1)});
-mkTile('bridge',c=>{c.fillStyle='#1858cc';c.fillRect(0,0,T,T);c.fillStyle='#a0622d';c.fillRect(2,0,12,T);c.fillStyle='#8B4513';c.fillRect(2,0,1,T);c.fillRect(13,0,1,T);c.fillStyle='#c08040';c.fillRect(4,0,2,T);c.fillRect(10,0,2,T);c.fillStyle='#604020';c.fillRect(3,3,10,1);c.fillRect(3,7,10,1);c.fillRect(3,11,10,1)});
-mkTile('stairs_up',c=>{c.fillStyle='#d4b892';c.fillRect(0,0,T,T);c.fillStyle='#a07040';for(let i=0;i<5;i++){c.fillRect(1+i*2,i*3,T-2-i*4,2)}c.fillStyle='#c09060';for(let i=0;i<5;i++){c.fillRect(1+i*2,i*3,T-2-i*4,1)}});
-mkTile('stairs_down',c=>{c.fillStyle='#d4b892';c.fillRect(0,0,T,T);c.fillStyle='#444';for(let i=0;i<5;i++){c.fillRect(1+i*2,i*3,T-2-i*4,2)}c.fillStyle='#555';for(let i=0;i<5;i++){c.fillRect(1+i*2,i*3,T-2-i*4,1)}});
-mkTile('swamp',c=>{c.fillStyle='#3a6a2a';c.fillRect(0,0,T,T);c.fillStyle='#507a30';c.fillRect(0,0,8,8);c.fillRect(8,8,8,8);c.fillStyle='#2a5a1a';c.fillRect(2,10,4,3);c.fillRect(10,4,4,3);c.fillStyle='#6a3a6a';c.fillRect(5,5,2,2);c.fillRect(11,11,2,2)});
-mkTile('tower',c=>{c.fillStyle='#3a9a3a';c.fillRect(0,0,T,T);c.fillStyle='#aaa';c.fillRect(4,3,8,13);c.fillStyle='#bbb';c.fillRect(5,4,6,11);c.fillStyle='#888';c.fillRect(4,0,2,5);c.fillRect(10,0,2,5);c.fillStyle='#999';c.fillRect(5,0,1,1);c.fillRect(11,0,1,1);c.fillStyle='#555';c.fillRect(6,10,4,6);c.fillStyle='#448';c.fillRect(6,5,2,2);c.fillRect(8,5,2,2)});
-mkTile('chest',c=>{c.fillStyle='#d4b892';c.fillRect(0,0,T,T);c.fillStyle='#daa520';c.fillRect(3,5,10,7);c.fillStyle='#c89010';c.fillRect(3,5,10,2);c.fillStyle='#b08010';c.fillRect(3,7,10,1);c.fillStyle='#f0d040';c.fillRect(7,6,2,1);c.fillStyle='#fff';c.fillRect(7,8,2,2);c.fillStyle='#a07010';c.fillRect(3,5,1,7);c.fillRect(12,5,1,7)});
-mkTile('chest_open',c=>{c.fillStyle='#d4b892';c.fillRect(0,0,T,T);c.fillStyle='#8a6a10';c.fillRect(3,5,10,7);c.fillStyle='#7a5a08';c.fillRect(3,3,10,3);c.fillStyle='#6a4a00';c.fillRect(3,5,10,1);c.fillStyle='#444';c.fillRect(5,7,6,3)});
+// === DS版DQ風 高品質ドットタイル ===
+mkTile('grass',c=>{
+c.fillStyle='#48a848';c.fillRect(0,0,T,T);
+c.fillStyle='#56bc56';c.fillRect(0,0,8,8);c.fillRect(8,8,8,8);
+c.fillStyle='#5cc85c';c.fillRect(2,2,4,3);c.fillRect(10,10,4,3);
+c.fillStyle='#3e943e';c.fillRect(6,12,3,1);c.fillRect(12,5,2,1);c.fillRect(1,8,2,1);
+c.fillStyle='#64d464';c.fillRect(4,4,1,1);c.fillRect(12,12,1,1);c.fillRect(8,1,1,1);
+c.fillStyle='#389038';c.fillRect(0,15,T,1);c.fillRect(7,7,2,1)});
+mkTile('sea',c=>{
+c.fillStyle='#1855c8';c.fillRect(0,0,T,T);
+c.fillStyle='#2065d5';c.fillRect(0,2,T,4);c.fillRect(0,10,T,4);
+c.fillStyle='#2878e8';c.fillRect(1,3,5,2);c.fillRect(9,11,5,2);
+c.fillStyle='#3890f8';c.fillRect(2,3,3,1);c.fillRect(10,11,3,1);
+c.fillStyle='#1048b0';c.fillRect(0,7,T,2);c.fillRect(0,15,T,1);
+c.fillStyle='rgba(255,255,255,0.12)';c.fillRect(3,4,2,1);c.fillRect(11,12,2,1)});
+mkTile('desert',c=>{
+c.fillStyle='#e0b838';c.fillRect(0,0,T,T);
+c.fillStyle='#d4a830';c.fillRect(0,0,8,8);c.fillRect(8,8,8,8);
+c.fillStyle='#ecc848';c.fillRect(3,3,3,2);c.fillRect(11,11,3,2);
+c.fillStyle='#c89820';c.fillRect(5,11,4,2);c.fillRect(11,3,3,2);
+c.fillStyle='#f0d060';c.fillRect(1,1,2,1);c.fillRect(13,9,2,1);
+c.fillStyle='#b88818';c.fillRect(8,6,1,1);c.fillRect(2,14,1,1)});
+mkTile('mountain',c=>{
+c.fillStyle='#48a848';c.fillRect(0,0,T,T);
+c.fillStyle='#8a5828';c.beginPath();c.moveTo(8,2);c.lineTo(14,13);c.lineTo(2,13);c.fill();
+c.fillStyle='#9c6830';c.fillRect(5,5,6,4);
+c.fillStyle='#ac7840';c.fillRect(6,5,4,2);
+c.fillStyle='#e8e8f0';c.beginPath();c.moveTo(8,2);c.lineTo(10,5);c.lineTo(6,5);c.fill();
+c.fillStyle='#c8d0e0';c.fillRect(7,3,2,1);
+c.fillStyle='#704020';c.fillRect(2,13,12,2);
+c.fillStyle='#604018';c.fillRect(3,14,10,1)});
+mkTile('forest',c=>{
+c.fillStyle='#48a848';c.fillRect(0,0,T,T);
+c.fillStyle='#1a6a22';c.beginPath();c.arc(8,5,6,0,Math.PI*2);c.fill();
+c.fillStyle='#28802c';c.beginPath();c.arc(5,4,3,0,Math.PI*2);c.fill();c.beginPath();c.arc(11,4,3,0,Math.PI*2);c.fill();
+c.fillStyle='#30903a';c.beginPath();c.arc(8,3,2.5,0,Math.PI*2);c.fill();
+c.fillStyle='#0c500e';c.beginPath();c.arc(8,7,2,0,Math.PI*2);c.fill();
+c.fillStyle='#7c4518';c.fillRect(7,10,2,6);
+c.fillStyle='#44a44a';c.fillRect(4,2,1,1);c.fillRect(10,2,1,1)});
+mkTile('wall',c=>{
+c.fillStyle='#787888';c.fillRect(0,0,T,T);
+c.fillStyle='#8c8c9c';c.fillRect(0,0,7,7);c.fillRect(8,8,8,7);
+c.fillStyle='#686878';c.fillRect(7,0,1,T);c.fillRect(0,7,T,1);
+c.fillStyle='#9898a8';c.fillRect(1,1,3,1);c.fillRect(9,9,3,1);
+c.fillStyle='#585868';c.fillRect(0,15,T,1);c.fillRect(15,0,1,T);
+c.fillStyle='#a0a0b0';c.fillRect(2,2,1,1);c.fillRect(11,10,1,1)});
+mkTile('floor',c=>{
+c.fillStyle='#d8bc98';c.fillRect(0,0,T,T);
+c.fillStyle='#ccb088';c.fillRect(0,0,8,8);c.fillRect(8,8,8,8);
+c.fillStyle='#e0c8a0';c.fillRect(2,2,4,4);c.fillRect(10,10,4,4);
+c.fillStyle='#c0a478';c.fillRect(7,0,1,T);c.fillRect(0,7,T,1);
+c.fillStyle='#b89868';c.fillRect(0,15,T,1);c.fillRect(15,0,1,T)});
+mkTile('town',c=>{
+c.fillStyle='#48a848';c.fillRect(0,0,T,T);
+c.fillStyle='#c83030';c.fillRect(3,5,10,10);
+c.fillStyle='#d84040';c.fillRect(4,6,8,8);
+c.fillStyle='#b02828';c.beginPath();c.moveTo(8,1);c.lineTo(14,5);c.lineTo(2,5);c.fill();
+c.fillStyle='#a02020';c.fillRect(7,2,2,1);
+c.fillStyle='#ffc800';c.fillRect(7,8,2,6);
+c.fillStyle='#4488ff';c.fillRect(5,7,2,2);c.fillRect(9,7,2,2);
+c.fillStyle='#60a8ff';c.fillRect(5,7,1,1);c.fillRect(9,7,1,1)});
+mkTile('cave',c=>{
+c.fillStyle='#48a848';c.fillRect(0,0,T,T);
+c.fillStyle='#606060';c.beginPath();c.arc(8,10,6,Math.PI,0);c.fill();c.fillRect(2,10,12,6);
+c.fillStyle='#404040';c.fillRect(3,9,10,1);
+c.fillStyle='#181818';c.beginPath();c.arc(8,10,4,Math.PI,0);c.fill();c.fillRect(4,10,8,6);
+c.fillStyle='#808080';c.fillRect(2,9,1,1);c.fillRect(13,9,1,1);
+c.fillStyle='#505050';c.fillRect(3,14,1,2);c.fillRect(12,14,1,2)});
+mkTile('castle',c=>{
+c.fillStyle='#48a848';c.fillRect(0,0,T,T);
+c.fillStyle='#e8e8e8';c.fillRect(3,5,10,11);
+c.fillStyle='#d8d8d8';c.fillRect(4,6,8,9);
+c.fillStyle='#c8c8c8';c.fillRect(2,1,3,6);c.fillRect(11,1,3,6);
+c.fillStyle='#e0e0e0';c.fillRect(3,0,1,2);c.fillRect(12,0,1,2);
+c.fillStyle='#8B4513';c.fillRect(6,9,4,7);c.fillStyle='#a05820';c.fillRect(7,9,2,1);
+c.fillStyle='#4050a0';c.fillRect(4,6,2,2);c.fillRect(10,6,2,2);
+c.fillStyle='#ffd700';c.fillRect(7,4,2,1);c.fillRect(3,0,1,1);c.fillRect(12,0,1,1)});
+mkTile('bridge',c=>{
+c.fillStyle='#1855c8';c.fillRect(0,0,T,T);
+c.fillStyle='#a86830';c.fillRect(2,0,12,T);
+c.fillStyle='#904818';c.fillRect(2,0,1,T);c.fillRect(13,0,1,T);
+c.fillStyle='#c08040';c.fillRect(4,0,2,T);c.fillRect(10,0,2,T);
+c.fillStyle='#785020';c.fillRect(3,3,10,1);c.fillRect(3,7,10,1);c.fillRect(3,11,10,1);
+c.fillStyle='#b87838';c.fillRect(5,1,6,1);c.fillRect(5,5,6,1);c.fillRect(5,9,6,1)});
+mkTile('stairs_up',c=>{
+c.fillStyle='#d8bc98';c.fillRect(0,0,T,T);
+for(let i=0;i<5;i++){c.fillStyle=['#b08050','#a87048','#9c6840','#906038','#885830'][i];c.fillRect(1+i*2,i*3,T-2-i*4,2);c.fillStyle=['#c89868','#c09060','#b88858','#b08050','#a87848'][i];c.fillRect(1+i*2,i*3,T-2-i*4,1)}});
+mkTile('stairs_down',c=>{
+c.fillStyle='#d8bc98';c.fillRect(0,0,T,T);
+for(let i=0;i<5;i++){c.fillStyle=['#505050','#484848','#404040','#383838','#303030'][i];c.fillRect(1+i*2,i*3,T-2-i*4,2);c.fillStyle=['#606060','#585858','#505050','#484848','#404040'][i];c.fillRect(1+i*2,i*3,T-2-i*4,1)}});
+mkTile('swamp',c=>{
+c.fillStyle='#386828';c.fillRect(0,0,T,T);
+c.fillStyle='#487830';c.fillRect(0,0,8,8);c.fillRect(8,8,8,8);
+c.fillStyle='#2c581c';c.fillRect(2,10,4,3);c.fillRect(10,4,4,3);
+c.fillStyle='#684868';c.fillRect(4,4,3,3);c.fillRect(10,10,3,3);
+c.fillStyle='#583858';c.fillRect(5,5,1,1);c.fillRect(11,11,1,1);
+c.fillStyle='#507038';c.fillRect(7,1,2,1);c.fillRect(1,7,2,1)});
+mkTile('tower',c=>{
+c.fillStyle='#48a848';c.fillRect(0,0,T,T);
+c.fillStyle='#a0a0a8';c.fillRect(4,3,8,13);
+c.fillStyle='#b0b0b8';c.fillRect(5,4,6,11);
+c.fillStyle='#909098';c.fillRect(4,0,2,5);c.fillRect(10,0,2,5);
+c.fillStyle='#b8b8c0';c.fillRect(5,0,1,1);c.fillRect(11,0,1,1);
+c.fillStyle='#484850';c.fillRect(6,10,4,6);
+c.fillStyle='#4050a0';c.fillRect(6,5,2,2);c.fillRect(8,5,2,2);
+c.fillStyle='#c0c0c8';c.fillRect(6,4,4,1);
+c.fillStyle='#808088';c.fillRect(4,14,1,2);c.fillRect(11,14,1,2)});
+mkTile('chest',c=>{
+c.fillStyle='#d8bc98';c.fillRect(0,0,T,T);
+c.fillStyle='#d8a020';c.fillRect(3,5,10,7);
+c.fillStyle='#e8b830';c.fillRect(4,5,8,2);
+c.fillStyle='#c89018';c.fillRect(3,7,10,1);
+c.fillStyle='#f0d848';c.fillRect(7,5,2,2);
+c.fillStyle='#fff';c.fillRect(7,8,2,2);c.fillStyle='#e0e0e0';c.fillRect(8,9,1,1);
+c.fillStyle='#a07010';c.fillRect(3,5,1,7);c.fillRect(12,5,1,7);
+c.fillStyle='#b88018';c.fillRect(3,11,10,1)});
+mkTile('chest_open',c=>{
+c.fillStyle='#d8bc98';c.fillRect(0,0,T,T);
+c.fillStyle='#907020';c.fillRect(3,5,10,7);
+c.fillStyle='#806018';c.fillRect(3,3,10,3);
+c.fillStyle='#705010';c.fillRect(3,5,10,1);
+c.fillStyle='#383838';c.fillRect(5,7,6,3);
+c.fillStyle='#282828';c.fillRect(6,8,4,2)});
+// === DS版DQ風キャラスプライト ===
 // ローレシアの王子: 青い鎧、紫の兜、剣
 ['down','up','left','right'].forEach(dir=>{mkTile('hero_'+dir,c=>{
-// 兜(紫)
-c.fillStyle='#60c';c.fillRect(5,0,6,3);c.fillRect(4,1,1,2);c.fillRect(11,1,1,2);
-// 顔(肌色)
-c.fillStyle='#fdb';c.fillRect(5,3,6,3);
+// 兜(紫+金飾り)
+c.fillStyle='#7030c0';c.fillRect(5,0,6,3);c.fillRect(4,1,1,2);c.fillRect(11,1,1,2);
+c.fillStyle='#8848d0';c.fillRect(6,0,4,1);
+c.fillStyle='#ffd700';c.fillRect(7,1,2,1);
+// 顔(肌色+陰影)
+c.fillStyle='#fdc8a8';c.fillRect(5,3,6,3);
+c.fillStyle='#f0b090';c.fillRect(5,5,6,1);
 // 目
-c.fillStyle='#000';
-if(dir==='down'){c.fillRect(6,4,1,1);c.fillRect(9,4,1,1)}
-else if(dir==='left'){c.fillRect(5,4,1,1)}
-else if(dir==='right'){c.fillRect(10,4,1,1)}
-// 鎧(青)
-c.fillStyle='#22f';c.fillRect(4,6,8,5);
-// 鎧のライン
-c.fillStyle='#55f';c.fillRect(7,7,2,3);
+if(dir==='down'){c.fillStyle='#203060';c.fillRect(6,4,1,1);c.fillRect(9,4,1,1);c.fillStyle='#fff';c.fillRect(6,3,1,1);c.fillRect(9,3,1,1)}
+else if(dir==='left'){c.fillStyle='#203060';c.fillRect(5,4,1,1)}
+else if(dir==='right'){c.fillStyle='#203060';c.fillRect(10,4,1,1)}
+else{c.fillStyle='#530';c.fillRect(5,3,6,1)}
+// 鎧(青+ハイライト)
+c.fillStyle='#2040d0';c.fillRect(4,6,8,5);
+c.fillStyle='#3060e0';c.fillRect(5,6,6,1);
+c.fillStyle='#4878f0';c.fillRect(7,7,2,2);
+c.fillStyle='#1830a0';c.fillRect(4,10,8,1);
 // 腕
-c.fillStyle='#22f';c.fillRect(3,7,1,4);c.fillRect(12,7,1,4);
+c.fillStyle='#2040d0';c.fillRect(3,7,1,4);c.fillRect(12,7,1,4);
+c.fillStyle='#3060e0';c.fillRect(3,7,1,1);c.fillRect(12,7,1,1);
 // 剣(右手)
-if(dir!=='up'){c.fillStyle='#ccc';c.fillRect(13,5,1,5);c.fillStyle='#daa520';c.fillRect(12,9,3,1)}
+if(dir!=='up'){c.fillStyle='#d0d8e0';c.fillRect(13,4,1,6);c.fillStyle='#e8e8f0';c.fillRect(13,4,1,3);c.fillStyle='#daa520';c.fillRect(12,9,3,1);c.fillStyle='#ffd700';c.fillRect(13,9,1,1)}
 // 足
-c.fillStyle='#a52';c.fillRect(5,11,2,3);c.fillRect(9,11,2,3);
-// ブーツ
-c.fillStyle='#630';c.fillRect(5,13,2,2);c.fillRect(9,13,2,2);
+c.fillStyle='#a05828';c.fillRect(5,11,2,3);c.fillRect(9,11,2,3);
+c.fillStyle='#784018';c.fillRect(5,13,2,2);c.fillRect(9,13,2,2);
+c.fillStyle='#906020';c.fillRect(5,11,2,1);c.fillRect(9,11,2,1);
 })});
 // サマルトリアの王子: 緑のローブ、黄色い帽子
 ['down','up','left','right'].forEach(dir=>{mkTile('prince_'+dir,c=>{
-// 帽子(黄)
-c.fillStyle='#ec0';c.fillRect(5,0,6,2);c.fillRect(4,1,8,1);
+// 帽子(黄+オレンジ飾り)
+c.fillStyle='#f0c800';c.fillRect(5,0,6,2);c.fillRect(4,1,8,1);
+c.fillStyle='#f8d830';c.fillRect(6,0,4,1);
+c.fillStyle='#e0a000';c.fillRect(4,1,1,1);c.fillRect(11,1,1,1);
 // 髪
-c.fillStyle='#530';c.fillRect(5,2,6,1);
+c.fillStyle='#604020';c.fillRect(5,2,6,1);c.fillRect(4,2,1,2);c.fillRect(11,2,1,2);
 // 顔
-c.fillStyle='#fdb';c.fillRect(5,3,6,3);
-c.fillStyle='#000';
-if(dir==='down'){c.fillRect(6,4,1,1);c.fillRect(9,4,1,1)}
-else if(dir==='left'){c.fillRect(5,4,1,1)}
-else if(dir==='right'){c.fillRect(10,4,1,1)}
-// ローブ(緑)
-c.fillStyle='#0a0';c.fillRect(4,6,8,5);
-c.fillStyle='#0c0';c.fillRect(6,6,4,1);
+c.fillStyle='#fdc8a8';c.fillRect(5,3,6,3);
+c.fillStyle='#f0b090';c.fillRect(5,5,6,1);
+if(dir==='down'){c.fillStyle='#203060';c.fillRect(6,4,1,1);c.fillRect(9,4,1,1);c.fillStyle='#fff';c.fillRect(6,3,1,1);c.fillRect(9,3,1,1)}
+else if(dir==='left'){c.fillStyle='#203060';c.fillRect(5,4,1,1)}
+else if(dir==='right'){c.fillStyle='#203060';c.fillRect(10,4,1,1)}
+else{c.fillStyle='#604020';c.fillRect(5,3,6,1)}
+// ローブ(緑+ハイライト)
+c.fillStyle='#20a030';c.fillRect(4,6,8,5);
+c.fillStyle='#30b840';c.fillRect(5,6,6,1);
+c.fillStyle='#40c850';c.fillRect(6,7,4,1);
+c.fillStyle='#188828';c.fillRect(4,10,8,1);
 // 腕
-c.fillStyle='#0a0';c.fillRect(3,7,1,3);c.fillRect(12,7,1,3);
+c.fillStyle='#20a030';c.fillRect(3,7,1,3);c.fillRect(12,7,1,3);
 // 杖
-if(dir!=='up'){c.fillStyle='#a52';c.fillRect(13,3,1,8);c.fillStyle='#0ff';c.fillRect(13,2,1,1)}
+if(dir!=='up'){c.fillStyle='#906030';c.fillRect(13,3,1,8);c.fillStyle='#784818';c.fillRect(13,6,1,1);c.fillStyle='#00e8e8';c.fillRect(13,2,1,1);c.fillStyle='#80f0f0';c.fillRect(13,1,1,1)}
 // 足
-c.fillStyle='#0a0';c.fillRect(5,11,2,3);c.fillRect(9,11,2,3);
-c.fillStyle='#850';c.fillRect(5,13,2,2);c.fillRect(9,13,2,2);
+c.fillStyle='#20a030';c.fillRect(5,11,2,2);c.fillRect(9,11,2,2);
+c.fillStyle='#885020';c.fillRect(5,13,2,2);c.fillRect(9,13,2,2);
+c.fillStyle='#784018';c.fillRect(5,14,2,1);c.fillRect(9,14,1,1);
 })});
-// ムーンブルクの王女: ピンクのローブ、長い髪
+// ムーンブルクの王女: ピンクのローブ、長い紫髪
 ['down','up','left','right'].forEach(dir=>{mkTile('princess_'+dir,c=>{
-// 髪(青紫)
-c.fillStyle='#40a';c.fillRect(4,0,8,6);c.fillRect(3,2,1,8);c.fillRect(12,2,1,8);
+// 髪(紫+ハイライト)
+c.fillStyle='#4818a0';c.fillRect(4,0,8,6);c.fillRect(3,2,1,8);c.fillRect(12,2,1,8);
+c.fillStyle='#5828b0';c.fillRect(5,0,6,1);
+c.fillStyle='#381080';c.fillRect(3,8,1,2);c.fillRect(12,8,1,2);
 // 顔
-c.fillStyle='#fdb';c.fillRect(5,2,6,4);
-c.fillStyle='#000';
-if(dir==='down'){c.fillRect(6,3,1,1);c.fillRect(9,3,1,1);c.fillStyle='#f66';c.fillRect(7,5,2,1)}
-else if(dir==='left'){c.fillRect(5,3,1,1)}
-else if(dir==='right'){c.fillRect(10,3,1,1)}
-// ローブ(ピンク)
-c.fillStyle='#f6a';c.fillRect(4,6,8,5);
-c.fillStyle='#f8c';c.fillRect(6,7,4,1);
+c.fillStyle='#fdc8a8';c.fillRect(5,2,6,4);
+c.fillStyle='#f0b090';c.fillRect(5,5,6,1);
+if(dir==='down'){c.fillStyle='#203060';c.fillRect(6,3,1,1);c.fillRect(9,3,1,1);c.fillStyle='#fff';c.fillRect(6,2,1,1);c.fillRect(9,2,1,1);c.fillStyle='#f06080';c.fillRect(7,5,2,1)}
+else if(dir==='left'){c.fillStyle='#203060';c.fillRect(5,3,1,1)}
+else if(dir==='right'){c.fillStyle='#203060';c.fillRect(10,3,1,1)}
+else{c.fillStyle='#4818a0';c.fillRect(5,2,6,1)}
+// ローブ(ピンク+ハイライト)
+c.fillStyle='#e85898';c.fillRect(4,6,8,5);
+c.fillStyle='#f070a8';c.fillRect(5,6,6,1);
+c.fillStyle='#f888b8';c.fillRect(6,7,4,1);
+c.fillStyle='#d04880';c.fillRect(4,10,8,1);
 // 腕
-c.fillStyle='#f6a';c.fillRect(3,7,1,3);c.fillRect(12,7,1,3);
-// スカート
-c.fillStyle='#f6a';c.fillRect(4,11,8,3);
-c.fillStyle='#d48';c.fillRect(4,13,8,1);
+c.fillStyle='#e85898';c.fillRect(3,7,1,3);c.fillRect(12,7,1,3);
+// スカート(グラデーション)
+c.fillStyle='#e85898';c.fillRect(4,11,8,3);
+c.fillStyle='#d04880';c.fillRect(4,13,8,1);
+c.fillStyle='#f070a8';c.fillRect(5,11,6,1);
 // 足
-c.fillStyle='#f8c';c.fillRect(5,14,2,1);c.fillRect(9,14,2,1);
+c.fillStyle='#f888b8';c.fillRect(5,14,2,1);c.fillRect(9,14,2,1);
+c.fillStyle='#d04880';c.fillRect(6,14,1,1);c.fillRect(10,14,1,1);
 })});
 }
 initTiles();
@@ -244,10 +369,66 @@ ranger:{id:11,name:'レンジャー',statMod:{str:1.0,agi:1.2,maxHp:1.0,maxMp:0.
 superstar:{id:12,name:'スーパースター',statMod:{str:0.9,agi:1.1,maxHp:0.9,maxMp:1.2},skills:[[2,'starlight'],[4,'grandbocce'],[6,'hussledance2'],[8,'moonlight']],req:{dancer:8,mage:8}},
 hero_job:{id:13,name:'勇者',statMod:{str:1.3,agi:1.2,maxHp:1.3,maxMp:1.3},skills:[[2,'gigaslash2'],[4,'jigopark'],[6,'grandcross'],[8,'madante2']],req:{battlemaster:8,sage:8}}};
 const JOB_KEYS=Object.keys(JOBS);
-const WEAPONS=[{id:0,name:'ひのきのぼう',atk:2,price:10,who:[0,1]},{id:1,name:'どうのつるぎ',atk:10,price:100,who:[0,1]},{id:2,name:'はがねのつるぎ',atk:25,price:500,who:[0,1]},{id:3,name:'はやぶさのけん',atk:35,price:0,who:[0],hits:2},{id:4,name:'いなずまのけん',atk:45,price:0,who:[0]},{id:5,name:'ロトのつるぎ',atk:60,price:0,who:[0]},{id:6,name:'てつのやり',atk:20,price:300,who:[1]},{id:7,name:'まどうしのつえ',atk:8,price:200,who:[2]},{id:8,name:'ちからのつえ',atk:15,price:0,who:[2]}];
-const ARMORS=[{id:0,name:'ぬののふく',def:2,price:30,who:[0,1,2]},{id:1,name:'かわのよろい',def:8,price:80,who:[0,1]},{id:2,name:'くさりかたびら',def:16,price:300,who:[0,1]},{id:3,name:'はがねのよろい',def:25,price:700,who:[0]},{id:4,name:'みずのはごろも',def:35,price:0,who:[0,1,2]},{id:5,name:'ロトのよろい',def:50,price:0,who:[0]}];
-const SHIELDS=[{id:0,name:'かわのたて',def:4,price:60,who:[0,1]},{id:1,name:'てつのたて',def:10,price:250,who:[0,1]},{id:2,name:'ちからのたて',def:18,price:0,who:[0]},{id:3,name:'ロトのたて',def:30,price:0,who:[0]}];
-const HELMETS=[{id:0,name:'かわのぼうし',def:2,price:40,who:[0,1,2]},{id:1,name:'てつかぶと',def:6,price:200,who:[0,1]},{id:2,name:'ロトのかぶと',def:20,price:0,who:[0]}];
+const WEAPONS=[
+{id:0,name:'ひのきのぼう',atk:2,price:10,who:[0,1]},
+{id:1,name:'どうのつるぎ',atk:10,price:100,who:[0,1]},
+{id:2,name:'はがねのつるぎ',atk:25,price:500,who:[0,1]},
+{id:3,name:'はやぶさのけん',atk:30,price:0,who:[0],hits:2},
+{id:4,name:'いなずまのけん',atk:45,price:3500,who:[0]},
+{id:5,name:'ロトのつるぎ',atk:60,price:0,who:[0]},
+{id:6,name:'てつのやり',atk:20,price:300,who:[1]},
+{id:7,name:'まどうしのつえ',atk:8,price:200,who:[2]},
+{id:8,name:'ちからのつえ',atk:15,price:0,who:[2]},
+{id:9,name:'おおかなづち',atk:15,price:250,who:[0]},
+{id:10,name:'まどろみのけん',atk:32,price:1200,who:[0,1]},
+{id:11,name:'ほのおのつるぎ',atk:52,price:4200,who:[0]},
+{id:12,name:'きせきのつるぎ',atk:55,price:0,who:[0]},
+{id:13,name:'ラミアスのつるぎ',atk:70,price:0,who:[0]},
+{id:14,name:'おうじゃのけん',atk:80,price:0,who:[0]},
+{id:15,name:'てつのつえ',atk:12,price:150,who:[1,2]},
+{id:16,name:'ゆうわくのけん',atk:38,price:1800,who:[0,1]},
+{id:17,name:'いかずちのつえ',atk:28,price:0,who:[2]},
+{id:18,name:'ふぶきのつるぎ',atk:58,price:0,who:[0]},
+{id:19,name:'もろはのつるぎ',atk:75,price:0,who:[0]},
+{id:20,name:'グリンガムのムチ',atk:65,price:0,who:[2]},
+{id:21,name:'ドラゴンキラー',atk:42,price:2800,who:[0]},
+{id:22,name:'はかいのつるぎ',atk:90,price:0,who:[0]},
+{id:23,name:'ゾンビキラー',atk:35,price:1500,who:[0,1]}];
+const ARMORS=[
+{id:0,name:'ぬののふく',def:2,price:30,who:[0,1,2]},
+{id:1,name:'かわのよろい',def:8,price:80,who:[0,1]},
+{id:2,name:'くさりかたびら',def:16,price:300,who:[0,1]},
+{id:3,name:'はがねのよろい',def:25,price:700,who:[0]},
+{id:4,name:'みずのはごろも',def:35,price:3000,who:[0,1,2]},
+{id:5,name:'ロトのよろい',def:50,price:0,who:[0]},
+{id:6,name:'まほうのよろい',def:30,price:1500,who:[0,1]},
+{id:7,name:'ドラゴンメイル',def:40,price:2500,who:[0]},
+{id:8,name:'しんぴのよろい',def:45,price:0,who:[0,1]},
+{id:9,name:'おうじゃのマント',def:55,price:0,who:[0]},
+{id:10,name:'てんしのレオタード',def:38,price:0,who:[2]},
+{id:11,name:'ひかりのドレス',def:42,price:0,who:[2]},
+{id:12,name:'ギガントアーマー',def:60,price:0,who:[0]},
+{id:13,name:'まほうのほうい',def:20,price:800,who:[1,2]},
+{id:14,name:'みかがみのよろい',def:48,price:0,who:[0]}];
+const SHIELDS=[
+{id:0,name:'かわのたて',def:4,price:60,who:[0,1]},
+{id:1,name:'てつのたて',def:10,price:250,who:[0,1]},
+{id:2,name:'ちからのたて',def:18,price:0,who:[0]},
+{id:3,name:'ロトのたて',def:30,price:0,who:[0]},
+{id:4,name:'まほうのたて',def:14,price:500,who:[0,1]},
+{id:5,name:'ドラゴンシールド',def:22,price:1200,who:[0]},
+{id:6,name:'おうじゃのたて',def:35,price:0,who:[0]},
+{id:7,name:'みかがみのたて',def:28,price:0,who:[0,1]},
+{id:8,name:'ふうじんのたて',def:20,price:800,who:[0,1]}];
+const HELMETS=[
+{id:0,name:'かわのぼうし',def:2,price:40,who:[0,1,2]},
+{id:1,name:'てつかぶと',def:6,price:200,who:[0,1]},
+{id:2,name:'ロトのかぶと',def:20,price:0,who:[0]},
+{id:3,name:'てっかめん',def:10,price:400,who:[0]},
+{id:4,name:'おうごんのティアラ',def:12,price:0,who:[2]},
+{id:5,name:'グレートヘルム',def:16,price:800,who:[0]},
+{id:6,name:'おうじゃのかんむり',def:25,price:0,who:[0]},
+{id:7,name:'しあわせのぼうし',def:8,price:600,who:[0,1,2]}];
 const ITEMS=[{id:0,name:'やくそう',type:'heal',power:30,price:8},{id:1,name:'どくけしそう',type:'cure',cure:'poison',price:10},{id:2,name:'キメラのつばさ',type:'field',effect:'ruura',price:25},{id:3,name:'せかいじゅのは',type:'revive',power:999,price:0},{id:4,name:'ぎんのカギ',type:'key',price:0},{id:5,name:'きんのカギ',type:'key',price:0},{id:6,name:'ろうやのカギ',type:'key',price:0},{id:7,name:'ふねのきっぷ',type:'key',price:0},{id:8,name:'ラーのかがみ',type:'story',price:0},{id:9,name:'つきのかけら',type:'story',price:0},{id:10,name:'いのちのきのみ',type:'stat',stat:'maxHp',value:5,price:0},{id:11,name:'ふしぎなきのみ',type:'stat',stat:'maxMp',value:5,price:0}];
 const HERO_LV=[[0,20,0,8,5,[]],[4,40,0,14,9,[]],[27,56,2,20,12,[]],[82,71,3,25,16,[]],[178,85,4,30,19,['gira']],[324,98,6,35,22,[]],[531,111,7,40,26,['begirama']],[804,124,8,44,29,[]],[1154,136,10,49,32,['ionazun']],[1585,149,11,54,36,[]],[2107,161,13,58,39,[]],[2726,173,14,63,42,['baikiruto']],[3447,184,16,67,45,[]],[4279,196,18,72,48,[]],[5227,207,19,76,51,[]],[6297,219,21,80,55,[]],[7496,230,23,85,58,[]],[8829,241,24,89,61,[]],[10302,252,26,93,64,[]],[11921,263,28,98,67,[]],[13692,274,30,102,70,[]],[15620,284,31,106,73,[]],[17711,295,33,110,76,[]],[19969,306,35,114,79,[]],[22401,316,37,119,83,[]],[25011,327,39,123,86,[]],[27805,337,41,127,89,[]],[30787,347,43,131,92,[]],[33964,358,44,135,95,[]],[37339,368,46,139,98,[]],[40918,378,48,143,101,[]],[44706,388,50,147,104,[]],[48707,398,52,151,107,[]],[52927,408,54,155,110,[]],[57370,418,56,159,113,[]],[62040,428,58,163,116,[]],[66943,438,60,167,119,[]],[72083,448,62,171,122,[]],[77465,458,64,175,125,[]],[83093,467,66,179,128,[]],[88972,477,68,183,131,[]],[95106,487,70,187,134,[]],[101499,496,72,191,137,[]],[108157,506,74,195,140,[]],[115083,516,77,199,143,[]],[122282,525,79,203,146,[]],[129758,535,81,206,149,[]],[137516,544,83,210,152,[]],[145560,554,85,214,155,[]],[153893,563,87,218,158,[]],[162521,573,89,222,161,[]],[171447,582,91,226,164,[]],[180675,591,93,230,167,[]],[190210,601,96,233,170,[]],[200057,610,98,237,172,[]],[210217,619,100,241,175,[]],[220697,628,102,245,178,[]],[231500,638,104,249,181,[]],[242630,647,107,252,184,[]],[254091,656,109,256,187,[]],[265888,665,111,260,190,[]],[278023,674,113,264,193,[]],[290501,683,115,268,196,[]],[303326,692,118,271,199,[]],[316501,702,120,275,202,[]],[330032,711,122,279,205,[]],[343921,720,124,283,208,[]],[358172,729,127,286,211,[]],[372789,738,129,290,213,[]],[387777,747,131,294,216,[]],[403139,755,134,298,219,[]],[418878,764,136,301,222,[]],[434998,773,138,305,225,[]],[451504,782,140,309,228,[]],[468398,791,143,312,231,[]],[485685,800,145,316,234,[]],[503369,809,147,320,237,[]],[521452,818,150,324,240,[]],[539939,826,152,327,242,[]],[558834,835,154,331,245,[]],[578139,844,157,335,248,[]],[597860,853,159,338,251,[]],[617998,861,161,342,254,[]],[638558,870,164,346,257,[]],[659544,879,166,349,260,[]],[680959,887,169,353,263,[]],[702806,896,171,357,266,[]],[725089,905,173,360,268,[]],[747813,913,176,364,271,[]],[770979,922,178,367,274,[]],[794592,931,181,371,277,[]],[818656,939,183,375,280,[]],[843173,948,185,378,283,[]],[868148,956,188,382,286,[]],[893583,965,190,386,289,[]],[919482,973,193,389,291,[]],[945849,982,195,393,294,[]],[972687,991,198,396,297,[]],[1000000,999,200,400,300,[]]];
 const PRINCE_LV=[[0,18,8,6,6,['hoimi']],[4,34,16,12,11,[]],[27,47,23,16,15,['gira']],[82,58,29,21,20,[]],[178,70,36,25,24,['behoimi','sukuruto']],[324,80,42,30,28,[]],[531,91,48,34,31,['begirama']],[804,101,54,38,35,['zaoriku']],[1154,111,60,42,39,[]],[1585,121,65,46,43,[]],[2107,130,71,50,46,[]],[2726,140,77,54,50,[]],[3447,149,82,58,53,[]],[4279,158,88,62,57,[]],[5227,168,93,66,60,[]],[6297,177,99,70,64,[]],[7496,186,104,73,67,[]],[8829,194,110,77,71,[]],[10302,203,115,81,74,[]],[11921,212,120,85,78,[]],[13692,221,126,88,81,[]],[15620,229,131,92,84,[]],[17711,238,136,96,88,[]],[19969,246,141,99,91,[]],[22401,255,147,103,95,[]],[25011,263,152,107,98,[]],[27805,271,157,110,101,[]],[30787,279,162,114,104,[]],[33964,288,167,117,108,[]],[37339,296,172,121,111,[]],[40918,304,178,125,114,[]],[44706,312,183,128,117,[]],[48707,320,188,132,121,[]],[52927,328,193,135,124,[]],[57370,336,198,139,127,[]],[62040,344,203,142,130,[]],[66943,352,208,146,133,[]],[72083,360,213,149,137,[]],[77465,368,218,153,140,[]],[83093,375,223,156,143,[]],[88972,383,228,160,146,[]],[95106,391,233,163,149,[]],[101499,399,238,166,152,[]],[108157,406,242,170,156,[]],[115083,414,247,173,159,[]],[122282,422,252,177,162,[]],[129758,429,257,180,165,[]],[137516,437,262,184,168,[]],[145560,444,267,187,171,[]],[153893,452,272,190,174,[]],[162521,459,276,194,177,[]],[171447,467,281,197,180,[]],[180675,474,286,200,184,[]],[190210,482,291,204,187,[]],[200057,489,296,207,190,[]],[210217,497,301,211,193,[]],[220697,504,305,214,196,[]],[231500,511,310,217,199,[]],[242630,519,315,221,202,[]],[254091,526,320,224,205,[]],[265888,533,324,227,208,[]],[278023,541,329,231,211,[]],[290501,548,334,234,214,[]],[303326,555,339,237,217,[]],[316501,562,343,240,220,[]],[330032,570,348,244,223,[]],[343921,577,353,247,226,[]],[358172,584,357,250,229,[]],[372789,591,362,254,232,[]],[387777,598,367,257,235,[]],[403139,605,371,260,238,[]],[418878,613,376,263,241,[]],[434998,620,381,267,244,[]],[451504,627,385,270,247,[]],[468398,634,390,273,250,[]],[485685,641,395,276,253,[]],[503369,648,399,280,256,[]],[521452,655,404,283,259,[]],[539939,662,409,286,262,[]],[558834,669,413,289,265,[]],[578139,676,418,293,268,[]],[597860,683,422,296,271,[]],[617998,690,427,299,273,[]],[638558,697,432,302,276,[]],[659544,704,436,305,279,[]],[680959,711,441,309,282,[]],[702806,718,445,312,285,[]],[725089,725,450,315,288,[]],[747813,732,455,318,291,[]],[770979,739,459,321,294,[]],[794592,745,464,325,297,[]],[818656,752,468,328,300,[]],[843173,759,473,331,303,[]],[868148,766,477,334,306,[]],[893583,773,482,337,308,[]],[919482,780,486,341,311,[]],[945849,786,491,344,314,[]],[972687,793,495,347,317,[]],[1000000,800,500,350,320,[]]];
@@ -260,13 +441,13 @@ const MONSTERS=[
 // Zone 1: サマルトリア～ムーンペタ
 {name:'ドラキー',hp:12,mp:0,atk:9,def:5,agi:6,exp:3,gold:3,spells:[],zone:[0,1]},
 {name:'バブルスライム',hp:18,mp:0,atk:14,def:6,agi:4,exp:6,gold:6,spells:[],zone:[1]},
-{name:'マンドリル',hp:35,mp:0,atk:28,def:15,agi:10,exp:14,gold:18,spells:[],zone:[1,2]},
-{name:'リビングデッド',hp:30,mp:0,atk:22,def:12,agi:6,exp:10,gold:14,spells:[],zone:[1]},
+{name:'マンドリル',hp:28,mp:0,atk:18,def:10,agi:8,exp:10,gold:12,spells:[],zone:[1]},
+{name:'リビングデッド',hp:25,mp:0,atk:19,def:10,agi:5,exp:10,gold:14,spells:[],zone:[1]},
 {name:'まじゅつし',hp:25,mp:10,atk:16,def:10,agi:14,exp:12,gold:16,spells:['gira'],zone:[1]},
 // Zone 2: ロンダルキアへの洞窟
 {name:'バピラス',hp:40,mp:8,atk:32,def:20,agi:14,exp:18,gold:22,spells:['rariho'],zone:[2]},
-{name:'ドラゴン',hp:70,mp:0,atk:45,def:35,agi:16,exp:30,gold:40,spells:['gira'],zone:[2]},
-{name:'キラーマシン',hp:120,mp:0,atk:55,def:80,agi:25,exp:65,gold:50,spells:[],zone:[2,3]},
+{name:'ドラゴン',hp:60,mp:0,atk:38,def:30,agi:14,exp:30,gold:40,spells:['gira'],zone:[2]},
+{name:'キラーマシン',hp:100,mp:0,atk:50,def:60,agi:25,exp:65,gold:50,spells:[],zone:[2,3]},
 {name:'フレイム',hp:50,mp:8,atk:38,def:25,agi:20,exp:25,gold:30,spells:['gira'],zone:[2]},
 {name:'はぐれメタル',hp:5,mp:99,atk:10,def:250,agi:200,exp:1050,gold:10,spells:[],zone:[2,3],flee:0.5},
 // Zone 3: ハーゴン神殿
@@ -334,7 +515,7 @@ function kh(c){return G.keys[c]}
 const cv=document.getElementById('cv'),ctx=cv.getContext('2d');ctx.imageSmoothingEnabled=false;ctx.scale(3,3);
 function dt(t,x,y,s=8,c='#fff'){ctx.font=s+'px monospace';ctx.textAlign='left';ctx.fillStyle='rgba(0,0,0,0.7)';ctx.fillText(t,x+.5,y+.5);ctx.fillStyle=c;ctx.fillText(t,x,y)}
 function dtc(t,x,y,s=8,c='#fff'){ctx.font=s+'px monospace';ctx.textAlign='center';ctx.fillStyle='rgba(0,0,0,0.7)';ctx.fillText(t,x+.5,y+.5);ctx.fillStyle=c;ctx.fillText(t,x,y)}
-function dw(x,y,w,h){ctx.fillStyle='rgba(8,8,40,0.92)';ctx.fillRect(x,y,w,h);ctx.strokeStyle='#48f';ctx.lineWidth=1;ctx.strokeRect(x+.5,y+.5,w-1,h-1);ctx.strokeStyle='rgba(100,160,255,0.4)';ctx.strokeRect(x+1.5,y+1.5,w-3,h-3);ctx.fillStyle='rgba(100,180,255,0.15)';ctx.fillRect(x+2,y+2,w-4,1)}
+function dw(x,y,w,h){const r=3;ctx.fillStyle='rgba(0,0,24,0.93)';ctx.beginPath();ctx.moveTo(x+r,y);ctx.lineTo(x+w-r,y);ctx.quadraticCurveTo(x+w,y,x+w,y+r);ctx.lineTo(x+w,y+h-r);ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);ctx.lineTo(x+r,y+h);ctx.quadraticCurveTo(x,y+h,x,y+h-r);ctx.lineTo(x,y+r);ctx.quadraticCurveTo(x,y,x+r,y);ctx.fill();const grd=ctx.createLinearGradient(x,y,x,y+h);grd.addColorStop(0,'rgba(80,140,255,0.25)');grd.addColorStop(1,'rgba(20,40,100,0.1)');ctx.fillStyle=grd;ctx.fill();ctx.strokeStyle='#5af';ctx.lineWidth=1.5;ctx.stroke();ctx.strokeStyle='rgba(180,210,255,0.3)';ctx.lineWidth=0.5;ctx.beginPath();ctx.moveTo(x+r+1,y+1.5);ctx.lineTo(x+w-r-1,y+1.5);ctx.stroke()}
 function dc(x,y){const a=.6+.4*Math.sin(G.frame*.15);ctx.fillStyle=`rgba(255,215,0,${a})`;ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x+6,y+4);ctx.lineTo(x,y+8);ctx.fill()}
 function drawBar(x,y,w,h,ratio,c1,c2){ctx.fillStyle='rgba(0,0,0,0.5)';ctx.fillRect(x,y,w,h);const fw=Math.max(0,Math.floor(w*Math.min(1,ratio)));ctx.fillStyle=c1;ctx.fillRect(x,y,fw,h);ctx.fillStyle=c2;ctx.fillRect(x,y,fw,Math.floor(h/2));ctx.strokeStyle='rgba(255,255,255,0.2)';ctx.lineWidth=.5;ctx.strokeRect(x,y,w,h)}
 function showMsg(t,cb){G.msgQ.push({t,cb});if(!G.msgT)nxtMsg()}
@@ -405,7 +586,7 @@ m[8][3]=6;m[8][13]=6;
 m[14][8]=6;m[15][8]=6;
 return m}
 function drawMap(){const map=G.mapId==='world'?worldMap:G.maps[G.mapId].data;const mw=G.mapId==='world'?WORLD_W:G.maps[G.mapId].w;const mh=G.mapId==='world'?WORLD_H:G.maps[G.mapId].h;G.cam.x=Math.max(0,Math.min(G.px-Math.floor(COLS/2),mw-COLS));G.cam.y=Math.max(0,Math.min(G.py-Math.floor(ROWS/2),mh-ROWS));for(let sy=0;sy<ROWS+1;sy++)for(let sx=0;sx<COLS+1;sx++){const mx=G.cam.x+sx,my=G.cam.y+sy;if(mx<0||mx>=mw||my<0||my>=mh)continue;const tid=map[my][mx];let tn=G.mapId==='world'?(TILE_NAMES[tid]||'grass'):(INDOOR[tid]||'floor');if(TL[tn])ctx.drawImage(TL[tn],(mx-G.cam.x)*T,(my-G.cam.y)*T)}}
-function drawPlayer(){const ds=['down','up','left','right'];const sx=(G.px-G.cam.x)*T,sy=(G.py-G.cam.y)*T;if(G.onShip&&G.mapId==='world'){ctx.fillStyle='#8B4513';ctx.fillRect(sx+1,sy+4,14,10);ctx.fillStyle='#daa520';ctx.fillRect(sx+6,sy+1,2,12);ctx.fillStyle='#fff';ctx.fillRect(sx+8,sy+2,5,4)}const sp='hero_'+ds[G.pdir];if(TL[sp])ctx.drawImage(TL[sp],sx,sy);if(G.hasShip&&!G.onShip&&G.mapId==='world'){const bx=(G.shipX-G.cam.x)*T,by=(G.shipY-G.cam.y)*T;if(bx>-T&&bx<SW&&by>-T&&by<SH){ctx.fillStyle='#8B4513';ctx.fillRect(bx+1,by+4,14,10);ctx.fillStyle='#daa520';ctx.fillRect(bx+6,by+1,2,12)}}}
+function drawPlayer(){const ds=['down','up','left','right'];const sx=(G.px-G.cam.x)*T,sy=(G.py-G.cam.y)*T;if(G.onShip&&G.mapId==='world'){ctx.fillStyle='#905020';ctx.fillRect(sx+1,sy+5,14,9);ctx.fillStyle='#a86830';ctx.fillRect(sx+2,sy+6,12,7);ctx.fillStyle='#c08040';ctx.fillRect(sx+3,sy+7,10,1);ctx.fillStyle='#b07028';ctx.fillRect(sx+6,sy+1,2,12);ctx.fillStyle='#f8f8f8';ctx.fillRect(sx+8,sy+2,5,4);ctx.fillStyle='#e0e0e0';ctx.fillRect(sx+8,sy+5,5,1)}const sp='hero_'+ds[G.pdir];if(TL[sp])ctx.drawImage(TL[sp],sx,sy);if(G.hasShip&&!G.onShip&&G.mapId==='world'){const bx=(G.shipX-G.cam.x)*T,by=(G.shipY-G.cam.y)*T;if(bx>-T&&bx<SW&&by>-T&&by<SH){ctx.fillStyle='#905020';ctx.fillRect(bx+1,bx>0?by+5:by+5,14,9);ctx.fillStyle='#a86830';ctx.fillRect(bx+2,by+6,12,7);ctx.fillStyle='#b07028';ctx.fillRect(bx+6,by+1,2,12)}}}
 function tryMove(dx,dy){const nx=G.px+dx,ny=G.py+dy;const map=G.mapId==='world'?worldMap:G.maps[G.mapId].data;const mw=G.mapId==='world'?WORLD_W:G.maps[G.mapId].w;const mh=G.mapId==='world'?WORLD_H:G.maps[G.mapId].h;if(nx<0||nx>=mw||ny<0||ny>=mh)return false;const tid=map[ny][nx];if(G.mapId==='world'){if(tid===1){if(!G.hasShip)return false;if(!G.onShip){if(Math.abs(nx-G.shipX)+Math.abs(ny-G.shipY)>1)return false;G.onShip=true}};if(tid!==1&&G.onShip){G.onShip=false;G.shipX=G.px;G.shipY=G.py}if(tid===3)return false;if(tid!==1&&!WALKABLE[tid])return false}else{if(tid===5)return false}
 // NPC collision check - prevent walking onto NPCs
 if(G.mapId!=='world'){const npcs=G.npcs[G.mapId];if(npcs&&npcs.some(n=>n.x===nx&&n.y===ny))return false}G.px=nx;G.py=ny;G.steps++;const wk=G.mapId+'_'+nx+'_'+ny;if(G.warps[wk]){const w=G.warps[wk];G.mapId=w.map;G.px=w.x;G.py=w.y;if(w.map!=='world'&&!G.visited.includes(w.map))G.visited.push(w.map);return true}if(G.mapId!=='world'&&tid===9){openChest(G.mapId,nx,ny);return true}
@@ -766,7 +947,17 @@ c.fillStyle='#c80';c.fillRect(x-12,y-12,24,24);
 c.fillStyle='#fff';c.fillRect(x-6,y-6,4,4);c.fillRect(x+2,y-6,4,4);
 c.fillStyle='#000';c.fillRect(x-4,y+2,8,2);
 }}
-function drawBattle(){const bs=G.bs;if(!bs)return;for(let i=0;i<90;i++){const g=Math.floor(8+i*.3);ctx.fillStyle=`rgb(${g},${g},${Math.floor(g*1.5)})`;ctx.fillRect(0,i,SW,1)}ctx.fillStyle='#111';ctx.fillRect(0,90,SW,SH-90);ctx.fillStyle='rgba(68,136,255,0.2)';ctx.fillRect(0,90,SW,1);const al=bs.enemies.filter(e=>e.alive);al.forEach((e,i)=>{const ex=SW/(al.length+1)*(i+1),ey=60;drawMonster(ctx,ex,ey,e.name);dtc(e.name,ex,ey+22,6);dtc('HP'+e.hp,ex,ey+30,5,'#0f0')});dw(SW-120,SH-100,112,92);G.party.forEach((c,i)=>{const y=SH-92+i*28;dt(c.name.slice(0,4),SW-112,y,6,c.alive?'#fff':'#888');drawBar(SW-112,y+4,60,4,c.hp/c.maxHp,c.hp<c.maxHp/4?'#c00':'#0a0',c.hp<c.maxHp/4?'#f44':'#0f0');dt('HP'+c.hp+'/'+c.maxHp,SW-112,y+10,5,'#fff');drawBar(SW-112,y+14,60,3,c.mp/c.maxMp,'#06a','#0af');dt('MP'+c.mp+'/'+c.maxMp,SW-112,y+20,5,'#fff')});if(bs.phase==='select'){const a=G.party[bs.curActor];if(a){dw(8,SH-90,80,82);dt(a.name.slice(0,5),16,SH-80,6,'#ffd700');['たたかう','じゅもん','とくぎ','どうぐ','にげる'].forEach((c,i)=>dt(c,24,SH-68+i*13,7));dc(14,SH-74+bs.cursor*13)}}if(bs.phase==='skill'){const a=G.party[bs.curActor];if(a){const sk=a.learnedSkills.filter(k=>SPELLS[k]);dw(8,8,140,sk.length*14+20);dt('とくぎ',16,24,7,'#ffd700');sk.forEach((s,i)=>{const sp=SPELLS[s];dt((i===bs.skillCursor?'▶':' ')+sp.name+(sp.mp>0?' '+sp.mp:''),16,38+i*14,7)})}}if(bs.phase==='spell'){const a=G.party[bs.curActor];if(a){dw(8,8,120,a.spells.length*14+20);dt('じゅもん',16,24,7,'#ffd700');a.spells.forEach((sp,i)=>{const s=SPELLS[sp];dt((i===bs.spellCursor?'▶':' ')+s.name+' '+s.mp,16,38+i*14,7)})}}if(bs.phase==='item'){dw(8,8,140,G.items.length*14+20);dt('どうぐ',16,24,7,'#ffd700');G.items.forEach((it,i)=>{dt((i===bs.itemCursor?'▶':' ')+ITEMS[it.id].name,16,38+i*14,7)})}if(bs.msg){dw(8,SH-40,SW-16,32);dt(bs.msg,16,SH-22,7)}}
+function drawBattle(){const bs=G.bs;if(!bs)return;
+// DS風 戦闘背景
+const zone=G.mapId==='world'?getZone(G.px,G.py):(G.maps[G.mapId]?G.maps[G.mapId].zone||0:0);
+const bgColors=[[20,50,30,40,80,50],[30,40,50,50,60,70],[50,30,40,70,40,50],[20,15,30,30,20,40],[15,10,25,25,15,35]];
+const bg=bgColors[Math.min(zone,4)];
+for(let i=0;i<90;i++){const t=i/90;const r=Math.floor(bg[0]*(1-t)+bg[3]*t);const g=Math.floor(bg[1]*(1-t)+bg[4]*t);const b=Math.floor(bg[2]*(1-t)+bg[5]*t);ctx.fillStyle=`rgb(${r},${g},${b})`;ctx.fillRect(0,i,SW,1)}
+// 地平線のハイライト
+ctx.fillStyle=`rgba(${bg[3]+40},${bg[4]+40},${bg[5]+60},0.3)`;ctx.fillRect(0,86,SW,2);ctx.fillStyle=`rgba(${bg[3]+20},${bg[4]+20},${bg[5]+40},0.15)`;ctx.fillRect(0,88,SW,2);
+ctx.fillStyle='#0a0a14';ctx.fillRect(0,90,SW,SH-90);
+// 地面のグラデーション
+for(let i=0;i<8;i++){const a=0.12-i*0.012;ctx.fillStyle=`rgba(${bg[3]+60},${bg[4]+60},${bg[5]+80},${a})`;ctx.fillRect(0,90+i,SW,1)}const al=bs.enemies.filter(e=>e.alive);al.forEach((e,i)=>{const ex=SW/(al.length+1)*(i+1),ey=60;drawMonster(ctx,ex,ey,e.name);dtc(e.name,ex,ey+22,6);dtc('HP'+e.hp,ex,ey+30,5,'#0f0')});dw(SW-120,SH-100,112,92);G.party.forEach((c,i)=>{const y=SH-92+i*28;dt(c.name.slice(0,4),SW-112,y,6,c.alive?'#fff':'#888');drawBar(SW-112,y+4,60,4,c.hp/c.maxHp,c.hp<c.maxHp/4?'#c00':'#0a0',c.hp<c.maxHp/4?'#f44':'#0f0');dt('HP'+c.hp+'/'+c.maxHp,SW-112,y+10,5,'#fff');drawBar(SW-112,y+14,60,3,c.mp/c.maxMp,'#06a','#0af');dt('MP'+c.mp+'/'+c.maxMp,SW-112,y+20,5,'#fff')});if(bs.phase==='select'){const a=G.party[bs.curActor];if(a){dw(8,SH-90,80,82);dt(a.name.slice(0,5),16,SH-80,6,'#ffd700');['たたかう','じゅもん','とくぎ','どうぐ','にげる'].forEach((c,i)=>dt(c,24,SH-68+i*13,7));dc(14,SH-74+bs.cursor*13)}}if(bs.phase==='skill'){const a=G.party[bs.curActor];if(a){const sk=a.learnedSkills.filter(k=>SPELLS[k]);dw(8,8,140,sk.length*14+20);dt('とくぎ',16,24,7,'#ffd700');sk.forEach((s,i)=>{const sp=SPELLS[s];dt((i===bs.skillCursor?'▶':' ')+sp.name+(sp.mp>0?' '+sp.mp:''),16,38+i*14,7)})}}if(bs.phase==='spell'){const a=G.party[bs.curActor];if(a){dw(8,8,120,a.spells.length*14+20);dt('じゅもん',16,24,7,'#ffd700');a.spells.forEach((sp,i)=>{const s=SPELLS[sp];dt((i===bs.spellCursor?'▶':' ')+s.name+' '+s.mp,16,38+i*14,7)})}}if(bs.phase==='item'){dw(8,8,140,G.items.length*14+20);dt('どうぐ',16,24,7,'#ffd700');G.items.forEach((it,i)=>{dt((i===bs.itemCursor?'▶':' ')+ITEMS[it.id].name,16,38+i*14,7)})}if(bs.msg){dw(8,SH-40,SW-16,32);dt(bs.msg,16,SH-22,7)}}
 function updateMenu(){if(G.msgT)return;const ms=G.ms;if(!ms)return;if(ms.pg==='main'){const it=['はなす','じゅもん','どうぐ','つよさ','そうび','さくせん','とじる'];if(kp('ArrowUp'))ms.cursor=(ms.cursor-1+it.length)%it.length;if(kp('ArrowDown'))ms.cursor=(ms.cursor+1)%it.length;if(kp('KeyZ')||kp('Enter')){switch(ms.cursor){case 0:G.state=GS.EXPLORE;checkInteraction();break;case 1:ms.pg='spell';ms.cursor=0;ms.ci=0;break;case 2:ms.pg='item';ms.cursor=0;break;case 3:ms.pg='status';ms.ci=0;break;case 4:ms.pg='equip';ms.cursor=0;ms.ci=0;break;case 5:ms.pg='sakusen';ms.cursor=0;break;case 6:G.state=GS.EXPLORE;break}}if(kp('KeyX')||kp('Escape')){seCancel();G.state=GS.EXPLORE}}else if(ms.pg==='status'){if(kp('KeyX')||kp('Escape')||kp('KeyZ'))ms.pg='main';if(kp('ArrowLeft'))ms.ci=(ms.ci-1+G.party.length)%G.party.length;if(kp('ArrowRight'))ms.ci=(ms.ci+1)%G.party.length}else if(ms.pg==='item'){if(kp('ArrowUp'))ms.cursor=Math.max(0,ms.cursor-1);if(kp('ArrowDown'))ms.cursor=Math.min(G.items.length-1,ms.cursor);if(kp('KeyZ')||kp('Enter')){if(G.items.length>0)useItem(ms.cursor)}if(kp('KeyX')||kp('Escape'))ms.pg='main'}else if(ms.pg==='spell'){const c=G.party[ms.ci];if(kp('ArrowUp'))ms.cursor=Math.max(0,ms.cursor-1);if(kp('ArrowDown'))ms.cursor=Math.min(c.spells.length-1,ms.cursor);if(kp('ArrowLeft')){ms.ci=(ms.ci-1+G.party.length)%G.party.length;ms.cursor=0}if(kp('ArrowRight')){ms.ci=(ms.ci+1)%G.party.length;ms.cursor=0}if(kp('KeyZ')||kp('Enter')){if(c.spells.length>0)useFieldSpell(c,c.spells[ms.cursor])}if(kp('KeyX')||kp('Escape'))ms.pg='main'}else if(ms.pg==='equip'){const c=G.party[ms.ci];if(kp('ArrowUp'))ms.cursor=(ms.cursor-1+4)%4;if(kp('ArrowDown'))ms.cursor=(ms.cursor+1)%4;if(kp('ArrowLeft')){ms.ci=(ms.ci-1+G.party.length)%G.party.length;ms.cursor=0}if(kp('ArrowRight')){ms.ci=(ms.ci+1)%G.party.length;ms.cursor=0}if(kp('KeyZ')||kp('Enter')){if(ms.cursor===0&&c.weapon!=null){c.weapon=null;showMsg('ぶきを はずした。');G.state=GS.EXPLORE}else if(ms.cursor===1&&c.armor!=null){c.armor=null;showMsg('よろいを はずした。');G.state=GS.EXPLORE}else if(ms.cursor===2&&c.shield!=null){c.shield=null;showMsg('たてを はずした。');G.state=GS.EXPLORE}else if(ms.cursor===3&&c.helmet!=null){c.helmet=null;showMsg('かぶとを はずした。');G.state=GS.EXPLORE}}if(kp('KeyX')||kp('Escape'))ms.pg='main'}
 else if(ms.pg==='dharma'){
 if(ms.subPg==='charSelect'){
@@ -795,7 +986,8 @@ else if(ms.cursor===1){ms.pg='jumon_show';ms.jumon=encodeJumon()}
 else{ms.pg='main';ms.cursor=5}
 }if(kp('KeyX')||kp('Escape')){ms.pg='main';ms.cursor=5}
 }else if(ms.pg==='jumon_show'){
-if(kp('KeyZ')||kp('Enter')||kp('KeyX')||kp('Escape')){ms.pg='sakusen';ms.cursor=1}
+if(kp('KeyX')||kp('Escape')){if(ms.jumon&&navigator.clipboard){navigator.clipboard.writeText(ms.jumon).then(()=>{ms.jCopied=true}).catch(()=>{})}seSelect()}
+if(kp('KeyZ')||kp('Enter')){ms.jCopied=false;ms.pg='sakusen';ms.cursor=1}
 }else if(ms.pg==='jumon_input'){
 if(!ms.inputBuf)ms.inputBuf='';
 if(!ms.jcursor)ms.jcursor={x:0,y:0};
@@ -834,7 +1026,7 @@ const j=ms.jumon||'';
 for(let i=0;i<j.length;i++){
 const row=Math.floor(i/14),col=i%14;
 dt(j[i],16+col*16,66+row*18,8,'#0f0');
-}dt('Z/Escで もどる',16,218,6,'#888');
+}if(ms.jCopied)dt('コピーしました！',16,200,6,'#0f0');else dt('Xキーでコピー',16,200,6,'#8cf');dt('Zで もどる',16,218,6,'#888');
 }else if(ms.pg==='jumon_input'){
 dw(4,4,248,232);dt('ふっかつのじゅもんを いれよ',16,22,7,'#ffd700');
 // Show input buffer
@@ -924,7 +1116,7 @@ return'ダーマ神官「ようこそ ダーマ神殿へ。\nここは 天空よ
 {x:9,y:5,name:'女性',msg:()=>{
 const anyMastered=G.party.some(c=>{for(const k in c.jobProf)if(c.jobProf[k]>=8)return true;return false});
 if(anyMastered)return'女性「職を極めたのですね！\n2つの基本職を★8にすれば\n上級職になれますよ。\n戦士＋武闘家→バトルマスター\n魔法使い＋僧侶→賢者\nぜひ挑戦してみて。」';
-return'女性「ここで転職すると\n職業ごとの技を覚えられます。\n戦って熟練度を上げましょう。\n★の数が増えると新しい技を\n覚えますよ。」'}}]};G.shops={liriza:{items:[{id:0,p:8},{id:1,p:10},{id:2,p:25}],weapons:[{id:0,p:10},{id:1,p:100}],armors:[{id:0,p:30},{id:1,p:80}]},moonpeta:{items:[{id:0,p:8},{id:1,p:10},{id:2,p:25}],weapons:[{id:2,p:500},{id:7,p:200}],armors:[{id:2,p:300}]},beranule:{items:[{id:0,p:8},{id:1,p:10},{id:2,p:25}],weapons:[{id:2,p:500},{id:6,p:300}],armors:[{id:3,p:700}]},perpoi:{items:[{id:0,p:8},{id:1,p:10},{id:2,p:25}],weapons:[{id:4,p:3500}],armors:[{id:4,p:3000}]}}}
+return'女性「ここで転職すると\n職業ごとの技を覚えられます。\n戦って熟練度を上げましょう。\n★の数が増えると新しい技を\n覚えますよ。」'}}]};G.shops={liriza:{items:[{id:0,p:8},{id:1,p:10},{id:2,p:25}],weapons:[{id:0,p:10},{id:1,p:100},{id:9,p:250}],armors:[{id:0,p:30},{id:1,p:80}]},moonpeta:{items:[{id:0,p:8},{id:1,p:10},{id:2,p:25}],weapons:[{id:2,p:500},{id:7,p:200},{id:15,p:150},{id:10,p:1200}],armors:[{id:2,p:300},{id:13,p:800}]},beranule:{items:[{id:0,p:8},{id:1,p:10},{id:2,p:25}],weapons:[{id:2,p:500},{id:6,p:300},{id:23,p:1500},{id:16,p:1800}],armors:[{id:3,p:700},{id:6,p:1500}]},perpoi:{items:[{id:0,p:8},{id:1,p:10},{id:2,p:25}],weapons:[{id:4,p:3500},{id:11,p:4200},{id:21,p:2800}],armors:[{id:4,p:3000},{id:7,p:2500}]}}}
 function checkInteraction(){const dirs=[[0,1],[0,-1],[-1,0],[1,0]];const d=dirs[G.pdir],tx=G.px+d[0],ty=G.py+d[1];if(G.mapId==='world')return;const npcs=G.npcs[G.mapId];if(!npcs)return;for(const npc of npcs){if(npc.x===tx&&npc.y===ty){if(npc.inn){useInn();return}if(npc.recruit==='prince'&&!G.prince&&!G.flags.princeJoined){G.flags.princeJoined=true;G.prince=new Chara(1,'サマルトリアのおうじ',PRINCE_LV);G.prince.weapon=0;G.prince.armor=0;G.party.push(G.prince);showMsg(npc.msg,()=>showMsg('サマルトリアのおうじ が なかまになった！'));return}if(npc.recruit==='princess'&&!G.princess&&!G.flags.princessJoined){if(G.items.some(it=>it.id===8)){G.flags.princessJoined=true;G.princess=new Chara(2,'ムーンブルクのおうじょ',PRINCESS_LV);G.princess.weapon=7;G.princess.armor=0;G.party.push(G.princess);const ki=G.items.findIndex(it=>it.id===8);if(ki>=0)G.items.splice(ki,1);showMsg('ラーのかがみを つかった！\n犬の姿が みるみる変わっていく…',()=>showMsg('ムーンブルクのおうじょ が なかまになった！'));return}else{showMsg('犬「ワン！ ワン！」\n（ラーのかがみが あれば…）');return}}if(npc.dharma){G.state=GS.MENU;G.ms={pg:'dharma',cursor:0,ci:0,subPg:'charSelect'};return}if(npc.giveShip){if(G.items.some(it=>it.id===7)){G.hasShip=true;
 // Find nearest sea tile to beranule exit
 let sx=42,sy=20,found=false;
@@ -934,7 +1126,24 @@ G.shipX=sx;G.shipY=sy;G.items=G.items.filter(it=>it.id!==7);showMsg('船乗り�
 function enterShop(){const s=G.shops[G.mapId];if(!s)return;G.state=GS.SHOP;G.ss={pg:'main',cursor:0,items:s.items||[],weapons:s.weapons||[],armors:s.armors||[]}}
 function updateShop(){if(G.msgT)return;const ss=G.ss;if(!ss)return;if(ss.pg==='main'){if(kp('ArrowUp'))ss.cursor=(ss.cursor-1+4)%4;if(kp('ArrowDown'))ss.cursor=(ss.cursor+1)%4;if(kp('KeyZ')||kp('Enter')){if(ss.cursor===0){ss.pg='buy_item';ss.cursor=0}else if(ss.cursor===1){ss.pg='buy_weapon';ss.cursor=0}else if(ss.cursor===2){ss.pg='buy_armor';ss.cursor=0}else{G.state=GS.EXPLORE;G.ss=null}}if(kp('KeyX')||kp('Escape')){G.state=GS.EXPLORE;G.ss=null}}else{let list;if(ss.pg==='buy_item')list=ss.items;else if(ss.pg==='buy_weapon')list=ss.weapons;else list=ss.armors;if(kp('ArrowUp'))ss.cursor=Math.max(0,ss.cursor-1);if(kp('ArrowDown'))ss.cursor=Math.min(list.length-1,ss.cursor);if(kp('KeyZ')||kp('Enter')){if(list.length>0){const it=list[ss.cursor];if(G.gold>=it.p){G.gold-=it.p;if(ss.pg==='buy_item'){const ex=G.items.find(i=>i.id===it.id);if(ex)ex.count++;else G.items.push({id:it.id,count:1});showMsg(ITEMS[it.id].name+'を かった！')}else if(ss.pg==='buy_weapon'){const w=WEAPONS[it.id];const tgt=G.party.find(c=>c.alive&&w.who.includes(c.id))||G.party[0];tgt.weapon=it.id;showMsg(w.name+'を かった！\n'+tgt.name+'が そうびした！')}else{const a=ARMORS[it.id];const tgt=G.party.find(c=>c.alive&&a.who.includes(c.id))||G.party[0];tgt.armor=it.id;showMsg(a.name+'を かった！\n'+tgt.name+'が そうびした！')}}else showMsg('ゴールドが たりない！')}}if(kp('KeyX')||kp('Escape')){ss.pg='main';ss.cursor=0}}}
 function drawShop(){const ss=G.ss;if(!ss)return;if(ss.pg==='main'){dw(8,8,120,80);dt('おみせ  G:'+G.gold,16,26,7,'#ffd700');['どうぐ','ぶき','よろい','やめる'].forEach((t,i)=>dt((i===ss.cursor?'▶':' ')+t,16,42+i*14,7))}else{let list,names;if(ss.pg==='buy_item'){list=ss.items;names=list.map(i=>ITEMS[i.id].name)}else if(ss.pg==='buy_weapon'){list=ss.weapons;names=list.map(i=>WEAPONS[i.id].name)}else{list=ss.armors;names=list.map(i=>ARMORS[i.id].name)}dw(8,8,200,list.length*14+40);dt('G: '+G.gold,16,26,7,'#ffd700');list.forEach((it,i)=>dt((i===ss.cursor?'▶':' ')+names[i]+' '+it.p+'G',16,42+i*14,7));dt('Xで もどる',16,list.length*14+42,6,'#888')}}
-function drawNPCs(){if(G.mapId==='world')return;const npcs=G.npcs[G.mapId];if(!npcs)return;const npcColors={'ローレシア王':'#c00','サマルトリア王':'#00c','船乗り':'#a52','老人':'#888','学者':'#448','神官':'#fff','ダーマ神官':'#f80','犬':'#a80','宿屋':'#0a8','兵士':'#888','女性':'#f6a','商人':'#da0','道具屋':'#0a0'};npcs.forEach(npc=>{const sx=(npc.x-G.cam.x)*T,sy=(npc.y-G.cam.y)*T;if(sx<-T||sx>SW||sy<-T||sy>SH)return;if(npc.name==='犬'){ctx.fillStyle='#a60';ctx.fillRect(sx+4,sy+8,8,4);ctx.fillRect(sx+4,sy+12,2,3);ctx.fillRect(sx+10,sy+12,2,3);ctx.fillRect(sx+3,sy+6,4,3);ctx.fillStyle='#000';ctx.fillRect(sx+4,sy+7,1,1);ctx.fillStyle='#a60';ctx.fillRect(sx+11,sy+9,2,1);return}const col=npcColors[npc.name]||'#fa0';ctx.fillStyle='#fdb';ctx.fillRect(sx+5,sy+2,6,4);ctx.fillStyle='#000';ctx.fillRect(sx+6,sy+3,1,1);ctx.fillRect(sx+9,sy+3,1,1);ctx.fillStyle=col;ctx.fillRect(sx+4,sy+6,8,5);ctx.fillRect(sx+3,sy+7,1,3);ctx.fillRect(sx+12,sy+7,1,3);ctx.fillRect(sx+5,sy+11,2,3);ctx.fillRect(sx+9,sy+11,2,3);if(npc.name.includes('王')){ctx.fillStyle='#ffd700';ctx.fillRect(sx+5,sy+0,6,2);ctx.fillRect(sx+5,sy+0,1,1);ctx.fillRect(sx+7,sy+0,1,1);ctx.fillRect(sx+10,sy+0,1,1)}else if(npc.name==='女性'){ctx.fillStyle='#a06';ctx.fillRect(sx+4,sy+0,8,3);ctx.fillRect(sx+3,sy+1,1,5);ctx.fillRect(sx+12,sy+1,1,5)}else{ctx.fillStyle='#531';ctx.fillRect(sx+5,sy+1,6,1)}})}
+function drawNPCs(){if(G.mapId==='world')return;const npcs=G.npcs[G.mapId];if(!npcs)return;const npcColors={'ローレシア王':'#c02020','サマルトリア王':'#2020c0','船乗り':'#a05828','老人':'#909090','学者':'#404890','神官':'#e0e0e8','ダーマ神官':'#f08020','犬':'#a07020','宿屋':'#20a888','兵士':'#808898','女性':'#e85898','商人':'#d0a020','道具屋':'#20a040'};npcs.forEach(npc=>{const sx=(npc.x-G.cam.x)*T,sy=(npc.y-G.cam.y)*T;if(sx<-T||sx>SW||sy<-T||sy>SH)return;if(npc.name==='犬'){ctx.fillStyle='#b07020';ctx.fillRect(sx+4,sy+8,8,4);ctx.fillStyle='#c08030';ctx.fillRect(sx+5,sy+8,6,2);ctx.fillRect(sx+4,sy+12,2,3);ctx.fillRect(sx+10,sy+12,2,3);ctx.fillStyle='#a06018';ctx.fillRect(sx+3,sy+6,4,3);ctx.fillStyle='#c08830';ctx.fillRect(sx+4,sy+6,2,2);ctx.fillStyle='#202020';ctx.fillRect(sx+4,sy+7,1,1);ctx.fillStyle='#b07020';ctx.fillRect(sx+11,sy+9,2,1);ctx.fillRect(sx+12,sy+10,1,1);return}const col=npcColors[npc.name]||'#f0a020';// DS風 NPC - 丸みのある顔と陰影
+ctx.fillStyle='#fdc8a8';ctx.fillRect(sx+5,sy+2,6,4);ctx.fillStyle='#f0b090';ctx.fillRect(sx+5,sy+5,6,1);
+// 目
+ctx.fillStyle='#203060';ctx.fillRect(sx+6,sy+3,1,1);ctx.fillRect(sx+9,sy+3,1,1);ctx.fillStyle='#fff';ctx.fillRect(sx+6,sy+2,1,1);ctx.fillRect(sx+9,sy+2,1,1);
+// 服(メインカラー+ハイライト)
+ctx.fillStyle=col;ctx.fillRect(sx+4,sy+6,8,5);
+// 服のハイライト
+ctx.save();ctx.globalAlpha=0.3;ctx.fillStyle='#fff';ctx.fillRect(sx+5,sy+6,6,1);ctx.restore();
+ctx.save();ctx.globalAlpha=0.2;ctx.fillStyle='#000';ctx.fillRect(sx+4,sy+10,8,1);ctx.restore();
+// 腕
+ctx.fillStyle=col;ctx.fillRect(sx+3,sy+7,1,3);ctx.fillRect(sx+12,sy+7,1,3);
+// 足
+ctx.fillRect(sx+5,sy+11,2,3);ctx.fillRect(sx+9,sy+11,2,3);ctx.fillStyle='#704020';ctx.fillRect(sx+5,sy+13,2,2);ctx.fillRect(sx+9,sy+13,2,2);
+// 頭飾り
+if(npc.name.includes('王')){ctx.fillStyle='#ffd700';ctx.fillRect(sx+5,sy+0,6,2);ctx.fillStyle='#f0c000';ctx.fillRect(sx+6,sy+0,4,1);ctx.fillStyle='#ff4040';ctx.fillRect(sx+7,sy+0,2,1)}
+else if(npc.name==='女性'){ctx.fillStyle='#a02060';ctx.fillRect(sx+4,sy+0,8,3);ctx.fillStyle='#b83070';ctx.fillRect(sx+5,sy+0,6,1);ctx.fillRect(sx+3,sy+1,1,5);ctx.fillRect(sx+12,sy+1,1,5);ctx.fillStyle='#901850';ctx.fillRect(sx+3,sy+5,1,1);ctx.fillRect(sx+12,sy+5,1,1)}
+else if(npc.name==='神官'||npc.name==='ダーマ神官'){ctx.fillStyle=npc.name==='ダーマ神官'?'#f0a030':'#d0d0e0';ctx.fillRect(sx+4,sy+0,8,2);ctx.fillStyle='#ffd700';ctx.fillRect(sx+7,sy+0,2,1)}
+else{ctx.fillStyle='#503820';ctx.fillRect(sx+5,sy+1,6,1);ctx.fillRect(sx+4,sy+1,1,2)}})}
 function drawTitle(){
 // 背景: 深い青のグラデーション
 const bgGrd=ctx.createLinearGradient(0,0,0,SH);bgGrd.addColorStop(0,'#080820');bgGrd.addColorStop(0.5,'#101040');bgGrd.addColorStop(1,'#000010');ctx.fillStyle=bgGrd;ctx.fillRect(0,0,SW,SH);
@@ -1130,9 +1339,9 @@ G.state=GS.EXPLORE;
 function saveGame(){const d={party:G.party.map(c=>({id:c.id,name:c.name,level:c.level,exp:c.exp,hp:c.hp,maxHp:c._baseMaxHp,mp:c.mp,maxMp:c._baseMaxMp,str:c._baseStr,agi:c._baseAgi,spells:c.spells,weapon:c.weapon,armor:c.armor,shield:c.shield,helmet:c.helmet,alive:c.alive,job:c.job,jobProf:c.jobProf,learnedSkills:c.learnedSkills})),gold:G.gold,items:G.items,flags:G.flags,mapId:G.mapId,px:G.px,py:G.py,pdir:G.pdir,visited:G.visited,hasShip:G.hasShip,shipX:G.shipX,shipY:G.shipY};localStorage.setItem('dq2save',JSON.stringify(d));showMsg('ぼうけんのしょに きろくしました。')}
 function loadGame(){const r=localStorage.getItem('dq2save');if(!r){showMsg('ぼうけんのしょが ありません。');return}try{const d=JSON.parse(r);const ts=[HERO_LV,PRINCE_LV,PRINCESS_LV];G.party=d.party.map(p=>{const c=new Chara(p.id,p.name,ts[p.id]);Object.assign(c,p);c.lt=ts[p.id];if(!c.job)c.job='none';if(!c.jobProf){c.jobProf={};for(const k in JOBS)if(k!=='none')c.jobProf[k]=0}if(!c.learnedSkills)c.learnedSkills=[];return c});G.hero=G.party[0];G.prince=G.party.find(c=>c.id===1)||null;G.princess=G.party.find(c=>c.id===2)||null;G.gold=d.gold;G.items=d.items;G.flags=d.flags;G.mapId=d.mapId;G.px=d.px;G.py=d.py;G.pdir=d.pdir;G.visited=d.visited||[];G.hasShip=d.hasShip||false;G.shipX=d.shipX||0;G.shipY=d.shipY||0;G.state=GS.EXPLORE}catch(e){showMsg('ぼうけんのしょが こわれています。')}}
 function updateExplore(){if(G.msgT)return;G.moveTimer--;if(G.moveTimer>0)return;let dx=0,dy=0;if(kh('ArrowUp')){dy=-1;G.pdir=1}else if(kh('ArrowDown')){dy=1;G.pdir=0}else if(kh('ArrowLeft')){dx=-1;G.pdir=2}else if(kh('ArrowRight')){dx=1;G.pdir=3}if(dx||dy){tryMove(dx,dy);G.moveTimer=8}if(kp('KeyX')||kp('Escape')){G.state=GS.MENU;G.ms={pg:'main',cursor:0,ci:0}}if(kp('KeyZ')||kp('Enter')){seSelect();checkInteraction()}}
-function drawGameOver(){ctx.fillStyle='#000';ctx.fillRect(0,0,SW,SH);dtc('ぜんめつ してしまった…',SW/2,80,10,'#f00');dtc('ローレシア王「おお なさけない！',SW/2,120,8);dtc('もういちど がんばるのじゃ！」',SW/2,136,8);dtc('▶ つづきから (Zキー)',SW/2,180,8);if(kp('KeyZ')||kp('Enter')){loadGame();if(G.state!==GS.EXPLORE){G.ms={cursor:0};G.state=GS.TITLE}else{G.party.forEach(c=>{c.alive=true;c.hp=Math.max(1,Math.floor(c.maxHp/2));c.status=[]});G.gold=Math.floor(G.gold/2)}}}
+function drawGameOver(){ctx.fillStyle='#000';ctx.fillRect(0,0,SW,SH);if(!G.goPhase)G.goPhase='msg';if(G.goPhase==='msg'){dtc('ぜんめつ してしまった…',SW/2,60,10,'#f00');dtc('ローレシア王「おお なさけない！',SW/2,100,8);dtc('しかし あきらめるでないぞ。',SW/2,116,8);dtc('ふっかつのじゅもんを',SW/2,132,8);dtc('おぼえておくのじゃ。」',SW/2,148,8);dtc('▶ じゅもんを みる (Zキー)',SW/2,180,8,'#ffd700');if(kp('KeyZ')||kp('Enter')){seSelect();G.goPhase='jumon';G.goJumon=encodeJumon()}}else if(G.goPhase==='jumon'){dw(8,8,240,224);dtc('ふっかつのじゅもん',SW/2,28,8,'#ffd700');const j=G.goJumon||'';const cpl=10;const lines=[];for(let i=0;i<j.length;i+=cpl)lines.push(j.slice(i,i+cpl));lines.forEach((ln,i)=>{const spaced=ln.split('').join(' ');dtc(spaced,SW/2,60+i*18,8,'#fff')});dtc('ゴールドは はんぶんになります',SW/2,180,6,'#aaa');if(G.goCopied)dtc('コピーしました！',SW/2,195,6,'#0f0');else dtc('▶ Xキーでコピー',SW/2,195,6,'#8cf');dtc('▶ Zキーでタイトルへ',SW/2,210,7,'#ffd700');if(kp('KeyX')||kp('Escape')){if(j&&navigator.clipboard){navigator.clipboard.writeText(j).then(()=>{G.goCopied=true}).catch(()=>{})}seSelect()}if(kp('KeyZ')||kp('Enter')){seSelect();G.goPhase=null;G.goJumon=null;G.goCopied=false;G.ms={cursor:0};G.state=GS.TITLE}}}
 function drawEnding(){ctx.fillStyle='#000';ctx.fillRect(0,0,SW,SH);const t=Math.floor(G.frame/3)%400;const a=Math.min(1,t/30);ctx.globalAlpha=a;dtc('邪神シドーは たおされた！',SW/2,30,10,'#ffd700');dtc('せかいに へいわが もどった！',SW/2,52,8);G.party.forEach((c,i)=>{const jn=JOBS[c.job]?JOBS[c.job].name:'';const prof=Object.entries(c.jobProf).filter(([k,v])=>v>=8).length;dtc(c.name,SW/2,82+i*28,8);if(jn&&jn!=='なし')dtc('職業: '+jn,SW/2,94+i*28,6,'#8cf');if(prof>0)dtc(prof+'つの職を極めた',SW/2,94+i*28+(jn&&jn!=='なし'?10:0),6,'#fd0')});const by=82+G.party.length*28+10;dtc('ダーマ神殿で鍛え 幾多の技を学び',SW/2,by,7,'#aef');dtc('ロトの末裔たちは 真の勇者となった',SW/2,by+14,7,'#aef');dtc('あなたの ぼうけんは',SW/2,by+36,8);dtc('でんせつとして かたりつがれる',SW/2,by+52,8);dtc('- THE END -',SW/2,by+76,10,'#ffd700');ctx.globalAlpha=1}
-function checkBossEvents(){if(G.mapId==='hargon'&&G.px===8&&G.py===3&&!G.flags.hargonDown){const heroJob=G.party.some(c=>c.job==='hero_job');showMsg('ハーゴン「おろかな ロトの末裔どもめ！\nわが闘の力の前には\n何者も ひざまずくのみ！」',()=>{if(heroJob)showMsg('勇者の力が光を放つ！\nハーゴン「な…なんだと！\nその光は…まさか！」',()=>startBattle('ハーゴン'));else startBattle('ハーゴン')})}if(G.mapId==='hargon'&&G.px===8&&G.py===2&&G.flags.hargonDown&&!G.flags.sidoDown){showMsg('ハーゴンの体から\n禍々しい闇があふれ出す…！',()=>{showMsg('大地が裂け 天が割れる！\n闇の中から 巨大な影が\nゆっくりと姿を現した…',()=>{showMsg('邪神シドー「ハーゴンの祈りに応え\nこの世に降臨せし\n破壊の神…それが我だ。」',()=>startBattle('シドー'))})})}
+function checkBossEvents(){if(G.mapId==='hargon'&&G.px===8&&G.py===3&&!G.flags.hargonDown){const heroJob=G.party.some(c=>c.job==='hero_job');showMsg('ハーゴン「おろかな ロトの末裔どもめ！\nわが闇の力の前には\n何者も ひざまずくのみ！」',()=>{if(heroJob)showMsg('勇者の力が光を放つ！\nハーゴン「な…なんだと！\nその光は…まさか！」',()=>startBattle('ハーゴン'));else startBattle('ハーゴン')})}if(G.mapId==='hargon'&&G.px===8&&G.py===2&&G.flags.hargonDown&&!G.flags.sidoDown){showMsg('ハーゴンの体から\n禍々しい闇があふれ出す…！',()=>{showMsg('大地が裂け 天が割れる！\n闇の中から 巨大な影が\nゆっくりと姿を現した…',()=>{showMsg('邪神シドー「ハーゴンの祈りに応え\nこの世に降臨せし\n破壊の神…それが我だ。」',()=>startBattle('シドー'))})})}
 // 隠しダンジョン入口ガード
 if(G.mapId==='world'&&G.px===50&&G.py===8&&!G.flags.sidoDown){showMsg('洞窟の入口は\n強大な結界で封じられている…\nシドーを倒してから来るがよい。');G.py=9;return}
 // 裏ボス: ゾーマ(8,8), エスターク(16,16), ダークドレアム(12,20)
