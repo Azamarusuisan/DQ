@@ -65,23 +65,23 @@ const T=16,SW=256,SH=240,COLS=SW/T,ROWS=SH/T;
 const TL={};
 function mkTile(n,fn){const c=document.createElement('canvas');c.width=c.height=T;fn(c.getContext('2d'));TL[n]=c}
 function initTiles(){
-mkTile('grass',c=>{c.fillStyle='#2d8a2d';c.fillRect(0,0,T,T);c.fillStyle='#3a3';c.fillRect(2,2,2,2);c.fillRect(10,8,2,2);c.fillRect(6,12,2,2)});
-mkTile('sea',c=>{c.fillStyle='#1155cc';c.fillRect(0,0,T,T);c.fillStyle='#2266dd';c.fillRect(0,4,T,4);c.fillRect(0,12,T,4)});
-mkTile('desert',c=>{c.fillStyle='#daa520';c.fillRect(0,0,T,T);c.fillStyle='#c89418';c.fillRect(4,4,2,2);c.fillRect(10,10,2,2)});
-mkTile('mountain',c=>{c.fillStyle='#2d8a2d';c.fillRect(0,0,T,T);c.fillStyle='#8B4513';c.beginPath();c.moveTo(8,1);c.lineTo(15,15);c.lineTo(1,15);c.fill();c.fillStyle='#fff';c.beginPath();c.moveTo(8,1);c.lineTo(10,5);c.lineTo(6,5);c.fill()});
-mkTile('forest',c=>{c.fillStyle='#2d8a2d';c.fillRect(0,0,T,T);c.fillStyle='#006400';c.beginPath();c.arc(8,6,5,0,Math.PI*2);c.fill();c.fillStyle='#8B4513';c.fillRect(7,11,2,5)});
-mkTile('wall',c=>{c.fillStyle='#888';c.fillRect(0,0,T,T);c.fillStyle='#666';c.fillRect(0,0,T,1);c.fillRect(0,8,T,1);c.fillStyle='#aaa';c.fillRect(0,7,T,1)});
-mkTile('floor',c=>{c.fillStyle='#c4a882';c.fillRect(0,0,T,T);c.strokeStyle='#b09870';c.strokeRect(0,0,T,T)});
-mkTile('town',c=>{c.fillStyle='#2d8a2d';c.fillRect(0,0,T,T);c.fillStyle='#d44';c.fillRect(3,3,10,10);c.fillStyle='#a33';c.beginPath();c.moveTo(8,1);c.lineTo(14,5);c.lineTo(2,5);c.fill();c.fillStyle='#daa520';c.fillRect(6,8,4,5)});
-mkTile('cave',c=>{c.fillStyle='#2d8a2d';c.fillRect(0,0,T,T);c.fillStyle='#333';c.beginPath();c.arc(8,10,5,Math.PI,0);c.fill();c.fillRect(3,10,10,6)});
-mkTile('castle',c=>{c.fillStyle='#2d8a2d';c.fillRect(0,0,T,T);c.fillStyle='#ddd';c.fillRect(2,4,12,12);c.fillStyle='#aaa';c.fillRect(2,2,3,4);c.fillRect(11,2,3,4);c.fillStyle='#8B4513';c.fillRect(6,9,4,7)});
-mkTile('bridge',c=>{c.fillStyle='#1155cc';c.fillRect(0,0,T,T);c.fillStyle='#8B4513';c.fillRect(2,0,12,T);c.fillStyle='#a0522d';c.fillRect(2,0,1,T);c.fillRect(13,0,1,T)});
-mkTile('stairs_up',c=>{c.fillStyle='#c4a882';c.fillRect(0,0,T,T);c.fillStyle='#8B4513';for(let i=0;i<4;i++)c.fillRect(2+i*2,i*4,T-4-i*4,3)});
-mkTile('stairs_down',c=>{c.fillStyle='#c4a882';c.fillRect(0,0,T,T);c.fillStyle='#333';for(let i=0;i<4;i++)c.fillRect(2+i*2,i*4,T-4-i*4,3)});
-mkTile('swamp',c=>{c.fillStyle='#4a2';c.fillRect(0,0,T,T);c.fillStyle='#6b3';c.fillRect(2,2,4,4);c.fillRect(8,8,4,4)});
-mkTile('tower',c=>{c.fillStyle='#2d8a2d';c.fillRect(0,0,T,T);c.fillStyle='#999';c.fillRect(4,2,8,14);c.fillStyle='#777';c.fillRect(4,0,2,4);c.fillRect(10,0,2,4);c.fillStyle='#555';c.fillRect(6,10,4,6)});
-mkTile('chest',c=>{c.fillStyle='#c4a882';c.fillRect(0,0,T,T);c.fillStyle='#daa520';c.fillRect(3,4,10,8);c.fillStyle='#a07010';c.fillRect(3,4,10,1);c.fillRect(3,7,10,1);c.fillStyle='#fff';c.fillRect(7,5,2,2)});
-mkTile('chest_open',c=>{c.fillStyle='#c4a882';c.fillRect(0,0,T,T);c.fillStyle='#8a6a10';c.fillRect(3,4,10,8);c.fillStyle='#6a5010';c.fillRect(3,4,10,1);c.fillStyle='#555';c.fillRect(5,6,6,4)});
+mkTile('grass',c=>{c.fillStyle='#3a9a3a';c.fillRect(0,0,T,T);c.fillStyle='#4ab04a';c.fillRect(1,1,6,6);c.fillRect(9,9,6,6);c.fillStyle='#2d8a2d';c.fillRect(3,10,2,1);c.fillRect(11,4,2,1);c.fillRect(7,7,1,1)});
+mkTile('sea',c=>{c.fillStyle='#1858cc';c.fillRect(0,0,T,T);c.fillStyle='#2068dd';c.fillRect(0,3,T,3);c.fillRect(0,10,T,3);c.fillStyle='#3080ee';c.fillRect(2,4,4,1);c.fillRect(10,11,4,1);c.fillStyle='#1050aa';c.fillRect(0,7,T,1)});
+mkTile('desert',c=>{c.fillStyle='#e8b840';c.fillRect(0,0,T,T);c.fillStyle='#d0a030';c.fillRect(0,0,8,8);c.fillRect(8,8,8,8);c.fillStyle='#f0c850';c.fillRect(3,3,2,2);c.fillRect(11,11,2,2);c.fillStyle='#c89418';c.fillRect(6,12,3,1);c.fillRect(12,5,2,1)});
+mkTile('mountain',c=>{c.fillStyle='#3a9a3a';c.fillRect(0,0,T,T);c.fillStyle='#8B5a23';c.beginPath();c.moveTo(8,1);c.lineTo(15,14);c.lineTo(1,14);c.fill();c.fillStyle='#a07040';c.fillRect(6,4,4,3);c.fillStyle='#fff';c.beginPath();c.moveTo(8,1);c.lineTo(10,4);c.lineTo(6,4);c.fill();c.fillStyle='#704020';c.fillRect(1,14,14,2)});
+mkTile('forest',c=>{c.fillStyle='#3a9a3a';c.fillRect(0,0,T,T);c.fillStyle='#1a6a1a';c.beginPath();c.arc(8,5,5,0,Math.PI*2);c.fill();c.fillStyle='#228a22';c.beginPath();c.arc(6,4,3,0,Math.PI*2);c.fill();c.beginPath();c.arc(10,4,3,0,Math.PI*2);c.fill();c.fillStyle='#0a4a0a';c.beginPath();c.arc(8,6,2,0,Math.PI*2);c.fill();c.fillStyle='#8B4513';c.fillRect(7,10,2,6)});
+mkTile('wall',c=>{c.fillStyle='#7a7a8a';c.fillRect(0,0,T,T);c.fillStyle='#9a9aaa';c.fillRect(0,0,7,7);c.fillRect(8,8,8,7);c.fillStyle='#5a5a6a';c.fillRect(7,0,1,T);c.fillRect(0,7,T,1);c.fillStyle='#aaaabc';c.fillRect(1,1,2,1);c.fillRect(10,10,2,1)});
+mkTile('floor',c=>{c.fillStyle='#d4b892';c.fillRect(0,0,T,T);c.fillStyle='#c4a882';c.fillRect(0,0,8,8);c.fillRect(8,8,8,8);c.strokeStyle='#b09870';c.lineWidth=0.5;c.strokeRect(0.5,0.5,T-1,T-1);c.strokeRect(0.5,8,T-1,0)});
+mkTile('town',c=>{c.fillStyle='#3a9a3a';c.fillRect(0,0,T,T);c.fillStyle='#cc3333';c.fillRect(3,5,10,9);c.fillStyle='#dd4444';c.fillRect(4,6,8,7);c.fillStyle='#aa2222';c.beginPath();c.moveTo(8,1);c.lineTo(14,5);c.lineTo(2,5);c.fill();c.fillStyle='#ffd700';c.fillRect(7,8,2,6);c.fillStyle='#4af';c.fillRect(4,7,2,2);c.fillRect(10,7,2,2)});
+mkTile('cave',c=>{c.fillStyle='#3a9a3a';c.fillRect(0,0,T,T);c.fillStyle='#555';c.beginPath();c.arc(8,10,6,Math.PI,0);c.fill();c.fillRect(2,10,12,6);c.fillStyle='#222';c.beginPath();c.arc(8,10,4,Math.PI,0);c.fill();c.fillRect(4,10,8,6);c.fillStyle='#888';c.fillRect(2,9,1,1);c.fillRect(13,9,1,1)});
+mkTile('castle',c=>{c.fillStyle='#3a9a3a';c.fillRect(0,0,T,T);c.fillStyle='#eee';c.fillRect(2,5,12,11);c.fillStyle='#ddd';c.fillRect(3,6,10,9);c.fillStyle='#ccc';c.fillRect(2,2,3,5);c.fillRect(11,2,3,5);c.fillStyle='#eee';c.fillRect(3,1,1,2);c.fillRect(12,1,1,2);c.fillStyle='#8B4513';c.fillRect(6,9,4,7);c.fillStyle='#448';c.fillRect(4,6,2,2);c.fillRect(10,6,2,2);c.fillStyle='#ffd700';c.fillRect(7,5,2,1)});
+mkTile('bridge',c=>{c.fillStyle='#1858cc';c.fillRect(0,0,T,T);c.fillStyle='#a0622d';c.fillRect(2,0,12,T);c.fillStyle='#8B4513';c.fillRect(2,0,1,T);c.fillRect(13,0,1,T);c.fillStyle='#c08040';c.fillRect(4,0,2,T);c.fillRect(10,0,2,T);c.fillStyle='#604020';c.fillRect(3,3,10,1);c.fillRect(3,7,10,1);c.fillRect(3,11,10,1)});
+mkTile('stairs_up',c=>{c.fillStyle='#d4b892';c.fillRect(0,0,T,T);c.fillStyle='#a07040';for(let i=0;i<5;i++){c.fillRect(1+i*2,i*3,T-2-i*4,2)}c.fillStyle='#c09060';for(let i=0;i<5;i++){c.fillRect(1+i*2,i*3,T-2-i*4,1)}});
+mkTile('stairs_down',c=>{c.fillStyle='#d4b892';c.fillRect(0,0,T,T);c.fillStyle='#444';for(let i=0;i<5;i++){c.fillRect(1+i*2,i*3,T-2-i*4,2)}c.fillStyle='#555';for(let i=0;i<5;i++){c.fillRect(1+i*2,i*3,T-2-i*4,1)}});
+mkTile('swamp',c=>{c.fillStyle='#3a6a2a';c.fillRect(0,0,T,T);c.fillStyle='#507a30';c.fillRect(0,0,8,8);c.fillRect(8,8,8,8);c.fillStyle='#2a5a1a';c.fillRect(2,10,4,3);c.fillRect(10,4,4,3);c.fillStyle='#6a3a6a';c.fillRect(5,5,2,2);c.fillRect(11,11,2,2)});
+mkTile('tower',c=>{c.fillStyle='#3a9a3a';c.fillRect(0,0,T,T);c.fillStyle='#aaa';c.fillRect(4,3,8,13);c.fillStyle='#bbb';c.fillRect(5,4,6,11);c.fillStyle='#888';c.fillRect(4,0,2,5);c.fillRect(10,0,2,5);c.fillStyle='#999';c.fillRect(5,0,1,1);c.fillRect(11,0,1,1);c.fillStyle='#555';c.fillRect(6,10,4,6);c.fillStyle='#448';c.fillRect(6,5,2,2);c.fillRect(8,5,2,2)});
+mkTile('chest',c=>{c.fillStyle='#d4b892';c.fillRect(0,0,T,T);c.fillStyle='#daa520';c.fillRect(3,5,10,7);c.fillStyle='#c89010';c.fillRect(3,5,10,2);c.fillStyle='#b08010';c.fillRect(3,7,10,1);c.fillStyle='#f0d040';c.fillRect(7,6,2,1);c.fillStyle='#fff';c.fillRect(7,8,2,2);c.fillStyle='#a07010';c.fillRect(3,5,1,7);c.fillRect(12,5,1,7)});
+mkTile('chest_open',c=>{c.fillStyle='#d4b892';c.fillRect(0,0,T,T);c.fillStyle='#8a6a10';c.fillRect(3,5,10,7);c.fillStyle='#7a5a08';c.fillRect(3,3,10,3);c.fillStyle='#6a4a00';c.fillRect(3,5,10,1);c.fillStyle='#444';c.fillRect(5,7,6,3)});
 // ローレシアの王子: 青い鎧、紫の兜、剣
 ['down','up','left','right'].forEach(dir=>{mkTile('hero_'+dir,c=>{
 // 兜(紫)
@@ -751,28 +751,171 @@ dt('X:1文字けす Esc:もどる',14,218,5,'#888');
 }}
 function useItem(idx){if(idx>=G.items.length)return;const it=G.items[idx],item=ITEMS[it.id];if(item.type==='heal'){const c=G.party.find(c=>c.alive&&c.hp<c.maxHp);if(c){c.hp=Math.min(c.maxHp,c.hp+item.power);it.count--;if(it.count<=0)G.items.splice(idx,1);G.state=GS.EXPLORE;showMsg(c.name+'のHP '+item.power+' かいふく！')}else showMsg('つかう ひつようが ない。')}else if(item.type==='cure'){const c=G.party.find(c=>c.alive&&c.status.includes(item.cure));if(c){c.status=c.status.filter(s=>s!==item.cure);it.count--;if(it.count<=0)G.items.splice(idx,1);G.state=GS.EXPLORE;showMsg(item.cure+'が なおった！')}else showMsg('つかう ひつようが ない。')}else if(item.type==='revive'){const c=G.party.find(c=>!c.alive);if(c){c.alive=true;c.hp=c.maxHp;it.count--;if(it.count<=0)G.items.splice(idx,1);G.state=GS.EXPLORE;showMsg(c.name+'は いきかえった！')}else showMsg('つかう ひつようが ない。')}else if(item.type==='field'&&item.effect==='ruura'){if(G.visited.length===0){showMsg('まだ町を訪れていない。');return}it.count--;if(it.count<=0)G.items.splice(idx,1);G.mapId='world';G.px=12;G.py=15;G.state=GS.EXPLORE;showMsg('キメラのつばさを つかった！')}else if(item.type==='stat'){const c=G.party[0];if(c){c[item.stat]=(c[item.stat]||0)+item.value;if(item.stat==='maxHp')c.hp=Math.min(c.hp+item.value,c.maxHp);if(item.stat==='maxMp')c.mp=Math.min(c.mp+item.value,c.maxMp);it.count--;if(it.count<=0)G.items.splice(idx,1);G.state=GS.EXPLORE;showMsg(item.name+'を つかった！')}else showMsg('つかえない。')}else showMsg('ここでは つかえない。')}
 function useFieldSpell(caster,sid){const s=SPELLS[sid];if(caster.mp<s.mp){showMsg('MPが たりない！');return}if(s.type==='heal'){const t=G.party.find(c=>c.alive&&c.hp<c.maxHp);if(!t){showMsg('つかう ひつようがない。');return}caster.mp-=s.mp;t.hp=Math.min(t.maxHp,t.hp+s.power);G.state=GS.EXPLORE;showMsg(caster.name+'は '+s.name+'！\n'+t.name+'のHP '+s.power+' かいふく！')}else if(s.type==='revive'){const t=G.party.find(c=>!c.alive);if(!t){showMsg('つかう ひつようがない。');return}caster.mp-=s.mp;t.alive=true;t.hp=t.maxHp;G.state=GS.EXPLORE;showMsg(caster.name+'は '+s.name+'！\n'+t.name+'は いきかえった！')}else if(sid==='ruura'){if(G.visited.length===0){showMsg('まだ町を訪れていない。');return}caster.mp-=s.mp;G.mapId='world';G.px=12;G.py=15;G.state=GS.EXPLORE;showMsg(caster.name+'は ルーラ！')}else if(sid==='riremito'){if(G.mapId==='world'){showMsg('ここでは つかえない。');return}caster.mp-=s.mp;G.mapId='world';G.state=GS.EXPLORE;showMsg(caster.name+'は リレミト！')}else showMsg('ここでは つかえない。')}
-function initNPCs(){G.npcs={loracia:[{x:5,y:3,name:'ローレシア王',msg:'ローレシア王「サマルトリアの王子を\n仲間にするのじゃ！\n南西のサマルトリア城を訪ねよ。」'},{x:10,y:8,name:'兵士',msg:'兵士「東にリリザの町があります。\n南の湖のほこらには\n大切なものがあるそうです。」'},{x:3,y:8,name:'宿屋',msg:'inn',inn:true}],liriza:[{x:4,y:5,name:'商人',msg:'商人「ここはリリザだよ。」',shop:true},{x:8,y:3,name:'女性',msg:'女性「サマルトリアの王子は\n旅に出たらしいわよ。\nサマルトリア城にいるみたい。」'},{x:2,y:8,name:'宿屋',msg:'inn',inn:true}],samaltria:[{x:7,y:3,name:'サマルトリア王',msg:'サマルトリア王「うちの王子が\nお前を探していたぞ。\nこの城のどこかにいるはず。」'},{x:5,y:8,name:'サマルトリアのおうじ',recruit:'prince',msg:'サマルトリアのおうじ「おお！\nぼくも つれていってください！」'},{x:10,y:8,name:'宿屋',msg:'inn',inn:true}],moonpeta:[{x:5,y:5,name:'老人',msg:'老人「この町の東に犬がいるだろう？\nあれは ムーンブルクの王女\nなのじゃ。ラーのかがみが\nあれば 元の姿にもどせるぞ。」'},{x:9,y:7,name:'犬',recruit:'princess',msg:'犬「ワン！ワン！」\nラーのかがみを つかった！'},{x:3,y:9,name:'道具屋',msg:'道具屋「いらっしゃい！」',shop:true},{x:3,y:3,name:'宿屋',msg:'inn',inn:true}],beranule:[{x:4,y:5,name:'船乗り',msg:'船乗り「船が欲しいのか？\nふねのきっぷを持ってきな！」',giveShip:true},{x:8,y:3,name:'道具屋',msg:'道具屋「いらっしゃい！」',shop:true},{x:8,y:8,name:'宿屋',msg:'inn',inn:true}],perpoi:[{x:4,y:5,name:'学者',msg:'学者「ロンダルキアへの洞窟は\n北西にある。\n強い装備が必要じゃ。\nハーゴンの神殿は東の果てに。」'},{x:8,y:3,name:'道具屋',msg:'道具屋「いらっしゃい！」',shop:true},{x:2,y:8,name:'宿屋',msg:'inn',inn:true}],rhone:[{x:7,y:5,name:'神官',msg:'神官「ここはロンダルキアのほこら。\nハーゴン神殿は東の果てにある。\n気をつけてゆくのじゃ。」'},{x:5,y:5,name:'宿屋',msg:'inn',inn:true}],dharma:[{x:6,y:3,name:'ダーマ神官',msg:'ダーマ神官「ここはダーマ神殿。\nしょくぎょうを かえることが\nできるぞ。」',dharma:true},{x:3,y:8,name:'宿屋',msg:'inn',inn:true}]};G.shops={liriza:{items:[{id:0,p:8},{id:1,p:10},{id:2,p:25}],weapons:[{id:0,p:10},{id:1,p:100}],armors:[{id:0,p:30},{id:1,p:80}]},moonpeta:{items:[{id:0,p:8},{id:1,p:10},{id:2,p:25}],weapons:[{id:2,p:500},{id:7,p:200}],armors:[{id:2,p:300}]},beranule:{items:[{id:0,p:8},{id:1,p:10},{id:2,p:25}],weapons:[{id:2,p:500},{id:6,p:300}],armors:[{id:3,p:700}]},perpoi:{items:[{id:0,p:8},{id:1,p:10},{id:2,p:25}],weapons:[{id:4,p:3500}],armors:[{id:4,p:3000}]}}}
+function initNPCs(){G.npcs={loracia:[
+{x:5,y:3,name:'ローレシア王',msg:()=>{
+if(G.flags.sidoDown)return'ローレシア王「おお 勇者たちよ！\nよくぞ邪神シドーを倒した！\nお前たちは まことの勇者じゃ！」';
+if(G.flags.hargonDown)return'ローレシア王「ハーゴンは倒したか！\nしかし まだ不吉な気配が…\n油断するでないぞ！」';
+if(G.party.length>=3)return'ローレシア王「3人が揃ったか！\n北にあるダーマ神殿で\n転職すれば さらに強くなれるぞ。\nハーゴンを 必ず倒すのじゃ！」';
+if(G.flags.princeJoined)return'ローレシア王「おお 王子を見つけたか！\n次はムーンブルクの王女じゃ。\nムーンペタの町に手がかりがある。」';
+return'ローレシア王「おお ローレシアのおうじよ！\n魔王ハーゴンを倒す旅に出るのじゃ！\n南西のサマルトリア城で\n王子を仲間にするのじゃ！」'}},
+{x:10,y:8,name:'兵士',msg:()=>{
+if(G.party.length>=3)return'兵士「三人の勇者が揃いましたな！\n北のダーマ神殿をご存知ですか？\n転職で新たな力を得られます。\nハーゴン討伐の鍵になるかと。」';
+return'兵士「東にリリザの町があります。\n南の湖のほこらには\n大切なものがあるそうです。」'}},
+{x:3,y:8,name:'宿屋',msg:'inn',inn:true}],
+liriza:[
+{x:4,y:5,name:'商人',msg:'商人「ここはリリザだよ。\n旅に必要なものは揃ってるぜ。」',shop:true},
+{x:8,y:3,name:'女性',msg:()=>{
+if(G.flags.princeJoined)return'女性「王子を見つけたのね！\nそういえば 北の方に\nダーマ神殿があるって話よ。\n転職で強くなれるんですって。」';
+return'女性「サマルトリアの王子は\n旅に出たらしいわよ。\nサマルトリア城にいるみたい。」'}},
+{x:6,y:9,name:'老人',msg:()=>{
+if(G.party.some(c=>c.job!=='none'))return'老人「ほう 転職しておるのか。\nひとつの職を★8まで極めれば\n上級の職への道が開けるぞ。\n戦士と武闘家でバトルマスター…\n魔法使いと僧侶で賢者じゃ。」';
+return'老人「わしが若い頃は\nダーマ神殿で修行したものじゃ。\n転職して様々な技を覚えれば\n魔王にも立ち向かえよう。」'}},
+{x:2,y:8,name:'宿屋',msg:'inn',inn:true}],
+samaltria:[
+{x:7,y:3,name:'サマルトリア王',msg:()=>{
+if(G.flags.princeJoined)return'サマルトリア王「息子を頼んだぞ。\nダーマ神殿で鍛えてやってくれ。\nあそこなら 職を変えて\n新しい力を身につけられる。」';
+return'サマルトリア王「うちの王子が\nお前を探していたぞ。\nこの城のどこかにいるはず。」'}},
+{x:5,y:8,name:'サマルトリアのおうじ',recruit:'prince',msg:'サマルトリアのおうじ「おお！\nぼくも つれていってください！\nいっしょに ハーゴンを倒そう！」'},
+{x:10,y:8,name:'宿屋',msg:'inn',inn:true},
+{x:3,y:5,name:'兵士',msg:'兵士「ダーマ神殿はご存知ですか？\nこの城から北の方角に\n神殿があるそうです。\n転職で 新たな技を覚えられると。」'}],
+moonpeta:[
+{x:5,y:5,name:'老人',msg:'老人「この町の東に犬がいるだろう？\nあれは ムーンブルクの王女\nなのじゃ。ラーのかがみが\nあれば 元の姿にもどせるぞ。」'},
+{x:9,y:7,name:'犬',recruit:'princess',msg:'犬「ワン！ワン！」\nラーのかがみを つかった！'},
+{x:3,y:9,name:'道具屋',msg:'道具屋「いらっしゃい！」',shop:true},
+{x:3,y:3,name:'宿屋',msg:'inn',inn:true},
+{x:7,y:3,name:'女性',msg:()=>{
+if(G.flags.princessJoined)return'女性「王女さまが元に戻ったのね！\n3人揃えばダーマ神殿で\n転職できるわ。\n踊り子になれば回復の踊りを\n覚えられるって噂よ。」';
+return'女性「ムーンブルク城は\nハーゴンに滅ぼされたの…\n王女さまだけが生き残ったけど\n呪いで犬の姿にされたらしいわ。」'}}],
+beranule:[
+{x:4,y:5,name:'船乗り',msg:'船乗り「船が欲しいのか？\nふねのきっぷを持ってきな！」',giveShip:true},
+{x:8,y:3,name:'道具屋',msg:'道具屋「いらっしゃい！」',shop:true},
+{x:8,y:8,name:'宿屋',msg:'inn',inn:true},
+{x:6,y:3,name:'老人',msg:()=>{
+const hasAdv=G.party.some(c=>{const j=JOBS[c.job];return j&&j.req!==null});
+if(hasAdv)return'老人「おお 上級職に就いたか！\n素晴らしい。その調子で\nバトルマスターと賢者を極めれば\n最後の職…勇者への道が開ける。\nマダンテの力があれば\nハーゴンにも勝てるじゃろう。」';
+return'老人「海の向こうには\n強い魔物がうようよしている。\nダーマ神殿で転職して\n己を鍛えてから挑むがよい。\n戦士や魔法使い 僧侶に武闘家…\n様々な技が身につくぞ。」'}}],
+perpoi:[
+{x:4,y:5,name:'学者',msg:()=>{
+const heroJob=G.party.some(c=>c.job==='hero_job');
+if(heroJob)return'学者「なんと…勇者の職に！\nマダンテの力を持つ者がいれば\nハーゴンも恐るるに足らぬ。\n東の果ての神殿へ向かうがよい。」';
+return'学者「ロンダルキアへの洞窟は\n北西にある。\n強い装備と転職で鍛えた力が\n必要じゃ。\nハーゴンの神殿は東の果てに。」'}},
+{x:8,y:3,name:'道具屋',msg:'道具屋「いらっしゃい！」',shop:true},
+{x:2,y:8,name:'宿屋',msg:'inn',inn:true},
+{x:6,y:7,name:'女性',msg:'女性「ダーマ神殿で修行した者が\n最後にたどり着く職業…\nそれが勇者だそうよ。\nバトルマスターと賢者を極めた\n者だけが なれるんですって。」'}],
+rhone:[
+{x:7,y:5,name:'神官',msg:()=>{
+const totalProf=G.party.reduce((s,c)=>{let t=0;for(const k in c.jobProf)t+=c.jobProf[k];return s+t},0);
+if(totalProf>30)return'神官「よくぞここまで鍛えた。\nダーマ神殿で積んだ修行の力…\nその技と魂で 闇を打ち払え。\nハーゴン神殿は東の果てにある。」';
+return'神官「ここはロンダルキアのほこら。\nハーゴン神殿は東の果てにある。\n気をつけてゆくのじゃ。\n…もっと鍛えてから来てもよいぞ。」'}},
+{x:5,y:5,name:'宿屋',msg:'inn',inn:true}],
+dharma:[
+{x:6,y:3,name:'ダーマ神官',msg:()=>{
+const heroJob=G.party.some(c=>c.job==='hero_job');
+if(heroJob)return'ダーマ神官「おお…ついに勇者が\n誕生したか！\nその者は あらゆる職を極め\n真の力を手に入れた。\nマダンテの光で\n闇を打ち砕くがよい！\nハーゴンを倒し 世界を救うのじゃ。」';
+const hasAdv=G.party.some(c=>{const j=JOBS[c.job];return j&&j.req!==null});
+if(hasAdv)return'ダーマ神官「上級職に進んだか。\n見事じゃ。\nしかし まだ先がある。\nバトルマスターと賢者…\nその2つを極めし者には\n最強の職 勇者への道が開ける。\n転職して参るがよい。」';
+const anyJob=G.party.some(c=>c.job!=='none');
+if(anyJob)return'ダーマ神官「修行は順調かな？\n戦い続ければ熟練度が上がり\n新たな技を覚えられる。\n★8まで極めれば 上級職への\n道も見えてこよう。\n転職して参るがよい。」';
+return'ダーマ神官「ようこそ ダーマ神殿へ。\nここは 天空より授かりし\n転職の力を司る聖なる場所。\n\n戦士 魔法使い 僧侶 武闘家\n踊り子 盗賊…\n6つの職を修めることで\n更なる高みへと至れる。\n\nさあ 転職して参るがよい。」'},dharma:true},
+{x:3,y:8,name:'宿屋',msg:'inn',inn:true},
+{x:9,y:5,name:'女性',msg:()=>{
+const anyMastered=G.party.some(c=>{for(const k in c.jobProf)if(c.jobProf[k]>=8)return true;return false});
+if(anyMastered)return'女性「職を極めたのですね！\n2つの基本職を★8にすれば\n上級職になれますよ。\n戦士＋武闘家→バトルマスター\n魔法使い＋僧侶→賢者\nぜひ挑戦してみて。」';
+return'女性「ここで転職すると\n職業ごとの技を覚えられます。\n戦って熟練度を上げましょう。\n★の数が増えると新しい技を\n覚えますよ。」'}}]};G.shops={liriza:{items:[{id:0,p:8},{id:1,p:10},{id:2,p:25}],weapons:[{id:0,p:10},{id:1,p:100}],armors:[{id:0,p:30},{id:1,p:80}]},moonpeta:{items:[{id:0,p:8},{id:1,p:10},{id:2,p:25}],weapons:[{id:2,p:500},{id:7,p:200}],armors:[{id:2,p:300}]},beranule:{items:[{id:0,p:8},{id:1,p:10},{id:2,p:25}],weapons:[{id:2,p:500},{id:6,p:300}],armors:[{id:3,p:700}]},perpoi:{items:[{id:0,p:8},{id:1,p:10},{id:2,p:25}],weapons:[{id:4,p:3500}],armors:[{id:4,p:3000}]}}}
 function checkInteraction(){const dirs=[[0,1],[0,-1],[-1,0],[1,0]];const d=dirs[G.pdir],tx=G.px+d[0],ty=G.py+d[1];if(G.mapId==='world')return;const npcs=G.npcs[G.mapId];if(!npcs)return;for(const npc of npcs){if(npc.x===tx&&npc.y===ty){if(npc.inn){useInn();return}if(npc.recruit==='prince'&&!G.prince&&!G.flags.princeJoined){G.flags.princeJoined=true;G.prince=new Chara(1,'サマルトリアのおうじ',PRINCE_LV);G.prince.weapon=0;G.prince.armor=0;G.party.push(G.prince);showMsg(npc.msg,()=>showMsg('サマルトリアのおうじ が なかまになった！'));return}if(npc.recruit==='princess'&&!G.princess&&!G.flags.princessJoined){if(G.items.some(it=>it.id===8)){G.flags.princessJoined=true;G.princess=new Chara(2,'ムーンブルクのおうじょ',PRINCESS_LV);G.princess.weapon=7;G.princess.armor=0;G.party.push(G.princess);const ki=G.items.findIndex(it=>it.id===8);if(ki>=0)G.items.splice(ki,1);showMsg('ラーのかがみを つかった！\n犬の姿が みるみる変わっていく…',()=>showMsg('ムーンブルクのおうじょ が なかまになった！'));return}else{showMsg('犬「ワン！ ワン！」\n（ラーのかがみが あれば…）');return}}if(npc.dharma){G.state=GS.MENU;G.ms={pg:'dharma',cursor:0,ci:0,subPg:'charSelect'};return}if(npc.giveShip){if(G.items.some(it=>it.id===7)){G.hasShip=true;
 // Find nearest sea tile to beranule exit
 let sx=42,sy=20,found=false;
 for(let r=1;r<10&&!found;r++)for(let dy=-r;dy<=r&&!found;dy++)for(let dx=-r;dx<=r&&!found;dx++){
 if(Math.abs(dx)===r||Math.abs(dy)===r){const nx=42+dx,ny=19+dy;if(nx>=0&&nx<64&&ny>=0&&ny<64&&worldMap[ny][nx]===1){sx=nx;sy=ny;found=true}}}
-G.shipX=sx;G.shipY=sy;G.items=G.items.filter(it=>it.id!==7);showMsg('船乗り「おお きっぷを持っているな！\nこの船を つかいな！」',()=>showMsg('船を てにいれた！'));return}else{showMsg('船乗り「船が欲しいのか？\nふねのきっぷを持ってきな！\n東の洞窟にあるらしいぞ。」');return}}if(npc.shop&&G.shops[G.mapId]){enterShop();return}showMsg(npc.msg);return}}showMsg('だれもいない。')}
+G.shipX=sx;G.shipY=sy;G.items=G.items.filter(it=>it.id!==7);showMsg('船乗り「おお きっぷを持っているな！\nこの船を つかいな！」',()=>showMsg('船を てにいれた！'));return}else{showMsg('船乗り「船が欲しいのか？\nふねのきっぷを持ってきな！\n東の洞窟にあるらしいぞ。」');return}}if(npc.shop&&G.shops[G.mapId]){enterShop();return}showMsg(typeof npc.msg==='function'?npc.msg():npc.msg);return}}showMsg('だれもいない。')}
 function enterShop(){const s=G.shops[G.mapId];if(!s)return;G.state=GS.SHOP;G.ss={pg:'main',cursor:0,items:s.items||[],weapons:s.weapons||[],armors:s.armors||[]}}
 function updateShop(){if(G.msgT)return;const ss=G.ss;if(!ss)return;if(ss.pg==='main'){if(kp('ArrowUp'))ss.cursor=(ss.cursor-1+4)%4;if(kp('ArrowDown'))ss.cursor=(ss.cursor+1)%4;if(kp('KeyZ')||kp('Enter')){if(ss.cursor===0){ss.pg='buy_item';ss.cursor=0}else if(ss.cursor===1){ss.pg='buy_weapon';ss.cursor=0}else if(ss.cursor===2){ss.pg='buy_armor';ss.cursor=0}else{G.state=GS.EXPLORE;G.ss=null}}if(kp('KeyX')||kp('Escape')){G.state=GS.EXPLORE;G.ss=null}}else{let list;if(ss.pg==='buy_item')list=ss.items;else if(ss.pg==='buy_weapon')list=ss.weapons;else list=ss.armors;if(kp('ArrowUp'))ss.cursor=Math.max(0,ss.cursor-1);if(kp('ArrowDown'))ss.cursor=Math.min(list.length-1,ss.cursor);if(kp('KeyZ')||kp('Enter')){if(list.length>0){const it=list[ss.cursor];if(G.gold>=it.p){G.gold-=it.p;if(ss.pg==='buy_item'){const ex=G.items.find(i=>i.id===it.id);if(ex)ex.count++;else G.items.push({id:it.id,count:1});showMsg(ITEMS[it.id].name+'を かった！')}else if(ss.pg==='buy_weapon'){const w=WEAPONS[it.id];const tgt=G.party.find(c=>c.alive&&w.who.includes(c.id))||G.party[0];tgt.weapon=it.id;showMsg(w.name+'を かった！\n'+tgt.name+'が そうびした！')}else{const a=ARMORS[it.id];const tgt=G.party.find(c=>c.alive&&a.who.includes(c.id))||G.party[0];tgt.armor=it.id;showMsg(a.name+'を かった！\n'+tgt.name+'が そうびした！')}}else showMsg('ゴールドが たりない！')}}if(kp('KeyX')||kp('Escape')){ss.pg='main';ss.cursor=0}}}
 function drawShop(){const ss=G.ss;if(!ss)return;if(ss.pg==='main'){dw(8,8,120,80);dt('おみせ  G:'+G.gold,16,26,7,'#ffd700');['どうぐ','ぶき','よろい','やめる'].forEach((t,i)=>dt((i===ss.cursor?'▶':' ')+t,16,42+i*14,7))}else{let list,names;if(ss.pg==='buy_item'){list=ss.items;names=list.map(i=>ITEMS[i.id].name)}else if(ss.pg==='buy_weapon'){list=ss.weapons;names=list.map(i=>WEAPONS[i.id].name)}else{list=ss.armors;names=list.map(i=>ARMORS[i.id].name)}dw(8,8,200,list.length*14+40);dt('G: '+G.gold,16,26,7,'#ffd700');list.forEach((it,i)=>dt((i===ss.cursor?'▶':' ')+names[i]+' '+it.p+'G',16,42+i*14,7));dt('Xで もどる',16,list.length*14+42,6,'#888')}}
-function drawNPCs(){if(G.mapId==='world')return;const npcs=G.npcs[G.mapId];if(!npcs)return;const npcColors={'ローレシア王':'#c00','サマルトリア王':'#00c','船乗り':'#a52','老人':'#888','学者':'#448','神官':'#fff','ダーマ神官':'#f80','犬':'#a80','宿屋':'#0a8','兵士':'#888'};npcs.forEach(npc=>{const sx=(npc.x-G.cam.x)*T,sy=(npc.y-G.cam.y)*T;if(sx<-T||sx>SW||sy<-T||sy>SH)return;if(npc.name==='犬'){ctx.fillStyle='#a60';ctx.fillRect(sx+4,sy+8,8,4);ctx.fillRect(sx+4,sy+12,2,3);ctx.fillRect(sx+10,sy+12,2,3);ctx.fillRect(sx+3,sy+6,4,3);ctx.fillStyle='#000';ctx.fillRect(sx+4,sy+7,1,1);ctx.fillStyle='#a60';ctx.fillRect(sx+11,sy+9,2,1);return}const col=npcColors[npc.name]||'#fa0';ctx.fillStyle='#fdb';ctx.fillRect(sx+5,sy+2,6,4);ctx.fillStyle='#000';ctx.fillRect(sx+6,sy+3,1,1);ctx.fillRect(sx+9,sy+3,1,1);ctx.fillStyle=col;ctx.fillRect(sx+4,sy+6,8,5);ctx.fillRect(sx+3,sy+7,1,3);ctx.fillRect(sx+12,sy+7,1,3);ctx.fillRect(sx+5,sy+11,2,3);ctx.fillRect(sx+9,sy+11,2,3);if(npc.name.includes('王')){ctx.fillStyle='#ffd700';ctx.fillRect(sx+5,sy+0,6,2);ctx.fillRect(sx+5,sy+0,1,1);ctx.fillRect(sx+7,sy+0,1,1);ctx.fillRect(sx+10,sy+0,1,1)}else{ctx.fillStyle='#531';ctx.fillRect(sx+5,sy+1,6,1)}})}
-function drawTitle(){ctx.fillStyle='#000';ctx.fillRect(0,0,SW,SH);dtc('ドラゴンクエストII',SW/2,60,12,'#ffd700');dtc('～悪霊の神々～',SW/2,78,8,'#ffd700');ctx.strokeStyle='#ffd700';ctx.lineWidth=1;ctx.beginPath();ctx.arc(SW/2,120,30,0,Math.PI*2);ctx.stroke();ctx.beginPath();ctx.moveTo(SW/2,90);ctx.lineTo(SW/2+26,135);ctx.lineTo(SW/2-26,135);ctx.closePath();ctx.stroke();dtc('ぼうけんをはじめる',SW/2,166,8);dtc('ぼうけんのしょ',SW/2,182,8);dtc('ふっかつのじゅもん',SW/2,198,8);
+function drawNPCs(){if(G.mapId==='world')return;const npcs=G.npcs[G.mapId];if(!npcs)return;const npcColors={'ローレシア王':'#c00','サマルトリア王':'#00c','船乗り':'#a52','老人':'#888','学者':'#448','神官':'#fff','ダーマ神官':'#f80','犬':'#a80','宿屋':'#0a8','兵士':'#888','女性':'#f6a','商人':'#da0','道具屋':'#0a0'};npcs.forEach(npc=>{const sx=(npc.x-G.cam.x)*T,sy=(npc.y-G.cam.y)*T;if(sx<-T||sx>SW||sy<-T||sy>SH)return;if(npc.name==='犬'){ctx.fillStyle='#a60';ctx.fillRect(sx+4,sy+8,8,4);ctx.fillRect(sx+4,sy+12,2,3);ctx.fillRect(sx+10,sy+12,2,3);ctx.fillRect(sx+3,sy+6,4,3);ctx.fillStyle='#000';ctx.fillRect(sx+4,sy+7,1,1);ctx.fillStyle='#a60';ctx.fillRect(sx+11,sy+9,2,1);return}const col=npcColors[npc.name]||'#fa0';ctx.fillStyle='#fdb';ctx.fillRect(sx+5,sy+2,6,4);ctx.fillStyle='#000';ctx.fillRect(sx+6,sy+3,1,1);ctx.fillRect(sx+9,sy+3,1,1);ctx.fillStyle=col;ctx.fillRect(sx+4,sy+6,8,5);ctx.fillRect(sx+3,sy+7,1,3);ctx.fillRect(sx+12,sy+7,1,3);ctx.fillRect(sx+5,sy+11,2,3);ctx.fillRect(sx+9,sy+11,2,3);if(npc.name.includes('王')){ctx.fillStyle='#ffd700';ctx.fillRect(sx+5,sy+0,6,2);ctx.fillRect(sx+5,sy+0,1,1);ctx.fillRect(sx+7,sy+0,1,1);ctx.fillRect(sx+10,sy+0,1,1)}else if(npc.name==='女性'){ctx.fillStyle='#a06';ctx.fillRect(sx+4,sy+0,8,3);ctx.fillRect(sx+3,sy+1,1,5);ctx.fillRect(sx+12,sy+1,1,5)}else{ctx.fillStyle='#531';ctx.fillRect(sx+5,sy+1,6,1)}})}
+function drawTitle(){
+// 背景: 深い青のグラデーション
+const bgGrd=ctx.createLinearGradient(0,0,0,SH);bgGrd.addColorStop(0,'#080820');bgGrd.addColorStop(0.5,'#101040');bgGrd.addColorStop(1,'#000010');ctx.fillStyle=bgGrd;ctx.fillRect(0,0,SW,SH);
+const s=Math.sin,cx=SW/2,f=G.frame;
+// 背景パーティクル（ゆっくり上昇する光の粒）
+for(let i=0;i<25;i++){const px=(i*79+i*i*17)%SW,py=((i*53+i*i*11)-f*0.3)%SH;const pa=0.15+0.15*s(f*0.015+i*2);ctx.fillStyle=`rgba(180,200,255,${pa})`;ctx.fillRect(px,(py+SH)%SH,1,1)}
+// ロトの紋章（中央上部、大きく）
+const ey=48,er=28;
+// 外円（ゴールドリング）
+const ga=0.6+0.2*s(f*0.03);
+ctx.strokeStyle=`rgba(255,215,0,${ga})`;ctx.lineWidth=1.5;ctx.beginPath();ctx.arc(cx,ey,er,0,Math.PI*2);ctx.stroke();
+ctx.strokeStyle=`rgba(255,200,0,${ga*0.5})`;ctx.lineWidth=0.5;ctx.beginPath();ctx.arc(cx,ey,er+2,0,Math.PI*2);ctx.stroke();
+// 紋章の鳥（不死鳥/ラーミア風）
+ctx.fillStyle=`rgba(255,215,0,${ga})`;
+// 体
+ctx.fillRect(cx-2,ey-4,4,10);
+// 翼（左）
+ctx.fillRect(cx-6,ey-6,4,2);ctx.fillRect(cx-10,ey-8,4,2);ctx.fillRect(cx-14,ey-8,4,2);ctx.fillRect(cx-16,ey-6,3,2);ctx.fillRect(cx-18,ey-4,3,2);
+// 翼（右）
+ctx.fillRect(cx+2,ey-6,4,2);ctx.fillRect(cx+6,ey-8,4,2);ctx.fillRect(cx+10,ey-8,4,2);ctx.fillRect(cx+13,ey-6,3,2);ctx.fillRect(cx+15,ey-4,3,2);
+// 頭
+ctx.fillRect(cx-1,ey-8,2,4);ctx.fillRect(cx-2,ey-10,4,3);
+// 尾羽
+ctx.fillRect(cx-4,ey+6,2,4);ctx.fillRect(cx+2,ey+6,2,4);ctx.fillRect(cx-1,ey+8,2,4);
+// 紋章の十字
+ctx.fillRect(cx-er+4,ey-1,er*2-8,2);ctx.fillRect(cx-1,ey-er+4,2,er*2-8);
+// DRAGONQUESTロゴ
+const ly=ey+er+12;
+// メインタイトル（英字ロゴ風）
+ctx.font='bold 11px monospace';ctx.textAlign='center';
+// 影（二重）
+ctx.fillStyle='rgba(0,0,0,0.9)';ctx.fillText('DRAGON QUEST',cx+1,ly+1);
+ctx.fillStyle='rgba(80,40,0,0.6)';ctx.fillText('DRAGON QUEST',cx+0.5,ly+0.5);
+// 本体（グラデーション）
+const tgrd=ctx.createLinearGradient(cx-50,ly-10,cx+50,ly+2);tgrd.addColorStop(0,'#ffd700');tgrd.addColorStop(0.3,'#fff4a0');tgrd.addColorStop(0.5,'#ffe040');tgrd.addColorStop(0.7,'#fff4a0');tgrd.addColorStop(1,'#ffd700');
+ctx.fillStyle=tgrd;ctx.fillText('DRAGON QUEST',cx,ly);
+// 「II」を大きく
+ctx.font='bold 16px monospace';
+ctx.fillStyle='rgba(0,0,0,0.9)';ctx.fillText('II',cx+1,ly+18+1);
+const igrd=ctx.createLinearGradient(cx-10,ly+4,cx+10,ly+20);igrd.addColorStop(0,'#ffd700');igrd.addColorStop(0.5,'#fffce0');igrd.addColorStop(1,'#daa520');
+ctx.fillStyle=igrd;ctx.fillText('II',cx,ly+18);
+// サブタイトル（日本語）
+ctx.font='8px monospace';
+ctx.fillStyle='rgba(0,0,0,0.8)';ctx.fillText('悪霊の神々',cx+0.5,ly+30+0.5);
+ctx.fillStyle='#e0b030';ctx.fillText('悪霊の神々',cx,ly+30);
+// 装飾区切りライン
+const dy=ly+36;
+ctx.strokeStyle=`rgba(255,215,0,${0.3+0.15*s(f*0.03)})`;ctx.lineWidth=0.5;
+ctx.beginPath();ctx.moveTo(cx-80,dy);ctx.lineTo(cx-10,dy);ctx.stroke();
+ctx.beginPath();ctx.moveTo(cx+10,dy);ctx.lineTo(cx+80,dy);ctx.stroke();
+// 中央ダイヤ
+ctx.fillStyle=`rgba(255,215,0,${0.5+0.3*s(f*0.05)})`;
+ctx.beginPath();ctx.moveTo(cx,dy-3);ctx.lineTo(cx+3,dy);ctx.lineTo(cx,dy+3);ctx.lineTo(cx-3,dy);ctx.closePath();ctx.fill();
+// 3人のシルエット（ロト三勇者）
+const sy2=ly+44;
+// ローレシア（中央、剣）
+ctx.fillStyle='#446';
+ctx.fillRect(cx-2,sy2,4,7);ctx.fillRect(cx-3,sy2+2,1,3);ctx.fillRect(cx+2,sy2+2,1,3);ctx.fillRect(cx-1,sy2+7,1,3);ctx.fillRect(cx,sy2+7,1,3);
+ctx.fillStyle='#668';ctx.fillRect(cx-1,sy2-2,2,2);
+ctx.fillStyle='#aab';ctx.fillRect(cx+3,sy2-1,1,6);
+// サマルトリア（左、杖）
+ctx.fillStyle='#343';
+ctx.fillRect(cx-16,sy2+1,4,6);ctx.fillRect(cx-17,sy2+3,1,2);ctx.fillRect(cx-12,sy2+3,1,2);ctx.fillRect(cx-15,sy2+7,1,3);ctx.fillRect(cx-14,sy2+7,1,3);
+ctx.fillStyle='#565';ctx.fillRect(cx-15,sy2-1,2,2);
+ctx.fillStyle='#886';ctx.fillRect(cx-11,sy2-2,1,8);
+// ムーンブルク（右、魔法）
+ctx.fillStyle='#436';
+ctx.fillRect(cx+12,sy2+1,4,6);ctx.fillRect(cx+11,sy2+3,1,2);ctx.fillRect(cx+16,sy2+3,1,2);ctx.fillRect(cx+13,sy2+7,1,3);ctx.fillRect(cx+14,sy2+7,1,3);
+ctx.fillStyle='#658';ctx.fillRect(cx+13,sy2-1,2,2);
+// 魔法エフェクト
+const ma=0.3+0.3*s(f*0.08);ctx.fillStyle=`rgba(100,200,255,${ma})`;ctx.fillRect(cx+17,sy2,2,1);ctx.fillRect(cx+18,sy2+1,1,1);
+// メニュー
+const my=196;
+dtc('ぼうけんをはじめる',cx,my,8);dtc('ぼうけんのしょ',cx,my+14,8);dtc('ふっかつのじゅもん',cx,my+28,8);
 const tc=G.ms?G.ms.cursor||0:0;
-if(G.frame%40<20)dc(SW/2-66,159+tc*16);
+if(G.frame%40<20)dc(SW/2-66,189+tc*14);
 if(kp('Enter')||kp('Space')||kp('KeyZ')){
 if(tc===0)newGame();
 else if(tc===1)loadGame();
 else{G.state=GS.MENU;G.ms={pg:'jumon_input',cursor:0,ci:0,inputBuf:'',jcursor:{x:0,y:0}}}
 }
 if(kp('ArrowDown')){if(!G.ms)G.ms={cursor:0};G.ms.cursor=Math.min(2,(G.ms.cursor||0)+1)}
-if(kp('ArrowUp')){if(!G.ms)G.ms={cursor:0};G.ms.cursor=Math.max(0,(G.ms.cursor||0)-1)};dtc('Z/Enter: けってい  矢印: いどう',SW/2,220,6,'#888')}
-function newGame(){G.hero=new Chara(0,'ローレシアのおうじ',HERO_LV);G.hero.weapon=1;G.hero.armor=1;G.party=[G.hero];G.gold=50;G.items=[{id:0,count:3}];G.mapId='world';G.px=12;G.py=15;G.pdir=0;G.flags={};G.visited=['loracia'];G.prince=null;G.princess=null;G.hasShip=false;G.onShip=false;G.chests={};initMaps();initNPCs();G.state=GS.DIALOG;showMsg('ローレシア王「おお ローレシアのおうじよ！\n魔王ハーゴンを倒す旅に出るのじゃ！」',()=>{showMsg('ローレシア王「サマルトリアの王子を\n仲間にするのじゃ！\n南のサマルトリア城を訪ねよ。」',()=>{G.state=GS.EXPLORE})})}
+if(kp('ArrowUp')){if(!G.ms)G.ms={cursor:0};G.ms.cursor=Math.max(0,(G.ms.cursor||0)-1)};dtc('Z: けってい  矢印: いどう',cx,236,5,'#445')}
+function newGame(){G.hero=new Chara(0,'ローレシアのおうじ',HERO_LV);G.hero.weapon=1;G.hero.armor=1;G.party=[G.hero];G.gold=50;G.items=[{id:0,count:3}];G.mapId='world';G.px=12;G.py=15;G.pdir=0;G.flags={};G.visited=['loracia'];G.prince=null;G.princess=null;G.hasShip=false;G.onShip=false;G.chests={};initMaps();initNPCs();G.state=GS.DIALOG;showMsg('ローレシア王「おお ローレシアのおうじよ！\n邪教の教祖ハーゴンが\n世界を闇に染めようとしている。」',()=>{showMsg('ローレシア王「ロトの血を引く3人の\n勇者が揃えば 奴を倒せるはず。\nまずは南のサマルトリア城で\n王子を仲間にするのじゃ！」',()=>{showMsg('ローレシア王「そうじゃ…\n北にダーマ神殿がある。\n転職の力で己を鍛えれば\nさらに強くなれるじゃろう。」',()=>{G.state=GS.EXPLORE})})})}
 // ===== FUKKATSU NO JUMON (Revival Password) =====
 const JUMON_CHARS='あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよらりるれろわをん';
 function encodeJumon(){
@@ -885,8 +1028,8 @@ function saveGame(){const d={party:G.party.map(c=>({id:c.id,name:c.name,level:c.
 function loadGame(){const r=localStorage.getItem('dq2save');if(!r){showMsg('ぼうけんのしょが ありません。');return}try{const d=JSON.parse(r);const ts=[HERO_LV,PRINCE_LV,PRINCESS_LV];G.party=d.party.map(p=>{const c=new Chara(p.id,p.name,ts[p.id]);Object.assign(c,p);c.lt=ts[p.id];if(!c.job)c.job='none';if(!c.jobProf){c.jobProf={};for(const k in JOBS)if(k!=='none')c.jobProf[k]=0}if(!c.learnedSkills)c.learnedSkills=[];return c});G.hero=G.party[0];G.prince=G.party.find(c=>c.id===1)||null;G.princess=G.party.find(c=>c.id===2)||null;G.gold=d.gold;G.items=d.items;G.flags=d.flags;G.mapId=d.mapId;G.px=d.px;G.py=d.py;G.pdir=d.pdir;G.visited=d.visited||[];G.hasShip=d.hasShip||false;G.shipX=d.shipX||0;G.shipY=d.shipY||0;G.state=GS.EXPLORE}catch(e){showMsg('ぼうけんのしょが こわれています。')}}
 function updateExplore(){if(G.msgT)return;G.moveTimer--;if(G.moveTimer>0)return;let dx=0,dy=0;if(kh('ArrowUp')){dy=-1;G.pdir=1}else if(kh('ArrowDown')){dy=1;G.pdir=0}else if(kh('ArrowLeft')){dx=-1;G.pdir=2}else if(kh('ArrowRight')){dx=1;G.pdir=3}if(dx||dy){tryMove(dx,dy);G.moveTimer=8}if(kp('KeyX')||kp('Escape')){G.state=GS.MENU;G.ms={pg:'main',cursor:0,ci:0}}if(kp('KeyZ')||kp('Enter'))checkInteraction()}
 function drawGameOver(){ctx.fillStyle='#000';ctx.fillRect(0,0,SW,SH);dtc('ぜんめつ してしまった…',SW/2,80,10,'#f00');dtc('ローレシア王「おお なさけない！',SW/2,120,8);dtc('もういちど がんばるのじゃ！」',SW/2,136,8);dtc('▶ つづきから (Zキー)',SW/2,180,8);if(kp('KeyZ')||kp('Enter')){loadGame();if(G.state!==GS.EXPLORE){G.ms={cursor:0};G.state=GS.TITLE}else{G.party.forEach(c=>{c.alive=true;c.hp=Math.max(1,Math.floor(c.maxHp/2));c.status=[]});G.gold=Math.floor(G.gold/2)}}}
-function drawEnding(){ctx.fillStyle='#000';ctx.fillRect(0,0,SW,SH);dtc('邪神シドーは たおされた！',SW/2,40,10,'#ffd700');dtc('せかいに へいわが もどった！',SW/2,70,8);G.party.forEach((c,i)=>dtc(c.name,SW/2,110+i*20,8));dtc('あなたの ぼうけんは',SW/2,180,8);dtc('でんせつとして かたりつがれる',SW/2,196,8);dtc('- THE END -',SW/2,220,10,'#ffd700')}
-function checkBossEvents(){if(G.mapId==='hargon'&&G.px===8&&G.py===3&&!G.flags.hargonDown){showMsg('ハーゴン「おろかもの！\nわがやみのちからを みるがよい！」',()=>startBattle('ハーゴン'))}if(G.mapId==='hargon'&&G.px===8&&G.py===2&&G.flags.hargonDown&&!G.flags.sidoDown){showMsg('大地がゆれる…\n邪神シドーが あらわれた！',()=>startBattle('シドー'))}}
+function drawEnding(){ctx.fillStyle='#000';ctx.fillRect(0,0,SW,SH);const t=Math.floor(G.frame/3)%400;const a=Math.min(1,t/30);ctx.globalAlpha=a;dtc('邪神シドーは たおされた！',SW/2,30,10,'#ffd700');dtc('せかいに へいわが もどった！',SW/2,52,8);G.party.forEach((c,i)=>{const jn=JOBS[c.job]?JOBS[c.job].name:'';const prof=Object.entries(c.jobProf).filter(([k,v])=>v>=8).length;dtc(c.name,SW/2,82+i*28,8);if(jn&&jn!=='なし')dtc('職業: '+jn,SW/2,94+i*28,6,'#8cf');if(prof>0)dtc(prof+'つの職を極めた',SW/2,94+i*28+(jn&&jn!=='なし'?10:0),6,'#fd0')});const by=82+G.party.length*28+10;dtc('ダーマ神殿で鍛え 幾多の技を学び',SW/2,by,7,'#aef');dtc('ロトの末裔たちは 真の勇者となった',SW/2,by+14,7,'#aef');dtc('あなたの ぼうけんは',SW/2,by+36,8);dtc('でんせつとして かたりつがれる',SW/2,by+52,8);dtc('- THE END -',SW/2,by+76,10,'#ffd700');ctx.globalAlpha=1}
+function checkBossEvents(){if(G.mapId==='hargon'&&G.px===8&&G.py===3&&!G.flags.hargonDown){const heroJob=G.party.some(c=>c.job==='hero_job');showMsg('ハーゴン「おろかな ロトの末裔どもめ！\nわが闇の力の前には\n何者も ひざまずくのみ！」',()=>{if(heroJob)showMsg('勇者の力が光を放つ！\nハーゴン「な…なんだと！\nその光は…まさか！」',()=>startBattle('ハーゴン'));else startBattle('ハーゴン')})}if(G.mapId==='hargon'&&G.px===8&&G.py===2&&G.flags.hargonDown&&!G.flags.sidoDown){showMsg('ハーゴンの体から\n禍々しい闇があふれ出す…！',()=>{showMsg('大地が裂け 天が割れる！\n闇の中から 巨大な影が\nゆっくりと姿を現した…',()=>{showMsg('邪神シドー「ハーゴンの祈りに応え\nこの世に降臨せし\n破壊の神…それが我だ。」',()=>startBattle('シドー'))})})}}
 function mainLoop(){G.frame++;switch(G.state){case GS.TITLE:drawTitle();break;case GS.EXPLORE:updateExplore();checkBossEvents();drawMap();drawPlayer();drawNPCs();if(G.party.length>0){dw(0,0,SW,18);G.party.forEach((c,i)=>{const bx=i*85+4;const col=c.alive?(c.hp<c.maxHp/4?'#f00':'#fff'):'#555';dt(c.name.slice(0,2),bx,9,6,col);drawBar(bx+16,4,32,3,c.hp/c.maxHp,c.hp<c.maxHp/4?'#c00':'#0a0',c.hp<c.maxHp/4?'#f44':'#0f0');dt('H'+c.hp,bx+16,13,5,col);drawBar(bx+16,10,32,2,c.mp/c.maxMp,'#06a','#0af');dt('M'+c.mp,bx+50,13,5,'#0af')})}break;case GS.BATTLE:updateBattle();drawBattle();break;case GS.MENU:updateMenu();drawMap();drawPlayer();drawNPCs();drawMenu();break;case GS.DIALOG:drawMap();drawPlayer();drawNPCs();break;case GS.SHOP:updateShop();drawMap();drawPlayer();drawNPCs();drawShop();break;case GS.GAMEOVER:drawGameOver();break;case GS.ENDING:drawEnding();break}if(G.msgT){drawMsg();if(kp('KeyZ')||kp('Enter')){if(G.msgCI<G.msgT.length){G.msgCI=G.msgT.length}else if(G.msgCb){const cb=G.msgCb;G.msgCb=null;G.msgT='';cb();if(!G.msgT)nxtMsg()}else nxtMsg()}}requestAnimationFrame(mainLoop)}
 // ===== TOUCH CONTROLS =====
 document.querySelectorAll('#pad button[data-key]').forEach(btn=>{
