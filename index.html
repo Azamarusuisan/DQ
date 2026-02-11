@@ -402,18 +402,18 @@ d.push(cs);
 // Encode to kana: each byte -> 2 chars (high nibble + low nibble) using base-46
 const jc=JUMON_CHARS;
 let s='';
-for(const v of d){s+=jc[Math.floor(v/46)%46];s+=jc[v%46]}
+for(const v of d){s+=jc[Math.floor(v/42)%42];s+=jc[v%42]}
 return s;
 }
 function decodeJumon(s){
 const jc=JUMON_CHARS;
 const clean=s.replace(/[\s　]/g,'');
-if(clean.length<28)return null;
+if(clean.length<30)return null;
 const d=[];
 for(let i=0;i<clean.length;i+=2){
 const hi=jc.indexOf(clean[i]),lo=jc.indexOf(clean[i+1]);
 if(hi<0||lo<0)return null;
-d.push(hi*46+lo);
+d.push(hi*42+lo);
 }
 // Verify checksum
 const cs=d.pop();
