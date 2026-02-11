@@ -294,7 +294,281 @@ if(G.mapId==='world'&&tid!==6&&tid!==7&&tid!==8&&tid!==9&&tid!==10&&Math.random(
 function startBattle(bossName){const zone=bossName?3:(G.mapId==='world'?getZone(G.px,G.py):(G.maps[G.mapId].zone||0));let pool;if(bossName)pool=MONSTERS.filter(m=>m.name===bossName);else pool=MONSTERS.filter(m=>m.zone.includes(zone));if(pool.length===0)return;const count=bossName?1:1+Math.floor(Math.random()*3);const enemies=[];for(let i=0;i<count;i++){const m=pool[Math.floor(Math.random()*pool.length)];enemies.push({...m,hp:m.hp,maxHp:m.hp,alive:true,status:[]})}G.bs={enemies,cursor:0,spellCursor:0,itemCursor:0,partyActs:[],curActor:0,msg:'まものが あらわれた！',msgTimer:60,phase:'msg',nextPhase:'select',resultMsgs:[],resultIdx:0};G.state=GS.BATTLE}
 function updateBattle(){const bs=G.bs;if(!bs)return;if(bs.phase==='msg'){bs.msgTimer--;if(bs.msgTimer<=0||kp('KeyZ')||kp('Enter')){if(bs.nextPhase){bs.phase=bs.nextPhase;bs.nextPhase=null}else bs.phase='select';bs.msg=''}return}if(bs.phase==='start'){bs.phase='select';bs.cursor=0;bs.partyActs=[];bs.curActor=0}if(bs.phase==='select'){const a=G.party[bs.curActor];if(!a||!a.alive){bs.curActor++;if(bs.curActor>=G.party.length){bs.phase='exec';bs.curActor=0}return}if(kp('ArrowUp'))bs.cursor=(bs.cursor-1+4)%4;if(kp('ArrowDown'))bs.cursor=(bs.cursor+1)%4;if(kp('KeyZ')||kp('Enter')){if(bs.cursor===0){bs.partyActs.push({ai:bs.curActor,type:'atk',tgt:0});bs.curActor++;bs.cursor=0}else if(bs.cursor===1){if(a.spells.length>0){bs.phase='spell';bs.spellCursor=0}else{bs.msg='じゅもんを おぼえていない！';bs.msgTimer=40;bs.phase='msg';bs.nextPhase='select'}}else if(bs.cursor===2){if(G.items.length>0){bs.phase='item';bs.itemCursor=0}else{bs.msg='どうぐがない！';bs.msgTimer=40;bs.phase='msg';bs.nextPhase='select'}}else if(bs.cursor===3){if(bs.enemies.some(e=>e.boss)){bs.msg='ボスからは にげられない！';bs.msgTimer=40;bs.phase='msg';bs.nextPhase='select'}else if(Math.random()>0.5){bs.msg='うまく にげきれた！';bs.msgTimer=40;bs.phase='msg';bs.nextPhase='end'}else{bs.msg='にげられない！';bs.msgTimer=40;bs.phase='msg';bs.partyActs.push({ai:bs.curActor,type:'def'});bs.curActor++;bs.nextPhase='select'}}}if(bs.curActor>=G.party.length&&bs.phase==='select'){bs.phase='exec';bs.curActor=0}}if(bs.phase==='spell'){const a=G.party[bs.curActor];if(!a){bs.phase='select';return}if(kp('ArrowUp'))bs.spellCursor=Math.max(0,bs.spellCursor-1);if(kp('ArrowDown'))bs.spellCursor=Math.min(a.spells.length-1,bs.spellCursor);if(kp('KeyZ')||kp('Enter')){const sp=SPELLS[a.spells[bs.spellCursor]];if(a.mp<sp.mp){bs.msg='MPが たりない！';bs.msgTimer=40;bs.phase='msg';bs.nextPhase='spell'}else{bs.partyActs.push({ai:bs.curActor,type:'spell',spell:a.spells[bs.spellCursor],tgt:0});bs.curActor++;bs.spellCursor=0;bs.phase='select'}}if(kp('KeyX')||kp('Escape')){bs.phase='select';bs.cursor=1}}if(bs.phase==='item'){if(kp('ArrowUp'))bs.itemCursor=Math.max(0,bs.itemCursor-1);if(kp('ArrowDown'))bs.itemCursor=Math.min(G.items.length-1,bs.itemCursor);if(kp('KeyZ')||kp('Enter')){bs.partyActs.push({ai:bs.curActor,type:'item',itemId:G.items[bs.itemCursor].id});bs.curActor++;bs.itemCursor=0;bs.phase='select'}if(kp('KeyX')||kp('Escape')){bs.phase='select';bs.cursor=2}}if(bs.phase==='exec')execBattle();if(bs.phase==='result'){bs.msgTimer--;if(bs.msgTimer<=0){if(bs.resultIdx<bs.resultMsgs.length){bs.msg=bs.resultMsgs[bs.resultIdx];bs.resultIdx++;bs.msgTimer=50}else if(kp('KeyZ')||kp('Enter')||bs.msgTimer<-60){const allED=bs.enemies.every(e=>!e.alive),allPD=G.party.every(c=>!c.alive);if(allPD)G.state=GS.GAMEOVER;else if(G.flags.sidoDown)G.state=GS.ENDING;else if(allED)bs.phase='end';else{bs.phase='select';bs.cursor=0;bs.partyActs=[];bs.curActor=0;bs.msg=''}}}}if(bs.phase==='end'){G.state=GS.EXPLORE;G.bs=null;G.party.forEach(c=>{c.atkBuf=0;c.defBuf=0})}}
 function execBattle(){const bs=G.bs,acts=[];bs.partyActs.forEach(a=>{const ac=G.party[a.ai];if(ac&&ac.alive)acts.push({...a,agi:ac.agi,isP:true,obj:ac})});bs.enemies.forEach((e,i)=>{if(!e.alive)return;let t='atk';if(e.spells.length>0&&e.mp>0&&Math.random()>0.5)t='spell';acts.push({type:t,ai:i,isP:false,obj:e,agi:e.agi,spell:t==='spell'?e.spells[Math.floor(Math.random()*e.spells.length)]:null,tgt:Math.floor(Math.random()*G.party.length)})});acts.sort((a,b)=>b.agi-a.agi);const ms=[];for(const act of acts){if(act.isP){const a=act.obj;if(!a.alive)continue;if(a.status.includes('sleep')){if(Math.random()>0.5)a.status=a.status.filter(s=>s!=='sleep');ms.push(a.name+'は ねている。');continue}if(act.type==='atk'){const al=bs.enemies.filter(e=>e.alive);if(al.length===0)continue;const t=al[Math.floor(Math.random()*al.length)];const w=a.weapon!=null?WEAPONS[a.weapon]:null;const hits=w&&w.hits?w.hits:1;let td=0;for(let h=0;h<hits;h++){const d=Math.max(1,Math.floor(a.atk-t.def/2+Math.random()*4-2));t.hp-=d;td+=d}ms.push(a.name+'のこうげき！ '+t.name+'に '+td+'ダメージ！');if(t.hp<=0){t.alive=false;ms.push(t.name+'を たおした！')}}else if(act.type==='spell'){const sp=SPELLS[act.spell];a.mp-=sp.mp;if(sp.type==='damage'){const al=bs.enemies.filter(e=>e.alive);al.forEach(e=>{const d=Math.max(1,Math.floor(sp.power+Math.random()*10-e.def/4));e.hp-=d;if(e.hp<=0){e.alive=false;ms.push(e.name+'を たおした！')}});ms.push(a.name+'は '+sp.name+'！')}else if(sp.type==='heal'){const t=G.party.find(c=>c.alive&&c.hp<c.maxHp)||a;t.hp=Math.min(t.maxHp,t.hp+sp.power);ms.push(a.name+'は '+sp.name+'！ '+t.name+'のHPかいふく！')}else if(sp.type==='buff'){if(sp.effect==='def_up'){G.party.forEach(c=>{if(c.alive)c.defBuf+=10});ms.push(a.name+'は '+sp.name+'！ しゅびりょくUP！')}else if(sp.effect==='atk_up'){a.atkBuf+=15;ms.push(a.name+'は '+sp.name+'！ こうげきりょくUP！')}}else if(sp.type==='status'){const al=bs.enemies.filter(e=>e.alive);if(al.length>0){const t=al[Math.floor(Math.random()*al.length)];if(Math.random()>0.3){t.status.push('sleep');ms.push(a.name+'は '+sp.name+'！ '+t.name+'は ねむった！')}else ms.push(a.name+'は '+sp.name+'！ しかし きかなかった！')}}else if(sp.type==='revive'){const t=G.party.find(c=>!c.alive);if(t){t.alive=true;t.hp=t.maxHp;ms.push(a.name+'は '+sp.name+'！ '+t.name+'は いきかえった！')}else ms.push(a.name+'は '+sp.name+'！ しかし だれも たおれていない。')}}else if(act.type==='item'){const itIdx=G.items.findIndex(i=>i.id===act.itemId);if(itIdx>=0){const it=G.items[itIdx];const item=ITEMS[it.id];if(item.type==='heal'){a.hp=Math.min(a.maxHp,a.hp+item.power);ms.push(a.name+'は '+item.name+'を つかった！ HPが '+item.power+' かいふく！');it.count--;if(it.count<=0)G.items.splice(itIdx,1)}else if(item.type==='revive'){const t=G.party.find(c=>!c.alive);if(t){t.alive=true;t.hp=t.maxHp;ms.push(a.name+'は '+item.name+'を つかった！ '+t.name+'は いきかえった！');it.count--;if(it.count<=0)G.items.splice(itIdx,1)}else{ms.push(a.name+'は '+item.name+'を つかった！ しかし こうかがなかった！')}}else{ms.push(a.name+'は '+item.name+'を つかった！ しかし こうかがなかった！')}}}}else{const e=act.obj;if(!e.alive)continue;if(e.flee&&Math.random()<e.flee){e.alive=false;ms.push(e.name+'は にげだした！');continue}if(e.status.includes('sleep')){if(Math.random()>0.5)e.status=e.status.filter(s=>s!=='sleep');ms.push(e.name+'は ねている。');continue}const ap=G.party.filter(c=>c.alive);if(ap.length===0)continue;const t=ap[Math.floor(Math.random()*ap.length)];if(act.type==='atk'){const d=Math.max(1,Math.floor(e.atk-t.def/2+Math.random()*4-2));t.hp-=d;ms.push(e.name+'のこうげき！ '+t.name+'に '+d+'ダメージ！');if(t.hp<=0){t.hp=0;t.alive=false;ms.push(t.name+'は ちからつきた…')}}else if(act.type==='spell'){const sp=SPELLS[act.spell];if(e.mp<sp.mp){const d=Math.max(1,Math.floor(e.atk-t.def/2+Math.random()*4-2));t.hp-=d;ms.push(e.name+'のこうげき！ '+t.name+'に '+d+'ダメージ！');if(t.hp<=0){t.hp=0;t.alive=false;ms.push(t.name+'は ちからつきた…')}}else{e.mp-=sp.mp;if(sp.type==='damage'){ap.forEach(c=>{const d=Math.max(1,Math.floor(sp.power+Math.random()*8-c.def/4));c.hp-=d;if(c.hp<=0){c.hp=0;c.alive=false;ms.push(c.name+'は ちからつきた…')}});ms.push(e.name+'は '+sp.name+'！')}else if(sp.type==='heal'){e.hp=Math.min(e.maxHp,e.hp+sp.power);ms.push(e.name+'は '+sp.name+'！ HPかいふく！')}}}}}const allED=bs.enemies.every(e=>!e.alive),allPD=G.party.every(c=>!c.alive);if(allED){let te=0,tg=0;bs.enemies.forEach(e=>{te+=e.exp;tg+=e.gold});G.gold+=tg;ms.push('かった！ '+te+'EXP '+tg+'G かくとく！');G.party.forEach(c=>{if(!c.alive)return;c.exp+=te;if(c.lvUp())ms.push(c.name+' Lv'+c.level+'に UP！')});bs.enemies.forEach(e=>{if(e.name==='ハーゴン')G.flags.hargonDown=true;if(e.name==='シドー'){G.flags.sidoDown=true;ms.push('へいわが おとずれた…！')}})}if(allPD)ms.push('ぜんめつ…');bs.phase='result';bs.resultMsgs=ms;bs.resultIdx=0;bs.msgTimer=0}
-function drawBattle(){const bs=G.bs;if(!bs)return;ctx.fillStyle='#111';ctx.fillRect(0,0,SW,SH);const al=bs.enemies.filter(e=>e.alive);al.forEach((e,i)=>{const ex=SW/(al.length+1)*(i+1),ey=60;ctx.fillStyle=e.boss?'#a00':'#c80';ctx.fillRect(ex-12,ey-12,24,24);ctx.fillStyle='#fff';ctx.fillRect(ex-6,ey-6,4,4);ctx.fillRect(ex+2,ey-6,4,4);ctx.fillStyle='#000';ctx.fillRect(ex-4,ey+2,8,2);dtc(e.name,ex,ey+22,6);dtc('HP'+e.hp,ex,ey+30,5,'#0f0')});dw(SW-120,SH-100,112,92);G.party.forEach((c,i)=>{const y=SH-92+i*28;dt(c.name.slice(0,4),SW-112,y,6,c.alive?'#fff':'#888');dt('HP'+c.hp+'/'+c.maxHp,SW-112,y+10,6,c.hp<c.maxHp/4?'#f00':'#0f0');dt('MP'+c.mp+'/'+c.maxMp,SW-112,y+18,6,'#0af')});if(bs.phase==='select'){const a=G.party[bs.curActor];if(a){dw(8,SH-80,80,72);dt(a.name.slice(0,5),16,SH-70,6,'#ffd700');['たたかう','じゅもん','どうぐ','にげる'].forEach((c,i)=>dt(c,24,SH-56+i*14,7));dc(14,SH-63+bs.cursor*14)}}if(bs.phase==='spell'){const a=G.party[bs.curActor];if(a){dw(8,8,120,a.spells.length*14+20);dt('じゅもん',16,24,7,'#ffd700');a.spells.forEach((sp,i)=>{const s=SPELLS[sp];dt((i===bs.spellCursor?'▶':' ')+s.name+' '+s.mp,16,38+i*14,7)})}}if(bs.phase==='item'){dw(8,8,140,G.items.length*14+20);dt('どうぐ',16,24,7,'#ffd700');G.items.forEach((it,i)=>{dt((i===bs.itemCursor?'▶':' ')+ITEMS[it.id].name,16,38+i*14,7)})}if(bs.msg){dw(8,SH-40,SW-16,32);dt(bs.msg,16,SH-22,7)}}
+function drawMonster(c,x,y,name){
+switch(name){
+case'スライム':
+// 水色の水滴形
+c.fillStyle='#5cf';c.fillRect(x-6,y-2,12,10);c.fillRect(x-8,y+2,16,6);c.fillRect(x-4,y-6,8,6);c.fillRect(x-2,y-8,4,4);
+// ハイライト
+c.fillStyle='#8ef';c.fillRect(x-4,y-4,3,3);
+// 目
+c.fillStyle='#000';c.fillRect(x-4,y,2,3);c.fillRect(x+2,y,2,3);
+// 口
+c.fillRect(x-2,y+4,4,1);
+break;
+case'おおなめくじ':
+// 紫の楕円体
+c.fillStyle='#808';c.fillRect(x-10,y+2,20,8);c.fillRect(x-8,y-2,16,12);c.fillRect(x-6,y-4,12,4);
+// ハイライト
+c.fillStyle='#a2a';c.fillRect(x-6,y-2,6,3);
+// 触角
+c.fillStyle='#606';c.fillRect(x-6,y-6,2,4);c.fillRect(x+4,y-6,2,4);c.fillRect(x-7,y-8,2,3);c.fillRect(x+5,y-8,2,3);
+// 目
+c.fillStyle='#ff0';c.fillRect(x-4,y+1,2,2);c.fillRect(x+2,y+1,2,2);
+break;
+case'アイアンアント':
+// 赤茶色の体
+c.fillStyle='#a33';c.fillRect(x-4,y-2,8,6);c.fillRect(x-8,y,4,4);c.fillRect(x+4,y,4,4);
+// 頭
+c.fillStyle='#822';c.fillRect(x-3,y-6,6,5);
+// 顎
+c.fillRect(x-4,y-8,2,3);c.fillRect(x+2,y-8,2,3);
+// 脚6本
+c.fillStyle='#611';
+c.fillRect(x-10,y-1,3,1);c.fillRect(x-10,y+2,3,1);c.fillRect(x-10,y+5,3,1);
+c.fillRect(x+7,y-1,3,1);c.fillRect(x+7,y+2,3,1);c.fillRect(x+7,y+5,3,1);
+// 目
+c.fillStyle='#ff0';c.fillRect(x-2,y-5,1,1);c.fillRect(x+1,y-5,1,1);
+break;
+case'ドラキー':
+// 青い翼
+c.fillStyle='#22a';c.fillRect(x-12,y-4,24,6);c.fillRect(x-10,y-8,4,6);c.fillRect(x+6,y-8,4,6);
+c.fillRect(x-12,y-6,3,3);c.fillRect(x+9,y-6,3,3);
+// 体
+c.fillStyle='#33c';c.fillRect(x-4,y-4,8,10);c.fillRect(x-2,y-6,4,3);
+// 目
+c.fillStyle='#ff0';c.fillRect(x-3,y-2,2,2);c.fillRect(x+1,y-2,2,2);
+c.fillStyle='#000';c.fillRect(x-2,y-1,1,1);c.fillRect(x+2,y-1,1,1);
+// 口(牙)
+c.fillStyle='#fff';c.fillRect(x-2,y+3,1,2);c.fillRect(x+1,y+3,1,2);
+break;
+case'バブルスライム':
+// 緑のスライム体
+c.fillStyle='#0a0';c.fillRect(x-6,y-2,12,10);c.fillRect(x-8,y+2,16,6);c.fillRect(x-4,y-6,8,6);c.fillRect(x-2,y-8,4,4);
+// 毒々しいハイライト
+c.fillStyle='#0d0';c.fillRect(x-4,y-4,3,3);
+// 目
+c.fillStyle='#000';c.fillRect(x-4,y,2,3);c.fillRect(x+2,y,2,3);
+// 口
+c.fillRect(x-2,y+4,4,1);
+// 泡
+c.fillStyle='#8f8';c.fillRect(x+6,y-8,3,3);c.fillRect(x+4,y-5,2,2);c.fillRect(x-8,y-6,2,2);c.fillRect(x+8,y-4,2,2);
+break;
+case'マンドリル':
+// 茶色の体
+c.fillStyle='#840';c.fillRect(x-6,y-4,12,14);c.fillRect(x-8,y+2,16,6);
+// 頭
+c.fillRect(x-5,y-8,10,6);
+// 赤い顔
+c.fillStyle='#e22';c.fillRect(x-3,y-6,6,5);
+// 目
+c.fillStyle='#fff';c.fillRect(x-2,y-5,2,2);c.fillRect(x+1,y-5,2,2);
+c.fillStyle='#000';c.fillRect(x-1,y-4,1,1);c.fillRect(x+2,y-4,1,1);
+// 鼻
+c.fillStyle='#c00';c.fillRect(x-1,y-2,2,2);
+// 腕
+c.fillStyle='#840';c.fillRect(x-10,y,4,8);c.fillRect(x+6,y,4,8);
+break;
+case'リビングデッド':
+// 灰色の体
+c.fillStyle='#686';c.fillRect(x-5,y-4,10,14);
+// 頭
+c.fillStyle='#797';c.fillRect(x-4,y-10,8,8);
+// 目(くぼんだ)
+c.fillStyle='#300';c.fillRect(x-3,y-8,2,2);c.fillRect(x+1,y-8,2,2);
+// 口(開いた)
+c.fillStyle='#200';c.fillRect(x-2,y-4,4,2);
+// 腕
+c.fillStyle='#686';c.fillRect(x-9,y-2,5,3);c.fillRect(x+4,y-2,5,3);
+// ボロ衣
+c.fillStyle='#554';c.fillRect(x-6,y+2,12,6);c.fillRect(x-4,y+8,2,2);c.fillRect(x+2,y+8,2,2);
+break;
+case'まじゅつし':
+// 紫のローブ
+c.fillStyle='#60a';c.fillRect(x-6,y-4,12,14);c.fillRect(x-8,y+4,16,6);
+// フード
+c.fillStyle='#508';c.fillRect(x-5,y-10,10,8);c.fillRect(x-3,y-12,6,4);
+// 顔
+c.fillStyle='#fdb';c.fillRect(x-3,y-6,6,4);
+// 目
+c.fillStyle='#f00';c.fillRect(x-2,y-5,1,1);c.fillRect(x+1,y-5,1,1);
+// 杖
+c.fillStyle='#a70';c.fillRect(x+8,y-10,2,20);
+c.fillStyle='#ff0';c.fillRect(x+7,y-12,4,3);
+break;
+case'バピラス':
+// 緑の翼竜体
+c.fillStyle='#2a4';c.fillRect(x-4,y-2,8,10);
+// 頭
+c.fillStyle='#2a4';c.fillRect(x-3,y-8,6,7);
+c.fillStyle='#184';c.fillRect(x-5,y-6,2,3);
+// 翼
+c.fillStyle='#3b5';c.fillRect(x-12,y-6,10,4);c.fillRect(x+2,y-6,10,4);
+c.fillRect(x-12,y-8,4,3);c.fillRect(x+8,y-8,4,3);
+// 目
+c.fillStyle='#ff0';c.fillRect(x-2,y-6,2,2);c.fillRect(x+1,y-6,2,2);
+// 口
+c.fillStyle='#a62';c.fillRect(x-4,y-3,8,2);
+// 脚
+c.fillStyle='#184';c.fillRect(x-3,y+8,2,3);c.fillRect(x+1,y+8,2,3);
+break;
+case'ドラゴン':
+// オレンジの大きな竜体
+c.fillStyle='#d80';c.fillRect(x-8,y-2,16,12);
+// 頭
+c.fillStyle='#e90';c.fillRect(x-6,y-10,12,10);
+c.fillRect(x-8,y-6,4,4);
+// 角
+c.fillStyle='#a60';c.fillRect(x-4,y-12,2,4);c.fillRect(x+3,y-12,2,4);
+// 目
+c.fillStyle='#f00';c.fillRect(x-4,y-7,3,2);c.fillRect(x+2,y-7,3,2);
+c.fillStyle='#000';c.fillRect(x-3,y-6,1,1);c.fillRect(x+3,y-6,1,1);
+// 口・牙
+c.fillStyle='#a60';c.fillRect(x-6,y-3,12,2);
+c.fillStyle='#fff';c.fillRect(x-5,y-2,2,2);c.fillRect(x+3,y-2,2,2);
+// 翼
+c.fillStyle='#c70';c.fillRect(x-12,y-8,6,8);c.fillRect(x+6,y-8,6,8);
+break;
+case'キラーマシン':
+// メタリック体
+c.fillStyle='#889';c.fillRect(x-5,y-4,10,14);
+// 頭
+c.fillStyle='#99a';c.fillRect(x-4,y-10,8,7);
+// 目(赤いレンズ)
+c.fillStyle='#f00';c.fillRect(x-3,y-8,2,2);c.fillRect(x+1,y-8,2,2);
+// 腕(右に弓)
+c.fillStyle='#778';c.fillRect(x-9,y-4,5,3);c.fillRect(x+4,y-4,5,3);
+// 弓
+c.fillStyle='#a70';c.fillRect(x+9,y-10,2,16);c.fillStyle='#ccc';c.fillRect(x+9,y-10,1,1);c.fillRect(x+9,y+5,1,1);
+// 脚
+c.fillStyle='#778';c.fillRect(x-4,y+8,3,3);c.fillRect(x+1,y+8,3,3);
+// 装甲ライン
+c.fillStyle='#aab';c.fillRect(x-4,y-2,8,1);c.fillRect(x-4,y+4,8,1);
+break;
+case'フレイム':
+// 赤い炎の塊
+c.fillStyle='#e30';c.fillRect(x-6,y-2,12,10);c.fillRect(x-4,y-6,8,6);
+c.fillStyle='#f80';c.fillRect(x-4,y-4,8,8);
+c.fillStyle='#fd0';c.fillRect(x-2,y-2,4,6);
+// 炎の先端
+c.fillStyle='#f40';c.fillRect(x-2,y-10,4,6);c.fillRect(x-6,y-8,3,4);c.fillRect(x+3,y-8,3,4);
+c.fillStyle='#f80';c.fillRect(x,y-12,2,4);
+// 目
+c.fillStyle='#fff';c.fillRect(x-3,y,2,2);c.fillRect(x+1,y,2,2);
+break;
+case'はぐれメタル':
+// 銀色のスライム形(小さめ)
+c.fillStyle='#ccd';c.fillRect(x-5,y-1,10,8);c.fillRect(x-7,y+2,14,4);c.fillRect(x-3,y-4,6,5);c.fillRect(x-1,y-6,2,3);
+// ハイライト
+c.fillStyle='#eef';c.fillRect(x-3,y-2,3,2);
+// 影
+c.fillStyle='#99a';c.fillRect(x+2,y+3,4,3);
+// 目
+c.fillStyle='#000';c.fillRect(x-3,y+1,2,2);c.fillRect(x+1,y+1,2,2);
+// 口
+c.fillRect(x-1,y+4,2,1);
+break;
+case'ギガンテス':
+// 肌色の巨体
+c.fillStyle='#da8';c.fillRect(x-8,y-4,16,16);
+// 頭
+c.fillRect(x-6,y-12,12,10);
+// 目
+c.fillStyle='#000';c.fillRect(x-4,y-9,3,2);c.fillRect(x+1,y-9,3,2);
+// 口
+c.fillStyle='#800';c.fillRect(x-3,y-4,6,2);
+// 棍棒
+c.fillStyle='#860';c.fillRect(x+8,y-12,4,22);c.fillStyle='#640';c.fillRect(x+8,y-12,4,4);
+// 腕
+c.fillStyle='#c96';c.fillRect(x-12,y-2,5,4);c.fillRect(x+7,y-2,5,4);
+// パンツ
+c.fillStyle='#a60';c.fillRect(x-8,y+6,16,6);
+break;
+case'アークデーモン':
+// 紫の体
+c.fillStyle='#60a';c.fillRect(x-6,y-4,12,14);
+// 頭
+c.fillStyle='#70b';c.fillRect(x-5,y-10,10,8);
+// 角
+c.fillStyle='#a0e';c.fillRect(x-6,y-12,2,4);c.fillRect(x+4,y-12,2,4);
+// 目
+c.fillStyle='#f00';c.fillRect(x-3,y-8,2,2);c.fillRect(x+1,y-8,2,2);
+// 翼
+c.fillStyle='#508';c.fillRect(x-12,y-6,8,8);c.fillRect(x+4,y-6,8,8);
+c.fillRect(x-12,y-8,3,4);c.fillRect(x+9,y-8,3,4);
+// 口
+c.fillStyle='#a00';c.fillRect(x-2,y-4,4,2);
+// 脚
+c.fillStyle='#508';c.fillRect(x-4,y+8,3,3);c.fillRect(x+1,y+8,3,3);
+break;
+case'ブリザード':
+// 水色の氷の精霊
+c.fillStyle='#6cf';c.fillRect(x-5,y-2,10,12);c.fillRect(x-3,y-6,6,6);
+// 氷の結晶
+c.fillStyle='#aef';c.fillRect(x-2,y-10,4,6);c.fillRect(x-8,y-4,4,2);c.fillRect(x+4,y-4,4,2);
+c.fillStyle='#cff';c.fillRect(x-1,y-12,2,4);c.fillRect(x-6,y-6,2,2);c.fillRect(x+4,y-6,2,2);
+// 目
+c.fillStyle='#009';c.fillRect(x-3,y-2,2,2);c.fillRect(x+1,y-2,2,2);
+// 口
+c.fillStyle='#06a';c.fillRect(x-2,y+3,4,2);
+// 下部(消える感じ)
+c.fillStyle='#4af';c.fillRect(x-3,y+8,2,2);c.fillRect(x+1,y+8,2,2);
+break;
+case'あくましんかん':
+// 黒いローブ
+c.fillStyle='#222';c.fillRect(x-6,y-4,12,14);c.fillRect(x-8,y+4,16,6);
+// フード
+c.fillStyle='#111';c.fillRect(x-5,y-10,10,8);c.fillRect(x-3,y-12,6,4);
+// 顔(暗い)
+c.fillStyle='#a88';c.fillRect(x-3,y-6,6,4);
+// 目(光る)
+c.fillStyle='#f0f';c.fillRect(x-2,y-5,1,1);c.fillRect(x+1,y-5,1,1);
+// 杖
+c.fillStyle='#606';c.fillRect(x+8,y-10,2,20);
+c.fillStyle='#f0f';c.fillRect(x+7,y-12,4,3);
+break;
+case'ハーゴン':
+// 青い大きなローブ
+c.fillStyle='#22a';c.fillRect(x-8,y-4,16,16);c.fillRect(x-10,y+4,20,8);
+// フード
+c.fillStyle='#118';c.fillRect(x-6,y-12,12,10);c.fillRect(x-4,y-14,8,4);
+// 角
+c.fillStyle='#a00';c.fillRect(x-6,y-16,2,6);c.fillRect(x+4,y-16,2,6);
+// 顔
+c.fillStyle='#a8f';c.fillRect(x-4,y-8,8,5);
+// 目(光る)
+c.fillStyle='#f00';c.fillRect(x-3,y-7,2,2);c.fillRect(x+1,y-7,2,2);
+// 杖
+c.fillStyle='#aa0';c.fillRect(x+10,y-14,2,24);
+c.fillStyle='#ff0';c.fillRect(x+9,y-16,4,4);
+// ローブ装飾
+c.fillStyle='#44c';c.fillRect(x-6,y+2,12,2);
+break;
+case'シドー':
+// 紫+赤の巨大な悪魔
+c.fillStyle='#808';c.fillRect(x-10,y-4,20,16);
+// 頭
+c.fillStyle='#a08';c.fillRect(x-8,y-14,16,12);
+// 角
+c.fillStyle='#c00';c.fillRect(x-8,y-18,3,6);c.fillRect(x+5,y-18,3,6);
+// 目(3つ)
+c.fillStyle='#ff0';c.fillRect(x-5,y-11,3,2);c.fillRect(x+2,y-11,3,2);c.fillRect(x-1,y-8,2,2);
+// 翼
+c.fillStyle='#606';c.fillRect(x-14,y-10,6,12);c.fillRect(x+8,y-10,6,12);
+c.fillRect(x-14,y-12,3,4);c.fillRect(x+11,y-12,3,4);
+// 口
+c.fillStyle='#f00';c.fillRect(x-4,y-5,8,3);
+c.fillStyle='#fff';c.fillRect(x-3,y-4,2,2);c.fillRect(x+1,y-4,2,2);
+// 尾
+c.fillStyle='#606';c.fillRect(x-6,y+10,4,2);c.fillRect(x-10,y+8,5,2);c.fillRect(x-12,y+6,4,2);
+break;
+default:
+// フォールバック
+c.fillStyle='#c80';c.fillRect(x-12,y-12,24,24);
+c.fillStyle='#fff';c.fillRect(x-6,y-6,4,4);c.fillRect(x+2,y-6,4,4);
+c.fillStyle='#000';c.fillRect(x-4,y+2,8,2);
+}}
+function drawBattle(){const bs=G.bs;if(!bs)return;ctx.fillStyle='#111';ctx.fillRect(0,0,SW,SH);const al=bs.enemies.filter(e=>e.alive);al.forEach((e,i)=>{const ex=SW/(al.length+1)*(i+1),ey=60;drawMonster(ctx,ex,ey,e.name);dtc(e.name,ex,ey+22,6);dtc('HP'+e.hp,ex,ey+30,5,'#0f0')});dw(SW-120,SH-100,112,92);G.party.forEach((c,i)=>{const y=SH-92+i*28;dt(c.name.slice(0,4),SW-112,y,6,c.alive?'#fff':'#888');dt('HP'+c.hp+'/'+c.maxHp,SW-112,y+10,6,c.hp<c.maxHp/4?'#f00':'#0f0');dt('MP'+c.mp+'/'+c.maxMp,SW-112,y+18,6,'#0af')});if(bs.phase==='select'){const a=G.party[bs.curActor];if(a){dw(8,SH-80,80,72);dt(a.name.slice(0,5),16,SH-70,6,'#ffd700');['たたかう','じゅもん','どうぐ','にげる'].forEach((c,i)=>dt(c,24,SH-56+i*14,7));dc(14,SH-63+bs.cursor*14)}}if(bs.phase==='spell'){const a=G.party[bs.curActor];if(a){dw(8,8,120,a.spells.length*14+20);dt('じゅもん',16,24,7,'#ffd700');a.spells.forEach((sp,i)=>{const s=SPELLS[sp];dt((i===bs.spellCursor?'▶':' ')+s.name+' '+s.mp,16,38+i*14,7)})}}if(bs.phase==='item'){dw(8,8,140,G.items.length*14+20);dt('どうぐ',16,24,7,'#ffd700');G.items.forEach((it,i)=>{dt((i===bs.itemCursor?'▶':' ')+ITEMS[it.id].name,16,38+i*14,7)})}if(bs.msg){dw(8,SH-40,SW-16,32);dt(bs.msg,16,SH-22,7)}}
 function updateMenu(){if(G.msgT)return;const ms=G.ms;if(!ms)return;if(ms.pg==='main'){const it=['はなす','じゅもん','どうぐ','つよさ','そうび','さくせん','とじる'];if(kp('ArrowUp'))ms.cursor=(ms.cursor-1+it.length)%it.length;if(kp('ArrowDown'))ms.cursor=(ms.cursor+1)%it.length;if(kp('KeyZ')||kp('Enter')){switch(ms.cursor){case 0:G.state=GS.EXPLORE;checkInteraction();break;case 1:ms.pg='spell';ms.cursor=0;ms.ci=0;break;case 2:ms.pg='item';ms.cursor=0;break;case 3:ms.pg='status';ms.ci=0;break;case 4:ms.pg='equip';ms.cursor=0;ms.ci=0;break;case 5:ms.pg='sakusen';ms.cursor=0;break;case 6:G.state=GS.EXPLORE;break}}if(kp('KeyX')||kp('Escape'))G.state=GS.EXPLORE}else if(ms.pg==='status'){if(kp('KeyX')||kp('Escape')||kp('KeyZ'))ms.pg='main';if(kp('ArrowLeft'))ms.ci=(ms.ci-1+G.party.length)%G.party.length;if(kp('ArrowRight'))ms.ci=(ms.ci+1)%G.party.length}else if(ms.pg==='item'){if(kp('ArrowUp'))ms.cursor=Math.max(0,ms.cursor-1);if(kp('ArrowDown'))ms.cursor=Math.min(G.items.length-1,ms.cursor);if(kp('KeyZ')||kp('Enter')){if(G.items.length>0)useItem(ms.cursor)}if(kp('KeyX')||kp('Escape'))ms.pg='main'}else if(ms.pg==='spell'){const c=G.party[ms.ci];if(kp('ArrowUp'))ms.cursor=Math.max(0,ms.cursor-1);if(kp('ArrowDown'))ms.cursor=Math.min(c.spells.length-1,ms.cursor);if(kp('ArrowLeft')){ms.ci=(ms.ci-1+G.party.length)%G.party.length;ms.cursor=0}if(kp('ArrowRight')){ms.ci=(ms.ci+1)%G.party.length;ms.cursor=0}if(kp('KeyZ')||kp('Enter')){if(c.spells.length>0)useFieldSpell(c,c.spells[ms.cursor])}if(kp('KeyX')||kp('Escape'))ms.pg='main'}else if(ms.pg==='equip'){const c=G.party[ms.ci];if(kp('ArrowUp'))ms.cursor=(ms.cursor-1+4)%4;if(kp('ArrowDown'))ms.cursor=(ms.cursor+1)%4;if(kp('ArrowLeft')){ms.ci=(ms.ci-1+G.party.length)%G.party.length;ms.cursor=0}if(kp('ArrowRight')){ms.ci=(ms.ci+1)%G.party.length;ms.cursor=0}if(kp('KeyZ')||kp('Enter')){if(ms.cursor===0&&c.weapon!=null){c.weapon=null;showMsg('ぶきを はずした。');G.state=GS.EXPLORE}else if(ms.cursor===1&&c.armor!=null){c.armor=null;showMsg('よろいを はずした。');G.state=GS.EXPLORE}else if(ms.cursor===2&&c.shield!=null){c.shield=null;showMsg('たてを はずした。');G.state=GS.EXPLORE}else if(ms.cursor===3&&c.helmet!=null){c.helmet=null;showMsg('かぶとを はずした。');G.state=GS.EXPLORE}}if(kp('KeyX')||kp('Escape'))ms.pg='main'}
 else if(ms.pg==='sakusen'){
 if(kp('ArrowUp'))ms.cursor=(ms.cursor-1+3)%3;
