@@ -1130,7 +1130,7 @@ if(idx<jc.length)ms.inputBuf+=jc[idx];
 }}
 if(kp('KeyX')||kp('Escape')){
 if(ms.inputBuf.length>0)ms.inputBuf=ms.inputBuf.slice(0,-1);
-else{ms.pg='sakusen';ms.cursor=1}
+else{G.state=GS.TITLE;G.ms={cursor:2}}
 }}
 }
 function drawMenu(){const ms=G.ms;if(!ms)return;if(ms.pg==='main'){dw(8,8,80,134);['はなす','じゅもん','どうぐ','つよさ','そうび','ずかん','さくせん','とじる'].forEach((t,i)=>dt(t,24,24+i*14));dc(14,17+ms.cursor*14);dw(96,8,152,44*G.party.length);G.party.forEach((c,i)=>{const y=20+i*42;dt(c.name.slice(0,6),104,y,7);dt('Lv'+c.level,180,y,7);drawBar(104,y+5,80,4,c.hp/c.maxHp,c.hp<c.maxHp/4?'#c00':'#0a0',c.hp<c.maxHp/4?'#f44':'#0f0');dt('HP'+c.hp+'/'+c.maxHp,104,y+14,6);drawBar(104,y+18,80,3,c.mp/c.maxMp,'#06a','#0af');dt('MP'+c.mp+'/'+c.maxMp,104,y+26,6)})}else if(ms.pg==='status'){const c=G.party[ms.ci];dw(8,8,240,214);dt('< '+c.name+' >',16,26,8,'#ffd700');dt('レベル: '+c.level,16,44);dt('HP: '+c.hp+'/'+c.maxHp,16,58);dt('MP: '+c.mp+'/'+c.maxMp,16,72);dt('ちから: '+c.str,16,86);dt('すばやさ: '+c.agi,16,100);dt('こうげき力: '+c.atk,16,114);dt('しゅび力: '+c.def,16,128);dt('しょくぎょう: '+JOBS[c.job].name,16,142);dt('EXP: '+c.exp,16,156);const nx=c.level<c.lt.length?c.lt[c.level][0]-c.exp:'---';dt('つぎのLvまで: '+nx,16,170);if(c.job!=='none'){const p=c.jobProf[c.job]||0;dt('じゅくれんど: '+'★'.repeat(Math.min(8,p))+'☆'.repeat(Math.max(0,8-p)),16,184,6,'#ff0')}dt('←→ キャラ切替 Z/Escで戻る',16,200,6,'#888')}else if(ms.pg==='item'){dw(8,8,200,180);dt('どうぐ',16,26,8,'#ffd700');if(G.items.length===0)dt('なにも もっていない',16,44);G.items.forEach((it,i)=>{dt((i===ms.cursor?'▶':'  ')+ITEMS[it.id].name+(it.count>1?' x'+it.count:''),16,44+i*14,7)});dt('G: '+G.gold,16,170,7,'#ffd700')}else if(ms.pg==='spell'){const c=G.party[ms.ci];dw(8,8,200,180);dt(c.name+'のじゅもん',16,26,8,'#ffd700');if(c.spells.length===0)dt('おぼえていない',16,44);c.spells.forEach((sp,i)=>{const s=SPELLS[sp];dt((i===ms.cursor?'▶':'  ')+s.name+' MP'+s.mp,16,44+i*14,7)});dt('←→ キャラ切替',16,170,6,'#888')}else if(ms.pg==='equip'){const c=G.party[ms.ci];dw(8,8,240,150);dt(c.name+'のそうび',16,26,8,'#ffd700');dt((ms.cursor===0?'▶':' ')+'ぶき: '+(c.weapon!=null?WEAPONS[c.weapon].name:'なし'),16,44);dt((ms.cursor===1?'▶':' ')+'よろい: '+(c.armor!=null?ARMORS[c.armor].name:'なし'),16,58);dt((ms.cursor===2?'▶':' ')+'たて: '+(c.shield!=null?SHIELDS[c.shield].name:'なし'),16,72);dt((ms.cursor===3?'▶':' ')+'かぶと: '+(c.helmet!=null?HELMETS[c.helmet].name:'なし'),16,86);dt('Z:はずす ←→:キャラ切替',16,110,6,'#888');dt('X:もどる',16,122,6,'#888')}
@@ -1364,17 +1364,18 @@ const my=196;
 dtc('ぼうけんをはじめる',cx,my,8);dtc('ぼうけんのしょ',cx,my+14,8);dtc('ふっかつのじゅもん',cx,my+28,8);
 const tc=G.ms?G.ms.cursor||0:0;
 if(G.frame%40<20)dc(SW/2-66,189+tc*14);
+if(G.ms&&G.ms.pg==='name_input'){ctx.fillStyle='rgba(0,0,16,0.9)';ctx.fillRect(0,0,SW,SH);dw(10,10,236,220);dtc('なまえを いれてください',cx,30,7,'#ffd700');dw(30,38,196,20);dtc(G.ms.inputBuf||'＿',cx,52,8,'#0f0');const nc='あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよらりるれろわをん';const cols=10;for(let i=0;i<nc.length;i++){const r=Math.floor(i/cols),ci=i%cols;const sel=G.ms.jcursor&&G.ms.jcursor.y===r&&G.ms.jcursor.x===ci;dt(nc[i],20+ci*20,76+r*16,8,sel?'#ff0':'#fff')}const rows=Math.ceil(nc.length/cols);const selK=G.ms.jcursor&&G.ms.jcursor.y===rows;dtc('けってい',cx,76+rows*16,8,selK?'#ff0':'#fff');dtc('X:1文字けす',cx,218,5,'#888');
+if(kp('ArrowRight'))G.ms.jcursor.x=Math.min(cols-1,G.ms.jcursor.x+1);if(kp('ArrowLeft'))G.ms.jcursor.x=Math.max(0,G.ms.jcursor.x-1);if(kp('ArrowDown'))G.ms.jcursor.y=Math.min(rows,G.ms.jcursor.y+1);if(kp('ArrowUp'))G.ms.jcursor.y=Math.max(0,G.ms.jcursor.y-1);
+if(kp('KeyZ')||kp('Enter')){if(G.ms.jcursor.y===rows){const nm=G.ms.inputBuf||'ローレシアのおうじ';G.ms=null;newGame(nm)}else{const idx=G.ms.jcursor.y*cols+G.ms.jcursor.x;if(idx<nc.length&&(G.ms.inputBuf||'').length<8)G.ms.inputBuf=(G.ms.inputBuf||'')+nc[idx]}}
+if(kp('KeyX')||kp('Escape')){if((G.ms.inputBuf||'').length>0)G.ms.inputBuf=G.ms.inputBuf.slice(0,-1);else{G.ms={cursor:0}}}}else{
 if(kp('Enter')||kp('Space')||kp('KeyZ')){seSelect();
 if(tc===0){G.ms={pg:'name_input',cursor:0,inputBuf:'',jcursor:{x:0,y:0}}}
 else if(tc===1)loadGame();
 else{G.state=GS.MENU;G.ms={pg:'jumon_input',cursor:0,ci:0,inputBuf:'',jcursor:{x:0,y:0}}}
 }
 if(kp('ArrowDown')){if(!G.ms)G.ms={cursor:0};G.ms.cursor=Math.min(2,(G.ms.cursor||0)+1)}
-if(kp('ArrowUp')){if(!G.ms)G.ms={cursor:0};G.ms.cursor=Math.max(0,(G.ms.cursor||0)-1)};dtc('Z: けってい  矢印: いどう',cx,236,5,'#445');
-if(G.ms&&G.ms.pg==='name_input'){ctx.fillStyle='rgba(0,0,16,0.9)';ctx.fillRect(0,0,SW,SH);dw(10,10,236,220);dtc('なまえを いれてください',cx,30,7,'#ffd700');dw(30,38,196,20);dtc(G.ms.inputBuf||'＿',cx,52,8,'#0f0');const nc='あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよらりるれろわをん';const cols=10;for(let i=0;i<nc.length;i++){const r=Math.floor(i/cols),ci=i%cols;const sel=G.ms.jcursor&&G.ms.jcursor.y===r&&G.ms.jcursor.x===ci;dt(nc[i],20+ci*20,76+r*16,8,sel?'#ff0':'#fff')}const rows=Math.ceil(nc.length/cols);const selK=G.ms.jcursor&&G.ms.jcursor.y===rows;dtc('けってい',cx,76+rows*16,8,selK?'#ff0':'#fff');dtc('X:1文字けす',cx,218,5,'#888');
-if(kp('ArrowRight'))G.ms.jcursor.x=Math.min(cols-1,G.ms.jcursor.x+1);if(kp('ArrowLeft'))G.ms.jcursor.x=Math.max(0,G.ms.jcursor.x-1);if(kp('ArrowDown'))G.ms.jcursor.y=Math.min(rows,G.ms.jcursor.y+1);if(kp('ArrowUp'))G.ms.jcursor.y=Math.max(0,G.ms.jcursor.y-1);
-if(kp('KeyZ')||kp('Enter')){if(G.ms.jcursor.y===rows){const nm=G.ms.inputBuf||'ローレシアのおうじ';G.ms=null;newGame(nm)}else{const idx=G.ms.jcursor.y*cols+G.ms.jcursor.x;if(idx<nc.length&&(G.ms.inputBuf||'').length<8)G.ms.inputBuf=(G.ms.inputBuf||'')+nc[idx]}}
-if(kp('KeyX')||kp('Escape')){if((G.ms.inputBuf||'').length>0)G.ms.inputBuf=G.ms.inputBuf.slice(0,-1);else{G.ms={cursor:0}}}}}
+if(kp('ArrowUp')){if(!G.ms)G.ms={cursor:0};G.ms.cursor=Math.max(0,(G.ms.cursor||0)-1)}}
+dtc('Z: けってい  矢印: いどう',cx,236,5,'#445');}
 function newGame(heroName){G.hero=new Chara(0,heroName||'ローレシアのおうじ',HERO_LV);G.hero.weapon=1;G.hero.armor=1;G.party=[G.hero];G.gold=50;G.items=[{id:0,count:3}];G.mapId='world';G.px=12;G.py=15;G.pdir=0;G.flags={};G.visited=['loracia'];G.prince=null;G.princess=null;G.hasShip=false;G.onShip=false;G.chests={};G.zukan={monsters:{},items:{}};G.wagon=[];initMaps();initNPCs();G.state=GS.DIALOG;showMsg('ローレシア王「おお ローレシアのおうじよ！\n邪教の教祖ハーゴンが\n世界を闇に染めようとしている。」',()=>{showMsg('ローレシア王「ロトの血を引く3人の\n勇者が揃えば 奴を倒せるはず。\nまずは南のサマルトリア城で\n王子を仲間にするのじゃ！」',()=>{showMsg('ローレシア王「そうじゃ…\n北にダーマ神殿がある。\n転職の力で己を鍛えれば\nさらに強くなれるじゃろう。」',()=>{G.state=GS.EXPLORE})})})}
 // ===== FUKKATSU NO JUMON (Revival Password) =====
 const JUMON_CHARS='あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよらりるれろわをん';
