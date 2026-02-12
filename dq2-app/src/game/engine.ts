@@ -1081,7 +1081,7 @@ if(kp('KeyZ')||kp('Enter')){ms.jCopied=false;ms.pg='sakusen';ms.cursor=1}
 }else if(ms.pg==='jumon_input'){
 if(!ms.inputBuf)ms.inputBuf='';
 if(!ms.jcursor)ms.jcursor={x:0,y:0};
-const jc=JUMON_CHARS;const cols=10;const rows=Math.ceil(jc.length/cols);
+const jc=JUMON_CHARS;const cols=9;const rows=Math.ceil(jc.length/cols);
 if(kp('ArrowRight'))ms.jcursor.x=Math.min(cols-1,ms.jcursor.x+1);
 if(kp('ArrowLeft'))ms.jcursor.x=Math.max(0,ms.jcursor.x-1);
 if(kp('ArrowDown'))ms.jcursor.y=Math.min(rows,ms.jcursor.y+1);
@@ -1091,10 +1091,10 @@ if(ms.jcursor.y===rows){
 // けってい row
 const data=decodeJumon(ms.inputBuf);
 if(data){applyJumon(data);showMsg('ふっかつのじゅもんを うけつけた！');ms.pg='main';ms.cursor=0}
-else{showMsg('じゅもんが ちがいます。');G.state=GS.TITLE;G.ms={cursor:2}}
+else{showMsg('コードが ちがいます。');G.state=GS.TITLE;G.ms={cursor:2}}
 }else{
 const idx=ms.jcursor.y*cols+ms.jcursor.x;
-if(idx<jc.length)ms.inputBuf+=jc[idx];
+if(idx<jc.length&&ms.inputBuf.length<8)ms.inputBuf+=jc[idx];
 }}
 if(kp('KeyX')||kp('Escape')){
 if(ms.inputBuf.length>0)ms.inputBuf=ms.inputBuf.slice(0,-1);
@@ -1130,37 +1130,40 @@ else if(ms.cursor===2){dw(4,4,248,232);dt('そうびずかん',12,20,7,'#ffd700'
 }
 else if(ms.pg==='sakusen'){
 dw(8,8,140,80);dt('さくせん',16,26,8,'#ffd700');
-['きろくする','ふっかつのじゅもん','BGM:'+(bgmOn?'ON':'OFF'),'もどる'].forEach((t,i)=>dt((i===ms.cursor?'▶':' ')+t,16,42+i*14,7));
+['きろくする','ふっかつのコード','BGM:'+(bgmOn?'ON':'OFF'),'もどる'].forEach((t,i)=>dt((i===ms.cursor?'▶':' ')+t,16,42+i*14,7));
 }else if(ms.pg==='jumon_show'){
-dw(4,4,248,232);dt('ふっかつのじゅもん',16,24,8,'#ffd700');
-dt('この じゅもんを ひかえよ！',16,42,7);
+dw(4,4,248,160);dt('ふっかつのコード',16,24,8,'#ffd700');
+dt('この コードを ひかえよ！',16,42,7);
 const j=ms.jumon||'';
-for(let i=0;i<j.length;i++){
-const row=Math.floor(i/14),col=i%14;
-dt(j[i],16+col*16,66+row*18,8,'#0f0');
-}if(ms.jCopied)dt('コピーしました！',16,200,6,'#0f0');else dt('Xキーでコピー',16,200,6,'#8cf');dt('Zで もどる',16,218,6,'#888');
+const spaced=j.split('').join('  ');
+dtc(spaced,SW/2,80,10,'#0f0');
+if(ms.jCopied)dt('コピーしました！',16,120,6,'#0f0');else dt(btnLabel('B')+'でコピー',16,120,6,'#8cf');dt(btnLabel('A')+'で もどる',16,138,6,'#888');
 }else if(ms.pg==='owari_jumon'){
-dw(4,4,248,232);dt('きょうは おわりじゃ',16,24,8,'#ffd700');
-dt('セーブしたぞ。じゅもんを ひかえよ！',16,42,7);
+dw(4,4,248,160);dt('きょうは おわりじゃ',16,24,8,'#ffd700');
+dt('セーブしたぞ。コードを ひかえよ！',16,42,7);
 const j=ms.jumon||'';
-for(let i=0;i<j.length;i++){const row=Math.floor(i/14),col=i%14;dt(j[i],16+col*16,66+row*18,8,'#0f0')}
-if(ms.jCopied)dt('コピーしました！',16,200,6,'#0f0');else dt('Xキーでコピー',16,200,6,'#8cf');dt('Zでタイトルへ',16,218,6,'#888');
+const spaced=j.split('').join('  ');
+dtc(spaced,SW/2,80,10,'#0f0');
+if(ms.jCopied)dt('コピーしました！',16,120,6,'#0f0');else dt(btnLabel('B')+'でコピー',16,120,6,'#8cf');dt(btnLabel('A')+'でタイトルへ',16,138,6,'#888');
 }else if(ms.pg==='jumon_input'){
-dw(4,4,248,232);dt('ふっかつのじゅもんを いれよ',16,22,7,'#ffd700');
-// Show input buffer
-dw(8,32,240,24);dt(ms.inputBuf||'',14,48,8,'#0f0');
-// Kana grid
-const jc=JUMON_CHARS,cols=10;
+dw(4,4,248,200);dt('コードを いれよ (8けた)',16,22,7,'#ffd700');
+// Show input buffer with underscores for remaining
+const buf=ms.inputBuf||'';
+const display=buf+'_'.repeat(Math.max(0,8-buf.length));
+const spaced=display.split('').join('  ');
+dtc(spaced,SW/2,46,10,buf.length>=8?'#0f0':'#8f8');
+// Alphanumeric grid
+const jc=JUMON_CHARS,cols=9;
 for(let i=0;i<jc.length;i++){
 const r=Math.floor(i/cols),c=i%cols;
 const sel=ms.jcursor&&ms.jcursor.y===r&&ms.jcursor.x===c;
-dt(jc[i],14+c*22,76+r*16,8,sel?'#ff0':'#fff');
+dt(jc[i],14+c*24,72+r*18,9,sel?'#ff0':'#fff');
 }
 // けってい button
 const rows=Math.ceil(jc.length/cols);
 const selK=ms.jcursor&&ms.jcursor.y===rows;
-dt('けってい',14,76+rows*16,8,selK?'#ff0':'#fff');
-dt('X:1文字けす Esc:もどる',14,218,5,'#888');
+dt('けってい',14,72+rows*18,8,selK?'#ff0':'#fff');
+dt(btnLabel('B')+':1文字けす',14,186,5,'#888');
 }}
 function useItem(idx){if(idx>=G.items.length)return;const it=G.items[idx],item=ITEMS[it.id];if(item.type==='heal'){const c=G.party.find(c=>c.alive&&c.hp<c.maxHp);if(c){c.hp=Math.min(c.maxHp,c.hp+item.power);it.count--;if(it.count<=0)G.items.splice(idx,1);G.state=GS.EXPLORE;showMsg(c.name+'のHP '+item.power+' かいふく！')}else showMsg('つかう ひつようが ない。')}else if(item.type==='cure'){const c=G.party.find(c=>c.alive&&c.status.includes(item.cure));if(c){c.status=c.status.filter(s=>s!==item.cure);it.count--;if(it.count<=0)G.items.splice(idx,1);G.state=GS.EXPLORE;showMsg(item.cure+'が なおった！')}else showMsg('つかう ひつようが ない。')}else if(item.type==='revive'){const c=G.party.find(c=>!c.alive);if(c){c.alive=true;c.hp=c.maxHp;it.count--;if(it.count<=0)G.items.splice(idx,1);G.state=GS.EXPLORE;showMsg(c.name+'は いきかえった！')}else showMsg('つかう ひつようが ない。')}else if(item.type==='field'&&item.effect==='ruura'){if(G.visited.length===0){showMsg('まだ町を訪れていない。');return}it.count--;if(it.count<=0)G.items.splice(idx,1);G.mapId='world';G.px=12;G.py=15;G.state=GS.EXPLORE;showMsg('キメラのつばさを つかった！')}else if(item.type==='stat'){const c=G.party[0];if(c){c[item.stat]=(c[item.stat]||0)+item.value;if(item.stat==='maxHp')c.hp=Math.min(c.hp+item.value,c.maxHp);if(item.stat==='maxMp')c.mp=Math.min(c.mp+item.value,c.maxMp);it.count--;if(it.count<=0)G.items.splice(idx,1);G.state=GS.EXPLORE;showMsg(item.name+'を つかった！')}else showMsg('つかえない。')}else showMsg('ここでは つかえない。')}
 function useFieldSpell(caster,sid){const s=SPELLS[sid];if(caster.mp<s.mp){showMsg('MPが たりない！');return}if(s.type==='heal'){const t=G.party.find(c=>c.alive&&c.hp<c.maxHp);if(!t){showMsg('つかう ひつようがない。');return}caster.mp-=s.mp;t.hp=Math.min(t.maxHp,t.hp+s.power);G.state=GS.EXPLORE;showMsg(caster.name+'は '+s.name+'！\n'+t.name+'のHP '+s.power+' かいふく！')}else if(s.type==='revive'){const t=G.party.find(c=>!c.alive);if(!t){showMsg('つかう ひつようがない。');return}caster.mp-=s.mp;t.alive=true;t.hp=t.maxHp;G.state=GS.EXPLORE;showMsg(caster.name+'は '+s.name+'！\n'+t.name+'は いきかえった！')}else if(sid==='ruura'){if(G.visited.length===0){showMsg('まだ町を訪れていない。');return}caster.mp-=s.mp;G.mapId='world';G.px=12;G.py=15;G.state=GS.EXPLORE;showMsg(caster.name+'は ルーラ！')}else if(sid==='riremito'){if(G.mapId==='world'){showMsg('ここでは つかえない。');return}caster.mp-=s.mp;G.mapId='world';G.state=GS.EXPLORE;showMsg(caster.name+'は リレミト！')}else showMsg('ここでは つかえない。')}
@@ -1372,7 +1375,7 @@ ctx.fillStyle='#658';ctx.fillRect(cx+13,sy2-1,2,2);
 const ma=0.3+0.3*s(f*0.08);ctx.fillStyle=`rgba(100,200,255,${ma})`;ctx.fillRect(cx+17,sy2,2,1);ctx.fillRect(cx+18,sy2+1,1,1);
 // メニュー
 const my=196;
-dtc('ぼうけんをはじめる',cx,my,8);dtc('ぼうけんのしょ',cx,my+14,8);dtc('ふっかつのじゅもん',cx,my+28,8);
+dtc('ぼうけんをはじめる',cx,my,8);dtc('ぼうけんのしょ',cx,my+14,8);dtc('ふっかつのコード',cx,my+28,8);
 const tc=G.ms?G.ms.cursor||0:0;
 if(G.frame%40<20)dc(SW/2-66,189+tc*14);
 if(G.ms&&G.ms.pg==='name_input'){ctx.fillStyle='rgba(0,0,16,0.9)';ctx.fillRect(0,0,SW,SH);dw(10,10,236,220);dtc('なまえを いれてください',cx,30,7,'#ffd700');dw(30,38,196,20);dtc(G.ms.inputBuf||'＿',cx,52,8,'#0f0');const nc='あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよらりるれろわをん';const cols=10;for(let i=0;i<nc.length;i++){const r=Math.floor(i/cols),ci=i%cols;const sel=G.ms.jcursor&&G.ms.jcursor.y===r&&G.ms.jcursor.x===ci;dt(nc[i],20+ci*20,76+r*16,8,sel?'#ff0':'#fff')}const rows=Math.ceil(nc.length/cols);const selK=G.ms.jcursor&&G.ms.jcursor.y===rows;dtc('けってい',cx,76+rows*16,8,selK?'#ff0':'#fff');dtc('X:1文字けす',cx,218,5,'#888');
@@ -1389,91 +1392,85 @@ if(kp('ArrowUp')){if(!G.ms)G.ms={cursor:0};G.ms.cursor=Math.max(0,(G.ms.cursor||
 dtc('Z: けってい  矢印: いどう',cx,236,5,'#445');}
 function newGame(heroName){G.hero=new Chara(0,heroName||'ローレシアのおうじ',HERO_LV);G.hero.weapon=1;G.hero.armor=1;G.party=[G.hero];G.gold=50;G.items=[{id:0,count:3}];G.mapId='world';G.px=12;G.py=15;G.pdir=0;G.flags={};G.visited=['loracia'];G.prince=null;G.princess=null;G.hasShip=false;G.onShip=false;G.chests={};G.zukan={monsters:{},items:{}};G.wagon=[];initMaps();initNPCs();G.state=GS.DIALOG;showMsg('ローレシア王「おお ローレシアのおうじよ！\n邪教の教祖ハーゴンが\n世界を闇に染めようとしている。」',()=>{showMsg('ローレシア王「ロトの血を引く3人の\n勇者が揃えば 奴を倒せるはず。\nまずは南のサマルトリア城で\n王子を仲間にするのじゃ！」',()=>{showMsg('ローレシア王「そうじゃ…\n北にダーマ神殿がある。\n転職の力で己を鍛えれば\nさらに強くなれるじゃろう。」',()=>{G.state=GS.EXPLORE})})})}
 // ===== FUKKATSU NO JUMON (Revival Password) =====
-const JUMON_CHARS='あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよらりるれろわをん';
+const JUMON_CHARS='ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
 function encodeJumon(){
-const d=[];
-// Hero level (4bit), prince level (4bit), princess level (4bit)
-d.push(G.hero?G.hero.level:0);
-d.push(G.prince?G.prince.level:0);
-d.push(G.princess?G.princess.level:0);
-// Gold (16bit, max 65535)
-const g=Math.min(G.gold,65535);
-d.push(g>>8);d.push(g&0xFF);
-// Hero exp (16bit)
-const he=G.hero?Math.min(G.hero.exp,65535):0;
-d.push(he>>8);d.push(he&0xFF);
-// Prince exp (16bit)
-const pe=G.prince?Math.min(G.prince.exp,65535):0;
-d.push(pe>>8);d.push(pe&0xFF);
-// Princess exp (16bit)
-const pre=G.princess?Math.min(G.princess.exp,65535):0;
-d.push(pre>>8);d.push(pre&0xFF);
-// Flags (8bit): princeJoined, princessJoined, hasShip, hargonDown, key items...
+// 8桁英数字コード (36進数, 38bit)
+// heroLv(6) + princeLv(6) + princessLv(6) + gold/100(8) + flags(7) + checksum(5) = 38bit
+const hLv=G.hero?Math.min(G.hero.level,63):0;
+const pLv=G.prince?Math.min(G.prince.level,63):0;
+const prLv=G.princess?Math.min(G.princess.level,63):0;
+const gld=Math.min(Math.floor(G.gold/100),255);
 let flags=0;
 if(G.flags.princeJoined)flags|=1;
 if(G.flags.princessJoined)flags|=2;
 if(G.hasShip)flags|=4;
 if(G.flags.hargonDown)flags|=8;
-if(G.items.some(it=>it.id===4))flags|=16; // ぎんのカギ
-if(G.items.some(it=>it.id===5))flags|=32; // きんのカギ
-if(G.items.some(it=>it.id===8))flags|=64; // ラーのかがみ
-d.push(flags);
-// Equipment: hero weapon(4bit)+armor(4bit)
-const hw=G.hero&&G.hero.weapon!=null?G.hero.weapon+1:0;
-const ha=G.hero&&G.hero.armor!=null?G.hero.armor+1:0;
-d.push((hw<<4)|ha);
-// Items count: yakusou (4bit)
-const yc=G.items.find(it=>it.id===0);
-d.push(yc?Math.min(yc.count,15):0);
-// Checksum
-let cs=0;for(const v of d)cs=(cs+v)&0xFF;
-d.push(cs);
-// Encode to kana: each byte -> 2 chars (high nibble + low nibble) using base-46
+if(G.items.some(it=>it.id===4))flags|=16;
+if(G.items.some(it=>it.id===5))flags|=32;
+if(G.items.some(it=>it.id===8))flags|=64;
+// pack bits: hLv(6)+pLv(6)+prLv(6)+gld(8)+flags(7) = 33bit
+let bits=BigInt(hLv);
+bits=(bits<<6n)|BigInt(pLv);
+bits=(bits<<6n)|BigInt(prLv);
+bits=(bits<<8n)|BigInt(gld);
+bits=(bits<<7n)|BigInt(flags);
+// checksum: sum of all fields mod 32 (5bit)
+const cs=(hLv+pLv+prLv+gld+flags)%32;
+bits=(bits<<5n)|BigInt(cs);
+// convert to base-36, pad to 8 chars
 const jc=JUMON_CHARS;
 let s='';
-for(const v of d){s+=jc[Math.floor(v/42)%42];s+=jc[v%42]}
+let v=bits;
+for(let i=0;i<8;i++){s=jc[Number(v%36n)]+s;v=v/36n}
 return s;
 }
 function decodeJumon(s){
 const jc=JUMON_CHARS;
-const clean=s.replace(/[\s　]/g,'');
-if(clean.length<30)return null;
-const d=[];
-for(let i=0;i<clean.length;i+=2){
-const hi=jc.indexOf(clean[i]),lo=jc.indexOf(clean[i+1]);
-if(hi<0||lo<0)return null;
-d.push(hi*42+lo);
+const clean=s.replace(/[\s　]/g,'').toUpperCase();
+if(clean.length!==8)return null;
+// base-36 to BigInt
+let bits=0n;
+for(let i=0;i<8;i++){
+const idx=jc.indexOf(clean[i]);
+if(idx<0)return null;
+bits=bits*36n+BigInt(idx);
 }
-// Verify checksum
-const cs=d.pop();
-let ck=0;for(const v of d)ck=(ck+v)&0xFF;
+// unpack: checksum(5) + flags(7) + gld(8) + prLv(6) + pLv(6) + hLv(6)
+const cs=Number(bits&31n);bits>>=5n;
+const flags=Number(bits&127n);bits>>=7n;
+const gld=Number(bits&255n);bits>>=8n;
+const princessLv=Number(bits&63n);bits>>=6n;
+const princeLv=Number(bits&63n);bits>>=6n;
+const heroLv=Number(bits&63n);
+// verify checksum
+const ck=(heroLv+princeLv+princessLv+gld+flags)%32;
 if(ck!==cs)return null;
-// Decode
-const heroLv=d[0],princeLv=d[1],princessLv=d[2];
-const gold=(d[3]<<8)|d[4];
-const heroExp=(d[5]<<8)|d[6];
-const princeExp=(d[7]<<8)|d[8];
-const princessExp=(d[9]<<8)|d[10];
-const flags=d[11];
-const hw=d[12]>>4,ha=d[12]&0xF;
-const yakusou=d[13];
-return{heroLv,princeLv,princessLv,gold,heroExp,princeExp,princessExp,flags,hw,ha,yakusou};
+const gold=gld*100;
+return{heroLv,princeLv,princessLv,gold,flags};
+}
+function autoEquip(c,cid){
+// レベルに応じた最強装備を自動付与
+const best=(arr,who)=>{let b=null;for(const e of arr){if(!e.who.includes(cid))continue;if(e.price>0||e.atk||e.def){if(!b||(e.atk||e.def||0)>(b.atk||b.def||0))b=e}}return b};
+const w=best(WEAPONS,cid);if(w)c.weapon=w.id;
+const a=best(ARMORS,cid);if(a)c.armor=a.id;
 }
 function applyJumon(data){
 G.hero=new Chara(0,'ローレシアのおうじ',HERO_LV);
 G.hero.level=1;G.hero.exp=0;
 while(G.hero.level<data.heroLv&&G.hero.level<HERO_LV.length)
 {G.hero.level++;const s=HERO_LV[G.hero.level-1];G.hero.maxHp=s[1];G.hero.maxMp=s[2];G.hero.str=s[3];G.hero.agi=s[4];for(const sp of s[5])if(!G.hero.spells.includes(sp))G.hero.spells.push(sp)}
-G.hero.hp=G.hero.maxHp;G.hero.mp=G.hero.maxMp;G.hero.exp=data.heroExp;
-if(data.hw>0)G.hero.weapon=data.hw-1;
-if(data.ha>0)G.hero.armor=data.ha-1;
+G.hero.hp=G.hero.maxHp;G.hero.mp=G.hero.maxMp;
+G.hero.exp=G.hero.level>1?HERO_LV[G.hero.level-1][0]:0;
+autoEquip(G.hero,0);
 G.party=[G.hero];G.prince=null;G.princess=null;
 if(data.flags&1){
 G.prince=new Chara(1,'サマルトリアのおうじ',PRINCE_LV);
 G.prince.level=1;
 while(G.prince.level<data.princeLv&&G.prince.level<PRINCE_LV.length)
 {G.prince.level++;const s=PRINCE_LV[G.prince.level-1];G.prince.maxHp=s[1];G.prince.maxMp=s[2];G.prince.str=s[3];G.prince.agi=s[4];for(const sp of s[5])if(!G.prince.spells.includes(sp))G.prince.spells.push(sp)}
-G.prince.hp=G.prince.maxHp;G.prince.mp=G.prince.maxMp;G.prince.exp=data.princeExp;
+G.prince.hp=G.prince.maxHp;G.prince.mp=G.prince.maxMp;
+G.prince.exp=G.prince.level>1?PRINCE_LV[G.prince.level-1][0]:0;
+autoEquip(G.prince,1);
 G.party.push(G.prince);G.flags.princeJoined=true;
 }
 if(data.flags&2){
@@ -1481,12 +1478,13 @@ G.princess=new Chara(2,'ムーンブルクのおうじょ',PRINCESS_LV);
 G.princess.level=1;
 while(G.princess.level<data.princessLv&&G.princess.level<PRINCESS_LV.length)
 {G.princess.level++;const s=PRINCESS_LV[G.princess.level-1];G.princess.maxHp=s[1];G.princess.maxMp=s[2];G.princess.str=s[3];G.princess.agi=s[4];for(const sp of s[5])if(!G.princess.spells.includes(sp))G.princess.spells.push(sp)}
-G.princess.hp=G.princess.maxHp;G.princess.mp=G.princess.maxMp;G.princess.exp=data.princessExp;
+G.princess.hp=G.princess.maxHp;G.princess.mp=G.princess.maxMp;
+G.princess.exp=G.princess.level>1?PRINCESS_LV[G.princess.level-1][0]:0;
+autoEquip(G.princess,2);
 G.party.push(G.princess);G.flags.princessJoined=true;
 }
 G.gold=data.gold;
-G.items=[];
-if(data.yakusou>0)G.items.push({id:0,count:data.yakusou});
+G.items=[{id:0,count:3}];
 if(data.flags&16)G.items.push({id:4,count:1});
 if(data.flags&32)G.items.push({id:5,count:1});
 if(data.flags&64)G.items.push({id:8,count:1});
@@ -1499,7 +1497,7 @@ G.state=GS.EXPLORE;
 function saveGame(){const d={party:G.party.map(c=>({id:c.id,name:c.name,level:c.level,exp:c.exp,hp:c.hp,maxHp:c._baseMaxHp,mp:c.mp,maxMp:c._baseMaxMp,str:c._baseStr,agi:c._baseAgi,spells:c.spells,weapon:c.weapon,armor:c.armor,shield:c.shield,helmet:c.helmet,alive:c.alive,job:c.job,jobProf:c.jobProf,learnedSkills:c.learnedSkills})),gold:G.gold,items:G.items,flags:G.flags,mapId:G.mapId,px:G.px,py:G.py,pdir:G.pdir,visited:G.visited,hasShip:G.hasShip,shipX:G.shipX,shipY:G.shipY,zukan:G.zukan||{monsters:{},items:{}},chests:G.chests||{},wagon:(G.wagon||[]).map(c=>({id:c.id,name:c.name,level:c.level,exp:c.exp,hp:c.hp,maxHp:c._baseMaxHp,mp:c.mp,maxMp:c._baseMaxMp,str:c._baseStr,agi:c._baseAgi,spells:c.spells,weapon:c.weapon,armor:c.armor,shield:c.shield,helmet:c.helmet,alive:c.alive,job:c.job,jobProf:c.jobProf,learnedSkills:c.learnedSkills}))};localStorage.setItem('dq2save',JSON.stringify(d));showMsg('ぼうけんのしょに きろくしました。')}
 function loadGame(){const r=localStorage.getItem('dq2save');if(!r){showMsg('ぼうけんのしょが ありません。');return}try{const d=JSON.parse(r);function restoreChara(p){const lt=LV_TABLES[p.id]||(LEGACY_CHARS.find(lc=>lc.id===p.id)||{}).lt||HERO_LV;const c=new Chara(p.id,p.name,lt);Object.assign(c,p);c.lt=lt;if(!c.job)c.job='none';if(!c.jobProf){c.jobProf={};for(const k in JOBS)if(k!=='none')c.jobProf[k]=0}if(!c.learnedSkills)c.learnedSkills=[];return c}G.party=d.party.map(restoreChara);G.wagon=(d.wagon||[]).map(restoreChara);G.hero=G.party[0];G.prince=G.party.find(c=>c.id===1)||null;G.princess=G.party.find(c=>c.id===2)||null;G.gold=d.gold;G.items=d.items;G.flags=d.flags;G.mapId=d.mapId;G.px=d.px;G.py=d.py;G.pdir=d.pdir;G.visited=d.visited||[];G.hasShip=d.hasShip||false;G.shipX=d.shipX||0;G.shipY=d.shipY||0;G.zukan=d.zukan||{monsters:{},items:{}};G.chests=d.chests||{};initMaps();initNPCs();G.state=GS.EXPLORE}catch(e){showMsg('ぼうけんのしょが こわれています。')}}
 function updateExplore(){if(G.msgT)return;G.moveTimer--;if(G.moveTimer>0)return;let dx=0,dy=0;if(kh('ArrowUp')){dy=-1;G.pdir=1}else if(kh('ArrowDown')){dy=1;G.pdir=0}else if(kh('ArrowLeft')){dx=-1;G.pdir=2}else if(kh('ArrowRight')){dx=1;G.pdir=3}if(dx||dy){tryMove(dx,dy);G.moveTimer=8}if(kp('KeyX')||kp('Escape')){G.state=GS.MENU;G.ms={pg:'main',cursor:0,ci:0}}if(kp('KeyZ')||kp('Enter')){seSelect();checkInteraction()}}
-function drawGameOver(){ctx.fillStyle='#000';ctx.fillRect(0,0,SW,SH);if(!G.goPhase)G.goPhase='msg';if(G.goPhase==='msg'){dtc('ぜんめつ してしまった…',SW/2,60,10,'#f00');dtc('ローレシア王「おお なさけない！',SW/2,100,8);dtc('しかし あきらめるでないぞ。',SW/2,116,8);dtc('ふっかつのじゅもんを',SW/2,132,8);dtc('おぼえておくのじゃ。」',SW/2,148,8);dtc('▶ じゅもんを みる ('+btnLabel('A')+')',SW/2,180,8,'#ffd700');if(kp('KeyZ')||kp('Enter')){seSelect();G.goPhase='jumon';G.goJumon=encodeJumon()}}else if(G.goPhase==='jumon'){dw(8,8,240,224);dtc('ふっかつのじゅもん',SW/2,28,8,'#ffd700');const j=G.goJumon||'';const cpl=10;const lines=[];for(let i=0;i<j.length;i+=cpl)lines.push(j.slice(i,i+cpl));lines.forEach((ln,i)=>{const spaced=ln.split('').join(' ');dtc(spaced,SW/2,60+i*18,8,'#fff')});dtc('ゴールドは はんぶんになります',SW/2,180,6,'#aaa');if(G.goCopied)dtc('コピーしました！',SW/2,195,6,'#0f0');else dtc('▶ '+btnLabel('B')+'でコピー',SW/2,195,6,'#8cf');dtc('▶ '+btnLabel('A')+'でタイトルへ',SW/2,210,7,'#ffd700');if(kp('KeyX')||kp('Escape')){if(j){copyToClipboard(j).then(()=>{G.goCopied=true}).catch(()=>{})}seSelect()}if(kp('KeyZ')||kp('Enter')){seSelect();G.goPhase=null;G.goJumon=null;G.goCopied=false;G.ms={cursor:0};G.state=GS.TITLE}}}
+function drawGameOver(){ctx.fillStyle='#000';ctx.fillRect(0,0,SW,SH);if(!G.goPhase)G.goPhase='msg';if(G.goPhase==='msg'){dtc('ぜんめつ してしまった…',SW/2,60,10,'#f00');dtc('ローレシア王「おお なさけない！',SW/2,100,8);dtc('しかし あきらめるでないぞ。',SW/2,116,8);dtc('ふっかつのコードを',SW/2,132,8);dtc('おぼえておくのじゃ。」',SW/2,148,8);dtc('▶ コードを みる ('+btnLabel('A')+')',SW/2,180,8,'#ffd700');if(kp('KeyZ')||kp('Enter')){seSelect();G.goPhase='jumon';G.goJumon=encodeJumon()}}else if(G.goPhase==='jumon'){dw(8,8,240,180);dtc('ふっかつのコード',SW/2,28,8,'#ffd700');const j=G.goJumon||'';const spaced=j.split('').join('  ');dtc(spaced,SW/2,70,10,'#fff');dtc('ゴールドは はんぶんになります',SW/2,110,6,'#aaa');if(G.goCopied)dtc('コピーしました！',SW/2,130,6,'#0f0');else dtc('▶ '+btnLabel('B')+'でコピー',SW/2,130,6,'#8cf');dtc('▶ '+btnLabel('A')+'でタイトルへ',SW/2,150,7,'#ffd700');if(kp('KeyX')||kp('Escape')){if(j){copyToClipboard(j).then(()=>{G.goCopied=true}).catch(()=>{})}seSelect()}if(kp('KeyZ')||kp('Enter')){seSelect();G.goPhase=null;G.goJumon=null;G.goCopied=false;G.ms={cursor:0};G.state=GS.TITLE}}}
 function drawEnding(){ctx.fillStyle='#000';ctx.fillRect(0,0,SW,SH);
 if(!G.endPhase)G.endPhase='story';
 if(G.endPhase==='story'){
@@ -1511,17 +1509,17 @@ dtc('ダーマ神殿で鍛え 幾多の技を学び',SW/2,by,7,'#aef');dtc('ロ�
 dtc('あなたの ぼうけんは',SW/2,by+36,8);dtc('でんせつとして かたりつがれる',SW/2,by+52,8);
 dtc('- THE END -',SW/2,by+76,10,'#ffd700');
 ctx.globalAlpha=1;
-dtc('▶ '+btnLabel('A')+'で ふっかつのじゅもん',SW/2,SH-16,7,'#8cf');
+dtc('▶ '+btnLabel('A')+'で ふっかつのコード',SW/2,SH-16,7,'#8cf');
 if(kp('KeyZ')||kp('Enter')){seSelect();G.endPhase='jumon';G.endJumon=encodeJumon()}
 }else if(G.endPhase==='jumon'){
-dw(8,8,240,224);dtc('ふっかつのじゅもん',SW/2,28,8,'#ffd700');
-const j=G.endJumon||'';const cpl=10;const lines=[];
-for(let i=0;i<j.length;i+=cpl)lines.push(j.slice(i,i+cpl));
-lines.forEach((ln,i)=>{const spaced=ln.split('').join(' ');dtc(spaced,SW/2,60+i*18,8,'#fff')});
-dtc('クリアデータを セーブしました！',SW/2,170,6,'#0f0');
-if(G.endCopied)dtc('コピーしました！',SW/2,185,6,'#0f0');
-else dtc('▶ '+btnLabel('B')+'でコピー',SW/2,185,6,'#8cf');
-dtc('▶ '+btnLabel('A')+'でタイトルへ',SW/2,200,7,'#ffd700');
+dw(8,8,240,180);dtc('ふっかつのコード',SW/2,28,8,'#ffd700');
+const j=G.endJumon||'';
+const spaced=j.split('').join('  ');
+dtc(spaced,SW/2,70,10,'#fff');
+dtc('クリアデータを セーブしました！',SW/2,110,6,'#0f0');
+if(G.endCopied)dtc('コピーしました！',SW/2,130,6,'#0f0');
+else dtc('▶ '+btnLabel('B')+'でコピー',SW/2,130,6,'#8cf');
+dtc('▶ '+btnLabel('A')+'でタイトルへ',SW/2,150,7,'#ffd700');
 if(kp('KeyX')||kp('Escape')){if(j){copyToClipboard(j).then(()=>{G.endCopied=true}).catch(()=>{})}seSelect()}
 if(kp('KeyZ')||kp('Enter')){seSelect();G.endPhase=null;G.endJumon=null;G.endCopied=false;G.ms={cursor:0};G.state=GS.TITLE}
 }}
