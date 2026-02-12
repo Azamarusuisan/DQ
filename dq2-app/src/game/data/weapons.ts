@@ -1,0 +1,28 @@
+import type { WeaponData } from '../types';
+
+export const WEAPONS: WeaponData[] = [
+  { id: 0,  name: 'ひのきのぼう',       atk: 2,   price: 10,   who: [0, 1] },
+  { id: 1,  name: 'どうのつるぎ',       atk: 10,  price: 100,  who: [0, 1] },
+  { id: 2,  name: 'はがねのつるぎ',     atk: 25,  price: 500,  who: [0, 1] },
+  { id: 3,  name: 'はやぶさのけん',     atk: 30,  price: 0,    who: [0], hits: 2 },
+  { id: 4,  name: 'いなずまのけん',     atk: 45,  price: 3500, who: [0] },
+  { id: 5,  name: 'ロトのつるぎ',       atk: 60,  price: 0,    who: [0] },
+  { id: 6,  name: 'てつのやり',         atk: 20,  price: 300,  who: [1] },
+  { id: 7,  name: 'まどうしのつえ',     atk: 8,   price: 200,  who: [2] },
+  { id: 8,  name: 'ちからのつえ',       atk: 15,  price: 0,    who: [2] },
+  { id: 9,  name: 'おおかなづち',       atk: 15,  price: 250,  who: [0] },
+  { id: 10, name: 'まどろみのけん',     atk: 32,  price: 1200, who: [0, 1] },
+  { id: 11, name: 'ほのおのつるぎ',     atk: 52,  price: 4200, who: [0] },
+  { id: 12, name: 'きせきのつるぎ',     atk: 55,  price: 0,    who: [0] },
+  { id: 13, name: 'ラミアスのつるぎ',   atk: 70,  price: 0,    who: [0] },
+  { id: 14, name: 'おうじゃのけん',     atk: 80,  price: 0,    who: [0] },
+  { id: 15, name: 'てつのつえ',         atk: 12,  price: 150,  who: [1, 2] },
+  { id: 16, name: 'ゆうわくのけん',     atk: 38,  price: 1800, who: [0, 1] },
+  { id: 17, name: 'いかずちのつえ',     atk: 28,  price: 0,    who: [2] },
+  { id: 18, name: 'ふぶきのつるぎ',     atk: 58,  price: 0,    who: [0] },
+  { id: 19, name: 'もろはのつるぎ',     atk: 75,  price: 0,    who: [0] },
+  { id: 20, name: 'グリンガムのムチ',   atk: 65,  price: 0,    who: [2] },
+  { id: 21, name: 'ドラゴンキラー',     atk: 42,  price: 2800, who: [0] },
+  { id: 22, name: 'はかいのつるぎ',     atk: 90,  price: 0,    who: [0] },
+  { id: 23, name: 'ゾンビキラー',       atk: 35,  price: 1500, who: [0, 1] },
+];
