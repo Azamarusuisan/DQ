@@ -1042,7 +1042,7 @@ if(kp('KeyX')||kp('Escape')){ms.tMode='main';ms.cursor=2}}}}
 else if(ms.pg==='wagon_swap'){
 if(!G.wagon)G.wagon=[];
 const all=[...G.party,...G.wagon];
-if(all.length<=1){showMsg('いれかえる仲間がいない。');ms.pg='main';ms.cursor=7}
+if(all.length<=1){ms.pg='main';ms.cursor=7;showMsg('いれかえる仲間がいない。')}
 else{
 if(kp('ArrowUp'))ms.cursor=Math.max(0,ms.cursor-1);if(kp('ArrowDown'))ms.cursor=Math.min(all.length-1,ms.cursor);
 if(kp('KeyZ')||kp('Enter')){
