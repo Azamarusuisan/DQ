@@ -418,19 +418,19 @@ return Array.from({length:99},(_,i)=>{const lv=i+1;const exp=Math.floor(lv*lv*lv
 const LEGACY_CHARS=[
 {id:3,name:'ロトのゆうしゃ',lt:genLvTable(22,5,10,7,9.5,2,4,3,[[1,'gira'],[8,'behoimi'],[16,'begirama'],[25,'ionazun']]),joinLv:5,desc:'DQ1の勇者。バランス型。',recruitType:'boss',recruitCond:'dragonDown'},
 {id:4,name:'アリーナ',lt:genLvTable(20,0,12,10,8,0,4.5,4,[[1,'baikiruto']]),joinLv:8,desc:'DQ4の武闘家姫。会心の一撃率UP。',recruitType:'boss',recruitCond:'armLionDown'},
-{id:5,name:'クリフト',lt:genLvTable(18,14,6,7,7,5.5,2,3,[[1,'hoimi'],[5,'behoimi'],[12,'zaoriku'],[20,'behoma']]),joinLv:8,desc:'DQ4の神官。回復のスペシャリスト。',recruitType:'npc',recruitCond:'partyGte3'},
-{id:6,name:'ビアンカ',lt:genLvTable(16,12,5,8,7,5,2.5,3.5,[[1,'gira'],[6,'begirama'],[14,'ionazun'],[22,'manusa']]),joinLv:10,desc:'DQ5のビアンカ。攻撃魔法が得意。',recruitType:'story',recruitCond:'party3'},
-{id:7,name:'フローラ',lt:genLvTable(15,15,4,9,6,6,2,3.5,[[1,'hoimi'],[4,'behoimi'],[10,'behoma'],[18,'zaoriku']]),joinLv:10,desc:'DQ5のフローラ。万能回復型。',recruitType:'npc',recruitCond:'hasShip'},
+{id:5,name:'クリフト',lt:genLvTable(18,14,6,7,7,5.5,2,3,[[1,'hoimi'],[5,'behoimi'],[12,'zaoriku'],[20,'behoma']]),joinLv:8,desc:'DQ4の神官。回復のスペシャリスト。',recruitType:'npc',recruitCond:'visitDharma'},
+{id:6,name:'ビアンカ',lt:genLvTable(16,12,5,8,7,5,2.5,3.5,[[1,'gira'],[6,'begirama'],[14,'ionazun'],[22,'manusa']]),joinLv:10,desc:'DQ5のビアンカ。攻撃魔法が得意。',recruitType:'story',recruitCond:'hasShip'},
+{id:7,name:'フローラ',lt:genLvTable(15,15,4,9,6,6,2,3.5,[[1,'hoimi'],[4,'behoimi'],[10,'behoma'],[18,'zaoriku']]),joinLv:10,desc:'DQ5のフローラ。万能回復型。',recruitType:'npc',recruitCond:'dragonDown'},
 {id:8,name:'テリー',lt:genLvTable(22,4,13,8,9,1.5,4.5,3,[[1,'gira'],[10,'baikiruto'],[20,'gigaslash']]),joinLv:15,desc:'DQ6の剣士。攻撃特化型。',recruitType:'boss',recruitCond:'killerMachineDown'},
 {id:9,name:'バーバラ',lt:genLvTable(14,16,4,10,6,6.5,2,4,[[1,'gira'],[3,'begirama'],[8,'ionazun'],[15,'madante']]),joinLv:12,desc:'DQ6の魔法使い。最強魔法マダンテ。',recruitType:'npc',recruitCond:'jobMaster8'},
 {id:10,name:'エイト',lt:genLvTable(24,6,12,8,10,2,4.2,3,[[1,'gira'],[8,'begirama'],[18,'gigaslash'],[30,'ionazun']]),joinLv:20,desc:'DQ8の主人公。攻撃型万能キャラ。',recruitType:'boss',recruitCond:'zomaDown'},
 {id:11,name:'ゼシカ',lt:genLvTable(15,14,5,9,6.5,5.5,2,3.5,[[1,'gira'],[5,'begirama'],[12,'ionazun'],[20,'madante']]),joinLv:18,desc:'DQ8の魔法使い。強力な攻撃呪文。',recruitType:'story',recruitCond:'partyLv15'},
 {id:12,name:'カミュ',lt:genLvTable(20,4,14,12,8,1,4.5,4.5,[[1,'nusumu'],[10,'baikiruto']]),joinLv:15,desc:'DQ11の盗賊。素早さとSTRが高い。',recruitType:'boss',recruitCond:'estarkDown'},
 {id:13,name:'イレブン',lt:genLvTable(24,10,11,9,10,3.5,4.2,3.5,[[1,'gira'],[5,'behoimi'],[12,'gigaslash'],[20,'begirama'],[30,'gigadein']]),joinLv:25,desc:'DQ11の勇者。最強候補。',recruitType:'boss',recruitCond:'dreaamDown'},
-{id:14,name:'マーニャ',lt:genLvTable(14,15,4,8,6,6,1.5,3.5,[[1,'gira'],[4,'begirama'],[10,'ionazun'],[18,'megante']]),joinLv:10,desc:'DQ4の踊り子。攻撃魔法型。',recruitType:'story',recruitCond:'visitDharma'},
-{id:15,name:'ミネア',lt:genLvTable(16,13,5,7,7,5,2,3,[[1,'hoimi'],[5,'behoimi'],[10,'zaoriku'],[15,'sukuruto']]),joinLv:10,desc:'DQ4の占い師。回復・補助。',recruitType:'npc',recruitCond:'hasPrincess'},
-{id:16,name:'ハッサン',lt:genLvTable(26,2,14,6,11,0.5,4.8,2.5,[[1,'baikiruto'],[15,'gigaslash']]),joinLv:12,desc:'DQ6の武闘家。物理最強クラス。',recruitType:'story',recruitCond:'hasShip'},
-{id:17,name:'ヤンガス',lt:genLvTable(28,0,12,4,12,0,4,2,[[1,'baikiruto']]),joinLv:15,desc:'DQ8の盗賊。HPとSTRが高い。',recruitType:'story',recruitCond:'firstChest'},
+{id:14,name:'マーニャ',lt:genLvTable(14,15,4,8,6,6,1.5,3.5,[[1,'gira'],[4,'begirama'],[10,'ionazun'],[18,'megante']]),joinLv:10,desc:'DQ4の踊り子。攻撃魔法型。',recruitType:'story',recruitCond:'armLionDown'},
+{id:15,name:'ミネア',lt:genLvTable(16,13,5,7,7,5,2,3,[[1,'hoimi'],[5,'behoimi'],[10,'zaoriku'],[15,'sukuruto']]),joinLv:10,desc:'DQ4の占い師。回復・補助。',recruitType:'npc',recruitCond:'killerMachineDown'},
+{id:16,name:'ハッサン',lt:genLvTable(26,2,14,6,11,0.5,4.8,2.5,[[1,'baikiruto'],[15,'gigaslash']]),joinLv:12,desc:'DQ6の武闘家。物理最強クラス。',recruitType:'story',recruitCond:'partyLv15'},
+{id:17,name:'ヤンガス',lt:genLvTable(28,0,12,4,12,0,4,2,[[1,'baikiruto']]),joinLv:15,desc:'DQ8の盗賊。HPとSTRが高い。',recruitType:'story',recruitCond:'hasShip'},
 {id:18,name:'ベロニカ',lt:genLvTable(12,16,3,9,5,6.5,1.5,4,[[1,'gira'],[4,'begirama'],[10,'ionazun'],[16,'megante'],[22,'madante']]),joinLv:18,desc:'DQ11の魔法使い。最強攻撃魔法。',recruitType:'npc',recruitCond:'hargonDown'},
 {id:19,name:'セーニャ',lt:genLvTable(16,14,4,8,7,5.5,2,3,[[1,'hoimi'],[4,'behoimi'],[10,'behoma'],[15,'zaoriku'],[20,'sukuruto']]),joinLv:18,desc:'DQ11の僧侶。回復のエキスパート。',recruitType:'npc',recruitCond:'hargonDown'},
 ];
@@ -1270,7 +1270,6 @@ case 'zomaDown':cond=!!G.flags.zomaDown;break;
 case 'estarkDown':cond=!!G.flags.estarkDown;break;
 case 'dreaamDown':cond=!!G.flags.dreaamDown;break;
 case 'partyGte3':cond=G.party.length+((G.wagon||[]).length)>=3;break;
-case 'party3':cond=G.party.length>=3;break;
 case 'hasShip':cond=!!G.hasShip;break;
 case 'jobMaster8':cond=G.party.some(c=>{for(const k in c.jobProf)if(c.jobProf[k]>=8)return true;return false});break;
 case 'partyLv15':cond=G.party.some(c=>c.level>=15);break;
