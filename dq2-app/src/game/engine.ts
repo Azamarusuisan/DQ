@@ -459,8 +459,8 @@ const MONSTERS=[
 {name:'ブリザード',hp:60,mp:20,atk:40,def:30,agi:35,exp:45,gold:50,spells:['ionazun'],zone:[3],drop:{type:'weapon',id:18,rate:0.03}},
 {name:'あくましんかん',hp:90,mp:30,atk:45,def:40,agi:22,exp:55,gold:55,spells:['behoimi'],zone:[3],drop:{type:'item',id:3,rate:0.0625}},
 // ボス
-{name:'ハーゴン',hp:200,mp:50,atk:80,def:60,agi:40,exp:0,gold:0,spells:['begirama','behoimi'],zone:[],boss:true},
-{name:'シドー',hp:300,mp:99,atk:120,def:80,agi:50,exp:0,gold:0,spells:['ionazun','behoimi'],zone:[],boss:true},
+{name:'ハーゴン',hp:500,mp:80,atk:85,def:65,agi:40,exp:0,gold:0,spells:['begirama','behoimi','ionazun'],zone:[],boss:true},
+{name:'シドー',hp:600,mp:99,atk:90,def:70,agi:45,exp:0,gold:0,spells:['ionazun','behoimi'],zone:[],boss:true},
 // Zone 4: 隠しダンジョン（裏ダン）
 {name:'キングスライム',hp:200,mp:30,atk:80,def:60,agi:40,exp:120,gold:100,spells:['behoimi'],zone:[4],drop:{type:'item',id:3,rate:0.1}},
 {name:'デスピサロ',hp:400,mp:60,atk:130,def:90,agi:55,exp:200,gold:150,spells:['begirama','ionazun'],zone:[4],drop:{type:'armor',id:12,rate:0.02}},
@@ -1398,7 +1398,7 @@ function encodeJumon(){
 const hLv=G.hero?Math.min(G.hero.level,63):0;
 const pLv=G.prince?Math.min(G.prince.level,63):0;
 const prLv=G.princess?Math.min(G.princess.level,63):0;
-const gld=Math.min(Math.floor(G.gold/100),255);
+const gld=Math.min(Math.floor(G.gold/10),255);
 let flags=0;
 if(G.flags.princeJoined)flags|=1;
 if(G.flags.princessJoined)flags|=2;
@@ -1444,7 +1444,7 @@ const heroLv=Number(bits&63n);
 // verify checksum
 const ck=(heroLv+princeLv+princessLv+gld+flags)%32;
 if(ck!==cs)return null;
-const gold=gld*100;
+const gold=gld*10;
 return{heroLv,princeLv,princessLv,gold,flags};
 }
 function autoEquip(c,cid){
